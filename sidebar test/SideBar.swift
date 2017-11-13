@@ -57,7 +57,7 @@ class SideBar: UIViewController{//, UITableViewDelegate, UITableViewDataSource {
             if FIRAuth.auth()?.currentUser != nil{
                 do{
                     try currentImage = UIImage(data: Data(contentsOf: (FIRAuth.auth()?.currentUser?.photoURL)!))!
-                    try self.setUpImage(image: currentImage!)
+                    self.setUpImage(image: currentImage!)
                 }catch{
                     self.setUpImage(image: #imageLiteral(resourceName: "rejected-red"))
                 }
@@ -117,7 +117,7 @@ class SideBar: UIViewController{//, UITableViewDelegate, UITableViewDataSource {
         
     }
     
-    func logOut(){
+    @objc func logOut(){
         
         
         

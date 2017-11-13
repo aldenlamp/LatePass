@@ -37,19 +37,57 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     //MARK: - reloading Data
     // FirebaseDataDelegae functions
     func uesrDataDidLoad() {
-        
-        
         print("\n\nuser data loaded\n\n")
     }
-    
+
     func historyArrayDidLoad() {
-        print("\n\nhistory data loaded\n\n")
+        firebaseData?.allItems += firebaseData!.historyItems
+        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData!.allItems.count - 1)
         historyTableView.reloadData()
+        tableViewExists()
+        
+        print("\n\nhistory data loaded\n\n")
     }
     
+    func requestArrayDidLoad() {
+        firebaseData?.allItems += firebaseData!.requestItems
+        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData!.allItems.count - 1)
+        historyTableView.reloadData()
+        tableViewExists()
+        
+        print("\n\nrequest data loaded\n\n")
+    }
     
+    //quick sort for sorting the history items by time
+    func historyQuickSort(lowerIndex: Int, higherIndex: Int){
+        var lower = lowerIndex
+        var higher = higherIndex
+//        print(firebaseData?.allItems)
+//        print(higherIndex)
+//        print(Int(floor(Double(lower) + Double(higher - lower) / 2.0)))
+        
+        let pivot = firebaseData!.allItems[lower + (higher - lower) / 2].timeStarted!
+        
+        while(lower <= higher){
+            while(firebaseData!.allItems[lower].timeStarted! > pivot){ lower += 1 }
+            while(firebaseData!.allItems[higher].timeStarted! < pivot){ higher -= 1 }
+            
+            if lower <= higher{
+                exchangeNumbers(lower: lower, higher: higher)
+                lower += 1
+                higher -= 1
+            }
+        }
+        
+        if lowerIndex < higher{ historyQuickSort(lowerIndex: lowerIndex, higherIndex: higher) }
+        if lower < higherIndex{ historyQuickSort(lowerIndex: lower, higherIndex: higherIndex) }
+    }
     
-    
+    func exchangeNumbers(lower: Int, higher: Int){
+        let temp = firebaseData!.allItems[lower]
+        firebaseData!.allItems[lower] = firebaseData!.allItems[higher]
+        firebaseData!.allItems[higher] = temp
+    }
     
     //MARK: - Navigation
     
@@ -248,13 +286,26 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     //MARK: - TableView
     
     let historyTableView = UITableView()
+    let shadowView = UIView()
+    
+    var historyTopAnchor = NSLayoutConstraint()
+    var historyBottomAnchor = NSLayoutConstraint()
+    var historyLeftAnchor = NSLayoutConstraint()
+    var historyRightAnchor = NSLayoutConstraint()
+    
+    func setHistoryAnchors(to value: Bool){
+        historyTopAnchor.isActive = value
+        historyBottomAnchor.isActive = value
+        historyRightAnchor.isActive = value
+        historyLeftAnchor.isActive = value
+    }
     
     func setUpTableView(){
-        let shadowView = UIView()
         shadowView.addSubview(historyTableView)
         historyTableView.delegate = self
         historyTableView.dataSource = self
         
+        shadowView.backgroundColor = UIColor.white
         shadowView.layer.borderColor = UIColor.white.cgColor
         shadowView.layer.borderWidth = 0
         shadowView.layer.shadowColor = UIColor.lightGray.cgColor
@@ -269,37 +320,57 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         shadowView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         NSLayoutConstraint(item: shadowView, attribute: .top, relatedBy: .equal, toItem: keyView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
         
-        historyTableView.topAnchor.constraint(equalTo: shadowView.topAnchor, constant: 0).isActive = true
-        historyTableView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor, constant: 0).isActive = true
-        historyTableView.leftAnchor.constraint(equalTo: shadowView.leftAnchor, constant: 0).isActive = true
-        historyTableView.rightAnchor.constraint(equalTo: shadowView.rightAnchor, constant: 0).isActive = true
+        historyTopAnchor = historyTableView.topAnchor.constraint(equalTo: shadowView.topAnchor, constant: 0)
+        historyBottomAnchor = historyTableView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor, constant: 0)
+        historyLeftAnchor = historyTableView.leftAnchor.constraint(equalTo: shadowView.leftAnchor, constant: 0)
+        historyRightAnchor = historyTableView.rightAnchor.constraint(equalTo: shadowView.rightAnchor, constant: 0)
+        
+        
         
         shadowView.translatesAutoresizingMaskIntoConstraints = false
         historyTableView.translatesAutoresizingMaskIntoConstraints = false
         
-        
         historyTableView.register(HistoryCell.self, forCellReuseIdentifier: "Cell")
         
-        
+        historyTableView.removeFromSuperview()
+    }
+    
+    var tableViewIsShown = false
+    
+    func tableViewExists(){
+        if !tableViewIsShown && firebaseData!.allItems.count > 0{
+            
+            shadowView.addSubview(historyTableView)
+            setHistoryAnchors(to: true)
+            
+            tableViewIsShown = !tableViewIsShown
+        }else if tableViewIsShown && firebaseData!.allItems.count == 0{
+            
+            setHistoryAnchors(to: false)
+            historyTableView.removeFromSuperview()
+            tableViewIsShown = !tableViewIsShown
+        }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return firebaseData!.historyItems.count }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return firebaseData!.allItems.count
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 90 }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row <= (firebaseData?.historyItems.count)! - 1{
-            let cell = firebaseData?.historyItems[indexPath.row].toHistoryCell()
-            return cell!
-        }else{
-            let cell2 = tableView.dequeueReusableCell(withIdentifier: "Cell") as! HistoryCell
-            return cell2
-        }
-
+//        if indexPath.row <= (firebaseData?.allItems.count)! - 1{
         
-        
+        let cell = firebaseData?.allItems[indexPath.row].toHistoryCell()
+        return cell!
+            
+//        }else{
+//            let cell2 = tableView.dequeueReusableCell(withIdentifier: "Cell") as! HistoryCell
+//            print(indexPath.row)
+//            return cell2
+//        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -34,6 +34,7 @@ enum cellTypes{
 protocol FirebaseProtocol {
     func uesrDataDidLoad()
     func historyArrayDidLoad()
+    func requestArrayDidLoad()
 }
 
 class FirebaseDataClass{
@@ -41,13 +42,15 @@ class FirebaseDataClass{
     var currentUser: UserCell?
     var firebaseDataDelegate: FirebaseProtocol!
     
+    let ref = FIRDatabase.database().reference()
+//    let thisUserRef = self?.ref.child("users").child(userID!)
+    
     var historyItems = [Cell]()
     var requestItems = [Cell]()
     
-    var allItemsSorte = [Cell]()
+    var allItems = [Cell]()
     
     init() {
-        let ref = FIRDatabase.database().reference()
         
         guard let currUserID = FIRAuth.auth()?.currentUser?.uid else{
             print("user not logged in")
@@ -56,23 +59,15 @@ class FirebaseDataClass{
         }
         userID = currUserID
         
-        let thisUserRef = ref.child("users").child(userID!)
-        
-        
-        
-        
         
         // Needed to set up a user cell: id, name, email, image, userType
-        thisUserRef.observe(.value, with: { [weak self] (snapshot) in
+        self.ref.child("users").child(userID!).observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
             var data = snapshot.value as! [String: Any]
-            
-            print(data["history"])
             
             
             let name = data["name"] as! String
             let email = data["name"] as! String
             
-            let tierNum = data["tier"] as! Int
             var tier = userType.student
             switch(data["tier"] as! Int){
             case 0: tier = .student
@@ -93,27 +88,21 @@ class FirebaseDataClass{
             self?.currentUser!.setUpCell(id: self!.userID!, type: tier, image: image, name: name, email: email)
             self?.firebaseDataDelegate.uesrDataDidLoad()
             
-            }, withCancel: {(error) in
-                print(error)
         })
         
         
         
         //getting the history item and request items
-        
-        
-        thisUserRef.child("history").observe(.value, with: {(snapshot) in
+        self.ref.child("users").child(userID!).child("history").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
             if snapshot.exists(){
                 let values = snapshot.value as! [String : String]
                 let historyKeys = Array(values.keys)
                 
-                var historyCount = historyKeys.count
+                print(historyKeys.count)
                 
                 // Increased when the data is pulled from the follwing users: Student, origin, destination
                 // when all are equil to history keys.count * 2 (one is left out because of above), deleage data realoaded called
                 var userCount = 0
-                
-                print(historyCount)
                 
                 for key in historyKeys{
                     let cell = Cell()
@@ -121,52 +110,55 @@ class FirebaseDataClass{
                     // origin, destination, student, cellType, timeStart, timeEnd
                     //Get each item as a key
                     
-                    ref.child("history").child(key).observe(.value, with: { [weak self] (snapshot) in
+                    self?.ref.child("history").child(key).observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
                         let historyValues = snapshot.value as! [String: Any]
                         
                         let originID = historyValues["origin"] as! String
                         let destinationID = historyValues["destination"] as! String
                         let studentID = historyValues["student"] as! String
                         
-                        var originName: String? = ""
-                        var destinationName: String? = ""
-                        var studentName: String? = ""
+                        //                        var originName: String? = ""
+                        //                        var destinationName: String? = ""
+                        //                        var studentName: String? = ""
                         
                         //finding the cell type by matching the uid to the person
                         var cellType: cellTypes = .studentHistory
                         if studentID != self?.userID{
                             if originID == self?.userID{
                                 cellType = .fromHistory
-                                originName = self?.currentUser?.userName
+                                //                                originName = self?.currentUser?.userName
+                                cell.origin = self?.currentUser?.userName
                             }else if destinationID == self?.userID{
                                 cellType = .toHistory
-                                destinationName = self?.currentUser?.userName
+                                //                                destinationName = self?.currentUser?.userName
+                                cell.destination = self?.currentUser?.userName
                             }else{
                                 print("\n\nNO CELL TYPE\n\n")
                             }
                         }else{
-                            studentName = self?.currentUser?.userName
+                            //                            studentName = self?.currentUser?.userName
+                            cell.student = self?.currentUser?.userName
                         }
                         
                         
                         //Getting the user names from the IDs to put into the cell
                         if cellType != .fromHistory{
-                            ref.child("users").child(originID).child("name").observe(.value, with: { (originNameSnapshot) in
+                            self?.ref.child("users").child(originID).child("name").observeSingleEvent(of: .value, with: { [weak self] (originNameSnapshot) in
                                 
                                 // A check and alternate pull from the database is necessary in order to find potential users
                                 // (those in our school who did not sign up)
                                 // The key in this is not a UID it is the users' email
                                 if originNameSnapshot.exists(){
-                                    originName = originNameSnapshot.value as? String
-                                    cell.origin = originName
+                                    //                                    originName = originNameSnapshot.value as? String
+                                    cell.origin = originNameSnapshot.value as? String// originName
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
                                         self?.firebaseDataDelegate.historyArrayDidLoad()
                                     }
                                 }else{
-                                    ref.child("potentialTeachers").child(originID).observe(.value, with: { (potentialOriginNameSnapshot) in
-                                        originName = potentialOriginNameSnapshot.value as? String
-                                        cell.origin = originName
+                                    self?.ref.child("potentialTeachers").child(originID).observeSingleEvent(of: .value, with: { [weak self] (potentialOriginNameSnapshot) in
+                                        //                                        originName = potentialOriginNameSnapshot.value as? String
+                                        cell.origin = potentialOriginNameSnapshot.value as? String// originName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
                                             self?.firebaseDataDelegate.historyArrayDidLoad()
@@ -177,18 +169,16 @@ class FirebaseDataClass{
                         }
                         
                         if cellType != .toHistory{
-                            ref.child("users").child(destinationID).child("name").observe(.value, with: { (destinationNameSnapshot) in
+                            self?.ref.child("users").child(destinationID).child("name").observeSingleEvent(of: .value, with: { [weak self] (destinationNameSnapshot) in
                                 if destinationNameSnapshot.exists(){
-                                    destinationName = destinationNameSnapshot.value as? String
-                                    cell.destination = destinationName
+                                    cell.destination = destinationNameSnapshot.value as? String// destinationName
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
                                         self?.firebaseDataDelegate.historyArrayDidLoad()
                                     }
                                 }else{
-                                    ref.child("potentialTeachers").child(destinationID).observe(.value, with: { (potentialDestinationNameSnapshot) in
-                                        destinationName = potentialDestinationNameSnapshot.value as? String
-                                        cell.destination = destinationName
+                                    self?.ref.child("potentialTeachers").child(destinationID).observeSingleEvent(of: .value, with: { [weak self] (potentialDestinationNameSnapshot) in
+                                        cell.destination = potentialDestinationNameSnapshot.value as? String// destinationName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
                                             self?.firebaseDataDelegate.historyArrayDidLoad()
@@ -199,18 +189,17 @@ class FirebaseDataClass{
                         }
                         
                         if cellType != .studentHistory{
-                            ref.child("users").child(studentID).child("name").observe(.value, with: { (studentNameSnapshot) in
+                            self?.ref.child("users").child(studentID).child("name").observeSingleEvent(of: .value, with: { [weak self] (studentNameSnapshot) in
                                 if studentNameSnapshot.exists(){
-                                    studentName = studentNameSnapshot.value as! String
-                                    cell.student = studentName
+                                    cell.student = studentNameSnapshot.value as? String
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
                                         self?.firebaseDataDelegate.historyArrayDidLoad()
                                     }
                                 }else{
-                                    ref.child("potentialStudents").child(studentID).observe(.value, with: { (potentialStudentNameSnapshot) in
-                                        studentName = potentialStudentNameSnapshot.value as? String
-                                        cell.student = studentName
+                                    self?.ref.child("potentialStudents").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
+                                        //                                        studentName = potentialStudentNameSnapshot.value as? String
+                                        cell.student = potentialStudentNameSnapshot.value as? String//studentName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
                                             self?.firebaseDataDelegate.historyArrayDidLoad()
@@ -233,31 +222,82 @@ class FirebaseDataClass{
                         let timeCompleted = historyValues["timeCompleted"] as? Int
                         
                         let reason = historyValues["reason"] as! String
-                        cell.initData(origin: originName!, destination: destinationName!, student: studentName!, timeStarted: timeCreated, timeCompleted: timeCompleted, reason: reason, status: status, cellType: cellType)
+                        cell.initData(origin: "", destination: "", student: "", timeStarted: timeCreated, timeCompleted: timeCompleted, reason: reason, status: status, cellType: cellType)
                         
-                        self?.historyItems.append(cell)
-                        historyCount -= 1
+                        if !(self?.currentUser?.userType == .teacher && cell.status == .pending){
+                            self?.historyItems.append(cell)
+                        }
+                        
                     })
                 }
             }
         })
+
         
-        thisUserRef.child("requests").observe(.value, with: { (snapshot) in
+        self.ref.child("users").child(userID!).child("requests").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
             if snapshot.exists(){
+                // needed: timeCreated, to, student, reason,
+                let requestKeys = (snapshot.value as! [String: String]).keys
+                var requestCount = 0
                 
-                
-                
+                for key in requestKeys{
+                    
+                    let cell = Cell()
+                    self?.ref.child("requests").child(key).observeSingleEvent(of: .value, with: { [weak self] (requestSnapshot) in
+                        let requestData = requestSnapshot.value as! [String: Any]
+                        
+                        let destinationID = requestData["destination"] as! String
+                        
+                        let studentID = requestData["student"] as! String
+                        
+                        self?.ref.child("users").child(destinationID).child("name").observeSingleEvent(of: .value, with: { [weak self] (destinationNameSnapshot) in
+                            if destinationNameSnapshot.exists(){
+                                cell.destination = destinationNameSnapshot.value as? String
+                                requestCount += 1
+                                if requestCount == requestKeys.count * 2{
+                                    self?.firebaseDataDelegate.requestArrayDidLoad()
+                                }
+                            }else{
+                                
+                                self?.ref.child("potentialTeachers").child(destinationID).observeSingleEvent(of: .value, with: { [weak self] (potentialDestinationNameSnapshot) in
+                                    cell.destination = potentialDestinationNameSnapshot.value as? String
+                                    requestCount += 1
+                                    if requestCount == requestKeys.count * 2{
+                                        self?.firebaseDataDelegate.requestArrayDidLoad()
+                                    }
+                                })
+                            }
+                        })
+                        
+                        self?.ref.child("users").child(studentID).child("name").observeSingleEvent(of: .value, with: { [weak self] (studentNameSnapshot) in
+                            if studentNameSnapshot.exists(){
+                                cell.student = studentNameSnapshot.value as? String
+                                requestCount += 1
+                                if requestCount == requestKeys.count * 2{
+                                    self?.firebaseDataDelegate.requestArrayDidLoad()
+                                }
+                            }else{
+                                self?.ref.child("potentialStudent").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
+                                    cell.student = potentialStudentNameSnapshot.value as? String
+                                    requestCount += 1
+                                    if requestCount == requestKeys.count * 2  {
+                                        self?.firebaseDataDelegate.requestArrayDidLoad()
+                                    }
+                                })
+                            }
+                        })
+                        
+                        let timeCreated = requestData["time"] as! Int
+                        let reason = requestData["reason"] as! String
+                        
+                        cell.initData(origin: (self?.currentUser?.userName)!, destination: "", student: "", timeStarted: timeCreated, timeCompleted: nil, reason: reason, status: .pending, cellType: .request)
+                        self?.requestItems.append(cell)
+                    })
+                }
             }
         })
-        
-        
-        
-        
     }
 }
-
-
-
 class Cell{
     var destination: String?
     var origin: String?
@@ -294,6 +334,8 @@ class Cell{
         }
         return historyCell
     }
+    
+    
 }
 
 
@@ -421,7 +463,7 @@ class HistoryCell: UITableViewCell{
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         timeLabel.textColor = UIColor(hex: "55596B", alpha: 1)
         timeLabel.font = UIFont(name: "Avenir-Medium", size: 15)
-        timeLabel.adjustsFontSizeToFitWidth = true
+        
         
         timeView.addSubview(timeLabel)
         timeView.translatesAutoresizingMaskIntoConstraints = false

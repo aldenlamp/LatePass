@@ -78,7 +78,7 @@ class LogIn: UIViewController, GIDSignInUIDelegate {
         
     }
     
-    func googleSignIn(){ GIDSignIn.sharedInstance().signIn() }
+    @objc func googleSignIn(){ GIDSignIn.sharedInstance().signIn() }
     
     func setUpView(){
         let imageView = UIImageView(image: #imageLiteral(resourceName: "clock"))
@@ -119,7 +119,7 @@ class LogIn: UIViewController, GIDSignInUIDelegate {
         latePass.translatesAutoresizingMaskIntoConstraints = false
         
         let attributedString = NSMutableAttributedString(string: latePass.text!)
-        attributedString.addAttribute(NSKernAttributeName, value: CGFloat(3.0), range: NSRange(location: 0, length: attributedString.length))
+        attributedString.addAttribute(NSAttributedStringKey.kern, value: CGFloat(3.0), range: NSRange(location: 0, length: attributedString.length))
         latePass.attributedText = attributedString
         
         latePass.heightAnchor.constraint(equalToConstant: 36).isActive = true

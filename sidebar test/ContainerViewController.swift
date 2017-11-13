@@ -109,7 +109,7 @@ class ContainerViewController: UIViewController {
     }
     
     
-    func overlayClicked(sender: UIButton){
+    @objc func overlayClicked(sender: UIButton){
         animateSidePanel(expand: false)
     }
     
@@ -159,7 +159,7 @@ class ContainerViewController: UIViewController {
 
 extension ContainerViewController: UIGestureRecognizerDelegate{
     //MARK: - Gesture recognizer
-    func handlePanGesture(_ recognizer: UIPanGestureRecognizer){
+    @objc func handlePanGesture(_ recognizer: UIPanGestureRecognizer){
         if allowSlide{
             switch recognizer.state {
             case .began:

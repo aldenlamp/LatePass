@@ -44,7 +44,7 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
     }
     
     
-    func testingReloadTableview(){
+    @objc func testingReloadTableview(){
 //        print("TESTINGIGNGINGINGIn")
 //        print("\n\n\(String(describing: self.titleLabel.text))\n\n")
     }
@@ -102,7 +102,7 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
         textField.font = UIFont(name: "Avenir-Medium", size: 15)
         textField.textColor = UIColor(hex: "55596B", alpha: 1)
         
-        let attributes = [NSForegroundColorAttributeName: UIColor(hex: "8290AB", alpha: 1), NSFontAttributeName : UIFont(name: "Avenir-Medium", size: 15)!]
+        let attributes = [NSAttributedStringKey.foregroundColor: UIColor(hex: "8290AB", alpha: 1), NSAttributedStringKey.font : UIFont(name: "Avenir-Medium", size: 15)!]
         textField.attributedPlaceholder = NSAttributedString(string: "Search For Student", attributes: attributes) //Change Text Of PlaceHolder
         
         

@@ -168,7 +168,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         textField.setLeftPaddingPoints(16)
         textField.setRightPaddingPoints(16)
         
-        textField.attributedPlaceholder = NSAttributedString(string: "\(placeholder)", attributes: [NSForegroundColorAttributeName: UIColor(hex: "8290AB", alpha: 1), NSFontAttributeName: UIFont(name: "Avenir-Medium", size: 16)!])
+        textField.attributedPlaceholder = NSAttributedString(string: "\(placeholder)", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hex: "8290AB", alpha: 1), NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 16)!])
         textField.font = UIFont(name: "Avenir-Medium", size: 16)
         textField.textColor = UIColor(hex: "3D4C68", alpha: 1)
         textField.tintColor = UIColor(hex: "3D4C68", alpha: 1)
@@ -333,7 +333,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         isEditable = true
     }
     
-    func dismissKeyboard() { view.endEditing(true) }
+    @objc func dismissKeyboard() { view.endEditing(true) }
     
     
     //MARK: - Request Button
@@ -369,7 +369,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         
     }
     
-    func makeRequest(){
+    @objc func makeRequest(){
         if isEditable{
             //To be fixed with connection to firbase
             self.dismiss(animated: true, completion: nil)
