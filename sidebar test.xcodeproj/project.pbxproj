@@ -24,6 +24,7 @@
 		BFA5069B1F4BE33800B8DE09 /* sidebar_testTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5069A1F4BE33800B8DE09 /* sidebar_testTests.swift */; };
 		BFA506A61F4BE33800B8DE09 /* sidebar_testUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA506A51F4BE33800B8DE09 /* sidebar_testUITests.swift */; };
 		BFBFD7911F5A16D300437639 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBFD7901F5A16D300437639 /* Request.swift */; };
+		BFDCE1CD1FC62F4C00EA5EE0 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */; };
 		E2F58A72ADD7AE66D41ED5AA /* Pods_sidebar_testTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C66CCD972745F18E0F4B58D /* Pods_sidebar_testTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +75,7 @@
 		BFA506A51F4BE33800B8DE09 /* sidebar_testUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sidebar_testUITests.swift; sourceTree = "<group>"; };
 		BFA506A71F4BE33800B8DE09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFBFD7901F5A16D300437639 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
 		D69AD1696ED49A5AA5F0D992 /* Pods-sidebar testTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sidebar testTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-sidebar testTests/Pods-sidebar testTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,6 +167,7 @@
 				BF9D153F1F50BABC00ED4681 /* Navigation */,
 				BFA506871F4BE33700B8DE09 /* Home.swift */,
 				BF1E19631FA409330076F044 /* FirebaseDataClass.swift */,
+				BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */,
 				BFBFD7901F5A16D300437639 /* Request.swift */,
 				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
 				BF01EAD01F74C30D00D9769A /* ExpandedCell.swift */,
@@ -258,6 +261,7 @@
 				BFA5069E1F4BE33800B8DE09 /* Frameworks */,
 				BFA5069F1F4BE33800B8DE09 /* Resources */,
 				9F5D55B726046490863404FA /* [CP] Copy Pods Resources */,
+				E1BC9CC0C0C5F4140EB2307A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -353,13 +357,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-sidebar test-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7BB885A123EDDB3D658A4018 /* [CP] Check Pods Manifest.lock */ = {
@@ -368,13 +375,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-sidebar testUITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		93F6426BFC359985D1E2A3E8 /* [CP] Embed Pods Frameworks */ = {
@@ -383,9 +393,18 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-sidebar test/Pods-sidebar test-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GTMOAuth2/GTMOAuth2.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac-615f275e/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMOAuth2.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -413,9 +432,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-sidebar testTests/Pods-sidebar testTests-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac-Defines-NSData+zlib/GoogleToolboxForMac.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -428,13 +450,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-sidebar testTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C0183367581A75CC68E81D0D /* [CP] Copy Pods Resources */ = {
@@ -443,9 +468,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-sidebar test/Pods-sidebar test-resources.sh",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -467,6 +495,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-sidebar testTests/Pods-sidebar testTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		E1BC9CC0C0C5F4140EB2307A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-sidebar testUITests/Pods-sidebar testUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -482,6 +525,7 @@
 				BF9D15451F511CD500ED4681 /* ContainerViewController.swift in Sources */,
 				BF9D15431F50BD9600ED4681 /* SideBar.swift in Sources */,
 				BF01EAD11F74C30D00D9769A /* ExpandedCell.swift in Sources */,
+				BFDCE1CD1FC62F4C00EA5EE0 /* Cell.swift in Sources */,
 				BFA506861F4BE33700B8DE09 /* AppDelegate.swift in Sources */,
 				BF1E19641FA409330076F044 /* FirebaseDataClass.swift in Sources */,
 			);

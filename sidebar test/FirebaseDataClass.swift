@@ -31,15 +31,30 @@ enum cellTypes{
     case studentHistory
 }
 
+enum timeFrames{
+    case thisWeek
+    case thisMonth
+    case thisYear
+}
+
+@objc
 protocol FirebaseProtocol {
     func uesrDataDidLoad()
     func historyArrayDidLoad()
     func requestArrayDidLoad()
+//    @objc optional func realStudentsDidLoad()
+//    @objc optional func potentialStudentsDidLoad()
+//    @objc optional func realTeachersDidLoad()
+//    @objc optional func potentialTeachersDidLoad()
 }
+
+var allStudentsLoaded = false
+var allTeachersLoaded = false
 
 class FirebaseDataClass{
     var userID: String?
     var currentUser: UserCell?
+    var blankUser: UserCell!
     var firebaseDataDelegate: FirebaseProtocol!
     
     let ref = FIRDatabase.database().reference()
@@ -50,7 +65,13 @@ class FirebaseDataClass{
     
     var allItems = [Cell]()
     
+    var allTeachers = [UserCell]() //This does include the admins
+    var allStudents = [UserCell]()
+    
     init() {
+        
+        blankUser = UserCell()
+        blankUser.setUpPotentialCell(type: .student, name: "test ing", email: "test@ing.com")
         
         guard let currUserID = FIRAuth.auth()?.currentUser?.uid else{
             print("user not logged in")
@@ -116,10 +137,6 @@ class FirebaseDataClass{
                         let originID = historyValues["origin"] as! String
                         let destinationID = historyValues["destination"] as! String
                         let studentID = historyValues["student"] as! String
-                        
-                        //                        var originName: String? = ""
-                        //                        var destinationName: String? = ""
-                        //                        var studentName: String? = ""
                         
                         //finding the cell type by matching the uid to the person
                         var cellType: cellTypes = .studentHistory
@@ -222,7 +239,7 @@ class FirebaseDataClass{
                         let timeCompleted = historyValues["timeCompleted"] as? Int
                         
                         let reason = historyValues["reason"] as! String
-                        cell.initData(origin: "", destination: "", student: "", timeStarted: timeCreated, timeCompleted: timeCompleted, reason: reason, status: status, cellType: cellType)
+                        cell.initData(ID: key, origin: "", destination: "", student: "", timeStarted: timeCreated, timeCompleted: timeCompleted, reason: reason, status: status, cellType: cellType)
                         
                         if !(self?.currentUser?.userType == .teacher && cell.status == .pending){
                             self?.historyItems.append(cell)
@@ -290,368 +307,163 @@ class FirebaseDataClass{
                         let timeCreated = requestData["time"] as! Int
                         let reason = requestData["reason"] as! String
                         
-                        cell.initData(origin: (self?.currentUser?.userName)!, destination: "", student: "", timeStarted: timeCreated, timeCompleted: nil, reason: reason, status: .pending, cellType: .request)
+                        cell.initData(ID: key, origin: (self?.currentUser?.userName)!, destination: "", student: "", timeStarted: timeCreated, timeCompleted: nil, reason: reason, status: .pending, cellType: .request)
                         self?.requestItems.append(cell)
                     })
                 }
             }
         })
-    }
-}
-class Cell{
-    var destination: String?
-    var origin: String?
-    var student: String?
-    var timeStarted: Int?
-    var timeCompleted: Int?
-    var reason: String?
-    var status: acceptedStatus?
-    var thisCellType: cellTypes!
-    
-    func initData(origin: String, destination: String, student: String, timeStarted: Int, timeCompleted: Int?, reason: String, status: acceptedStatus, cellType: cellTypes){
-        self.origin = origin
-        self.destination = destination
-        self.student = student
-        self.timeStarted = timeStarted
-        self.timeCompleted = timeCompleted
-        self.status = status
-        self.reason = reason
-        self.thisCellType = cellType
-    }
-    
-    func toHistoryCell() -> HistoryCell{
-        let historyCell = HistoryCell()
-        switch thisCellType {
-        case .studentHistory:
-            historyCell.setUpCell(titleLabel: "\(String(describing: origin!)) to \(String(describing: destination!))", status: status!, unixDate: timeStarted!, cell: self)
-        case .toHistory:
-            historyCell.setUpCell(titleLabel: "\(String(describing: student!)) will be late", status: status!, unixDate: timeStarted!, cell: self)
-        case .fromHistory:
-            historyCell.setUpCell(titleLabel: "\(String(describing: student!)) left late", status: status!, unixDate: timeStarted!, cell: self)
-        case .request:
-            historyCell.setUpCell(titleLabel: "\(String(describing: student!)) requests a latepass", status: status!, unixDate: timeStarted!, cell: self)
-        default: print("something went wrong")
-        }
-        return historyCell
-    }
-    
-    
-}
-
-
-
-class HistoryCell: UITableViewCell{
-    let iconImage = UIImageView()
-    var dateLabel = UILabel()
-    var timeLabel = UILabel()
-    var titleLabel = UILabel()
-    var cell: Cell!
-    
-    func setUpCell(titleLabel: String, status: acceptedStatus, unixDate: Int, cell: Cell){
-        self.cell = cell
-        dateLabel.text = getDateString(unix: Double(unixDate)/1000.0)
-        timeLabel.text = getTimeString(unix: Double(unixDate)/1000.0)
-        self.titleLabel.text = titleLabel
         
-        switch status {
-        case .accepted:
-            if isThis(timeFrame: "week"){
-                iconImage.image = #imageLiteral(resourceName: "approved-lightBlue")
-                break
-            }else if isThis(timeFrame: "month"){
-                iconImage.image = #imageLiteral(resourceName: "approved-purple")
-                break
-            }else{
-                iconImage.image = #imageLiteral(resourceName: "approved-blue")
-                break
+        //getting all users for the select user list
+//        self.ref.child("")
+        
+        //getting regestered students
+        
+        //real means all initialized students loaded
+        //imaginary means all uninited '            '
+        var realStudents = false
+        var imaginaryStudents = false
+        
+        self.ref.child("students").observeSingleEvent(of: .value, with: { [weak self] (snapshotStudents) in
+            let studentKeys = Array((snapshotStudents.value! as! [String: Bool]).keys)
+            var finishCount = 0
+            
+            for i in studentKeys{
+                
+                let userCell = UserCell()
+                userCell.setUpView()
+                userCell.userID = i
+                userCell.userType = .student
+                
+                self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
+                    userCell.setName(name: snapshot.value! as! String)
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            allStudentsLoaded = true
+                        }
+                    }
+                })
+                
+                self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: { (snapshot) in
+                    userCell.setEmail(email: snapshot.value! as! String)
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            allStudentsLoaded = true
+                        }
+                    }
+                })
+                
+                self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: {(snapshot) in
+                    let photoString = snapshot.value! as! String
+                    do{
+                        let image = try UIImage(data: Data(contentsOf: URL(string: photoString)!))!
+                        userCell.setimage(image: image)
+                    }catch{
+                        print("\nimage Failed with id: \(i)\n")
+                        userCell.setBlankImage()
+                    }
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            allStudentsLoaded = true
+                        }
+                    }
+                })
+                self?.allStudents.append(userCell)
             }
-        case .pending:
-            iconImage.image = #imageLiteral(resourceName: "pending-lightBlue")
-            break
-        case .rejected:
-            iconImage.image = #imageLiteral(resourceName: "rejected-red")
-            break
-        }
+        })
         
-        self.contentView.addSubview(iconImage)
-        iconImage.translatesAutoresizingMaskIntoConstraints = false
-        let imSize: CGFloat = iconImage.image != #imageLiteral(resourceName: "pending-lightBlue") ? 45 : 40
-        iconImage.widthAnchor.constraint(equalToConstant: imSize).isActive = true
-        iconImage.heightAnchor.constraint(equalToConstant: imSize).isActive = true
-        iconImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 22.5).isActive = true
-        //        iconImage.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -22.5).isActive = true
-        iconImage.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 30).isActive = true
+        self.ref.child("potentialStudents").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
+            let data = snapshot.value! as! [String: String]
+            for (key, value) in data{
+                let cell = UserCell()
+                cell.setUpPotentialCell(type: .student, name: value, email: key.replacingOccurrences(of: "%2E", with: "."))
+                self?.allStudents.append(cell)
+            }
+            imaginaryStudents = true
+            if realStudents == true{
+                allStudentsLoaded = true
+            }
+        })
         
-        let textView = addTextView()
-        self.contentView.addSubview(textView)
+        //pulling for all the data in the teacher user array
         
-        NSLayoutConstraint(item: textView, attribute: .left, relatedBy: .equal, toItem: iconImage, attribute: .right, multiplier: 1, constant: 35).isActive = true
-        textView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20).isActive = true
-        textView.heightAnchor.constraint(equalToConstant: 51).isActive = true
-        textView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
-    }
-    
-    //MARK: - Setting up view
-    
-    func addTextView() -> UIView{
+        var realTeachers = false
+        var imaginaryTeacher = false
         
-        let finalView = UIView()
-        finalView.translatesAutoresizingMaskIntoConstraints = false
-        finalView.frame = CGRect(x: 0, y: 0, width: 300, height: 51)
-        finalView.addSubview(titleLabel)
-        titleLabel.adjustsFontSizeToFitWidth = true
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.heightAnchor.constraint(equalToConstant: 26).isActive = true
-        titleLabel.leftAnchor.constraint(equalTo: finalView.leftAnchor, constant: 0).isActive = true
-        titleLabel.topAnchor.constraint(equalTo: finalView.topAnchor, constant: 0).isActive = true
-        titleLabel.rightAnchor.constraint(equalTo: finalView.rightAnchor, constant: 0).isActive = true
+        self.ref.child("teachers").observeSingleEvent(of: .value, with: { [weak self] (teacherKeysSnapshot) in
+            let teacherKeys = Array((teacherKeysSnapshot.value! as! [String:Bool]).keys)
+            var finishCount = 0
+            
+            for i in teacherKeys{
+                let userCell = UserCell()
+                userCell.setUpView()
+                userCell.userType = .teacher
+                userCell.userID = i
+                
+                self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: {(snapshot) in
+                    userCell.setName(name: snapshot.value! as! String)
+                    finishCount += 1
+                    if finishCount == teacherKeys.count * 3{
+                        realTeachers = true
+                        if imaginaryTeacher == true{
+                            allTeachersLoaded = true
+                        }
+                    }
+                    
+                })
+                
+                self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: { (snapshot) in
+                    userCell.setEmail(email: (snapshot.value! as! String).replacingOccurrences(of: "%2E", with: "."))
+                    finishCount += 1
+                    if finishCount == teacherKeys.count * 3{
+                        realTeachers = true
+                        if imaginaryTeacher == true{
+                            allTeachersLoaded = true
+                        }
+                    }
+                })
+                
+                self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: { (snapshot) in
+                    let photoString = snapshot.value! as! String
+                    do{
+                        let image = try UIImage(data: Data(contentsOf: URL(string: photoString)!))!
+                        userCell.setimage(image: image)
+                    }catch{
+                        print("\nimage Failed with id: \(i)\n")
+                        userCell.setBlankImage()
+                    }
+                    finishCount += 1
+                    if finishCount == teacherKeys.count * 3{
+                        realTeachers = true
+                        if imaginaryTeacher == true{
+                            allTeachersLoaded = true
+                        }
+                    }
+                })
+                self?.allTeachers.append(userCell)
+            }
+        })
         
-        titleLabel.textColor = UIColor(hex: "55596B", alpha: 1)
-        titleLabel.font = UIFont(name: "Avenir-Medium", size: 19)
+        self.ref.child("potentialTeachers").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
+            let data = snapshot.value! as! [String: String]
+            for (key, value) in data{
+                let userCell = UserCell()
+                userCell.setUpPotentialCell(type: .teacher, name: value, email: key.replacingOccurrences(of: "%2E", with: "."))
+                self?.allTeachers.append(userCell)
+            }
+            imaginaryTeacher = true
+            if realTeachers == true{
+                allTeachersLoaded = true
+            }
+        })
         
-        
-        let dateView = UIView()
-        dateView.translatesAutoresizingMaskIntoConstraints = false
-        
-        dateView.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        dateView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        let dateIcon = UIImageView()
-        dateIcon.translatesAutoresizingMaskIntoConstraints = false
-        dateIcon.image = #imageLiteral(resourceName: "dateIcon")
-        dateIcon.heightAnchor.constraint(equalToConstant: 19).isActive = true
-        dateIcon.widthAnchor.constraint(equalToConstant: 17).isActive = true
-        
-        dateView.addSubview(dateIcon)
-        
-        dateIcon.topAnchor.constraint(equalTo: dateView.topAnchor, constant: 0.5).isActive = true
-        dateIcon.bottomAnchor.constraint(equalTo: dateView.bottomAnchor, constant: -0.5).isActive = true
-        dateIcon.leftAnchor.constraint(equalTo: dateView.leftAnchor, constant: 0).isActive = true
-        
-        dateLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateLabel.textColor = UIColor(hex: "55596B", alpha: 1)
-        dateLabel.font = UIFont(name: "Avenir-Medium", size: 15)
-        
-        dateView.addSubview(dateLabel)
-        //        dateLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        dateLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        dateLabel.rightAnchor.constraint(equalTo: dateView.rightAnchor, constant: 0).isActive = true
-        dateLabel.topAnchor.constraint(equalTo: dateView.topAnchor, constant: 0).isActive = true
-        dateLabel.bottomAnchor.constraint(equalTo: dateView.bottomAnchor, constant: 0).isActive = true
-        
-        NSLayoutConstraint(item: dateLabel, attribute: .left, relatedBy: .equal, toItem: dateIcon, attribute: .right, multiplier: 1, constant: 5).isActive = true
-        
-        
-        let timeView = UIView()
-        timeView.translatesAutoresizingMaskIntoConstraints = false
-        
-        //        timeView.widthAnchor.constraint(equalToConstant: 90).isActive = true
-        timeView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        let timeIcon = UIImageView()
-        timeIcon.translatesAutoresizingMaskIntoConstraints = false
-        timeIcon.image = #imageLiteral(resourceName: "timeIcon")
-        timeIcon.heightAnchor.constraint(equalToConstant: 19).isActive = true
-        timeIcon.widthAnchor.constraint(equalToConstant: 19).isActive = true
-        
-        timeView.addSubview(timeIcon)
-        
-        timeIcon.topAnchor.constraint(equalTo: timeView.topAnchor, constant: 0.5).isActive = true
-        timeIcon.bottomAnchor.constraint(equalTo: timeView.bottomAnchor, constant: -0.5).isActive = true
-        timeIcon.leftAnchor.constraint(equalTo: timeView.leftAnchor, constant: 0).isActive = true
-        
-        timeLabel.translatesAutoresizingMaskIntoConstraints = false
-        timeLabel.textColor = UIColor(hex: "55596B", alpha: 1)
-        timeLabel.font = UIFont(name: "Avenir-Medium", size: 15)
-        
-        
-        timeView.addSubview(timeLabel)
-        timeView.translatesAutoresizingMaskIntoConstraints = false
-        
-        //        timeLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        timeLabel.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        timeLabel.rightAnchor.constraint(equalTo: timeView.rightAnchor, constant: 0).isActive = true
-        timeLabel.topAnchor.constraint(equalTo: timeView.topAnchor, constant: 0).isActive = true
-        timeLabel.bottomAnchor.constraint(equalTo: timeView.bottomAnchor, constant: 0).isActive = true
-        
-        NSLayoutConstraint(item: timeLabel, attribute: .left, relatedBy: .equal, toItem: timeIcon, attribute: .right, multiplier: 1, constant: 5).isActive = true
-        
-        let stackView = UIStackView(arrangedSubviews: [dateView, timeView])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.distribution = .fill
-        stackView.alignment = .center
-        stackView.spacing = 6//CGFloat(width) - (timeView.frame.width + dateView.frame.width)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        finalView.addSubview(stackView)
-        stackView.bottomAnchor.constraint(equalTo: finalView.bottomAnchor, constant: 0).isActive = true
-        stackView.leftAnchor.constraint(equalTo: finalView.leftAnchor, constant: 0).isActive = true
-        stackView.rightAnchor.constraint(equalTo: finalView.rightAnchor, constant: 0).isActive = true
-        stackView.heightAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        NSLayoutConstraint(item: stackView, attribute: .top, relatedBy: .equal, toItem: titleLabel, attribute: .bottom, multiplier: 1, constant: 5).isActive = true
-        
-        return finalView
-        
-    }
-    
-    
-    //MARK: - Date related functions
-    
-    func isThis(timeFrame: String) -> Bool{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yy"
-        let realDate = formatter.date(from: dateLabel.text!)
-        
-        let calendar = NSCalendar(calendarIdentifier: NSCalendar.Identifier.gregorian)
-        
-        let date1 = NSDate(timeIntervalSinceNow: 0)
-        
-        let calenderUnit = timeFrame == "week" ? NSCalendar.Unit.weekOfYear : NSCalendar.Unit.month
-        
-        let weekOfYear1 = calendar!.component(calenderUnit, from: realDate!)
-        let weekOfYear2 = calendar!.component(calenderUnit, from: date1 as Date)
-        
-        let year1 = calendar!.component(NSCalendar.Unit.year, from: date1 as Date)
-        let year2 = calendar!.component(NSCalendar.Unit.year, from: realDate!)
-        
-        if weekOfYear1 == weekOfYear2 && year1 == year2 {
-            return true
-        } else {
-            return false
-        }
-        
-    }
-    
-    func getDateString(unix: Double) -> String{
-        let date = Date(timeIntervalSince1970: TimeInterval(unix))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yy"
-        return formatter.string(from: date)
-    }
-    
-    func getTimeString(unix: Double) -> String{
-        let date = Date(timeIntervalSince1970: TimeInterval(unix))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH"
-        var hour = Int(formatter.string(from: date))!
-        if (hour > 12){
-            hour -= 12
-        }
-        formatter.amSymbol = "am"
-        formatter.pmSymbol = "pm"
-        formatter.dateFormat = ":mm a"
-        
-        return "\(hour)\(formatter.string(from: date))"
     }
 }
 
 
-
-
-class UserCell: UITableViewCell{
-    //height = 58 - 68
-    
-    var userType: userType?
-    var userName: String?
-    var userID: String?
-    var userEmail: String?
-    var userImage: UIImage?
-    //    var userImageAlpha: Double?
-    
-    var containsSeparator = false
-    
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    let userImageView : UIImageView = {
-        let view = UIImageView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        //        view.alpha = 0.7
-        view.layer.cornerRadius = (45/2)
-        view.layer.masksToBounds = true
-        view.heightAnchor.constraint(equalToConstant: 45).isActive = true
-        view.widthAnchor.constraint(equalToConstant: 45).isActive = true
-        return view
-    }()
-    
-    let userNameLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Avenir-Heavy", size: 20)
-        label.textColor = UIColor(hex: "55596B", alpha: 1)
-        label.adjustsFontSizeToFitWidth = true
-        label.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        return label
-    }()
-    
-    let userEmailLabel : UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont(name: "Avenir-Medium", size: 16)
-        label.textColor = UIColor(hex: "55596B", alpha: 1)
-        label.adjustsFontSizeToFitWidth = true
-        label.heightAnchor.constraint(equalToConstant: 23).isActive = true
-        return label
-    }()
-    
-    let sep: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor(hex: "E3E3E3", alpha: 1)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        return view
-    }()
-    
-    func addSeparator(){
-        if !containsSeparator{
-            self.contentView.addSubview(sep)
-            sep.leftAnchor.constraint(equalTo: userImageView.leftAnchor, constant: 0).isActive = true
-            sep.rightAnchor.constraint(equalTo: userNameLabel.rightAnchor, constant: 0).isActive = true
-        }
-        containsSeparator = true
-    }
-    
-    func setAlpha(userImageAlpha: Double){
-        userImageView.alpha = CGFloat(userImageAlpha)
-    }
-    
-    func setUpCell(id: String, type: userType, image: UIImage, name: String, email: String){//, containsSeparator: Bool, userImageAlpha: Double){
-        
-        userType = type
-        userName = name
-        userEmail = email
-        userImage = image
-        userID = id
-        
-        userImageView.image = userImage
-        userNameLabel.text = name
-        userEmailLabel.text = email
-        
-        //        self.setAlpha(userImageAlpha: userImageAlpha)
-        
-        self.contentView.addSubview(userImageView)
-        userImageView.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 8).isActive = true
-        userImageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor, constant: 0).isActive = true
-        
-        self.contentView.addSubview(userNameLabel)
-        userNameLabel.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 8).isActive = true
-        userNameLabel.leftAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 8).isActive = true
-        userNameLabel.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
-        
-        self.contentView.addSubview(userEmailLabel)
-        userEmailLabel.topAnchor.constraint(equalTo: userNameLabel.bottomAnchor, constant: 0).isActive = true
-        userEmailLabel.leftAnchor.constraint(equalTo: userImageView.rightAnchor, constant: 8).isActive = true
-        userEmailLabel.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
-        
-        //        if containsSeparator{ addSeparator() }
-    }
-    
-    
-}

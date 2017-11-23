@@ -19,6 +19,8 @@ var testImage: UIImage?
 class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, FirebaseProtocol{
     
 
+    //INDEX 0: this week, 1: this month, 2: this year
+    var lateCounts = [0, 0, 0]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,13 +41,25 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     func uesrDataDidLoad() {
         print("\n\nuser data loaded\n\n")
     }
-
+    
     func historyArrayDidLoad() {
         firebaseData?.allItems += firebaseData!.historyItems
         historyQuickSort(lowerIndex: 0, higherIndex: firebaseData!.allItems.count - 1)
         historyTableView.reloadData()
         tableViewExists()
         
+        //this is for the numbers and statistics on the top
+        for i in firebaseData!.allItems{
+            if (i.thisCellType! == .fromHistory || i.thisCellType == .studentHistory) && i.status! != .rejected{
+                switch i.thisTimeFrame!{
+                case .thisWeek: lateCounts[0] += 1;
+                case .thisMonth: lateCounts[1] += 1
+                case .thisYear: lateCounts[2] += 1
+                }
+            }
+        }
+        
+        updateStatView()
         print("\n\nhistory data loaded\n\n")
     }
     
@@ -62,23 +76,16 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     func historyQuickSort(lowerIndex: Int, higherIndex: Int){
         var lower = lowerIndex
         var higher = higherIndex
-//        print(firebaseData?.allItems)
-//        print(higherIndex)
-//        print(Int(floor(Double(lower) + Double(higher - lower) / 2.0)))
-        
         let pivot = firebaseData!.allItems[lower + (higher - lower) / 2].timeStarted!
-        
         while(lower <= higher){
             while(firebaseData!.allItems[lower].timeStarted! > pivot){ lower += 1 }
             while(firebaseData!.allItems[higher].timeStarted! < pivot){ higher -= 1 }
-            
             if lower <= higher{
                 exchangeNumbers(lower: lower, higher: higher)
                 lower += 1
                 higher -= 1
             }
         }
-        
         if lowerIndex < higher{ historyQuickSort(lowerIndex: lowerIndex, higherIndex: higher) }
         if lower < higherIndex{ historyQuickSort(lowerIndex: lower, higherIndex: higherIndex) }
     }
@@ -90,7 +97,6 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     }
     
     //MARK: - Navigation
-    
     private func setUpNavigation(){
         navigationController?.navigationBar.backgroundColor = UIColor.white
         navigationController?.navigationBar.layer.borderColor = UIColor.white.cgColor
@@ -134,12 +140,14 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     
     //MARK: - Stats
     
+    var statArr = [UIView]()
+    
     private func setUpStats(){
-        let thisYear = createStatView(name: "This Year", count: 15, index: 0)
-        let thisMonth = createStatView(name: "This Month", count: 4, index: 1)
-        let thisWeek = createStatView(name: "This Week", count: 1, index: 2)
+        statArr.append(createStatView(name: "This Year", count: lateCounts[2], index: 0))
+        statArr.append(createStatView(name: "This Month", count: lateCounts[1], index: 1))
+        statArr.append(createStatView(name: "This Week", count: lateCounts[0], index: 2))
         
-        let stackView = UIStackView(arrangedSubviews: [thisYear, thisMonth, thisWeek])
+        let stackView = UIStackView(arrangedSubviews: statArr)
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 20
@@ -157,6 +165,7 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         numberLabel.text = "\(count)"
         numberLabel.textAlignment = .center
         numberLabel.font = UIFont(name: "Avenir-Heavy", size: 51)
+        numberLabel.tag = 1
         switch index {
         case 0: numberLabel.textColor = UIColor(hex: "8FB3FB", alpha: 1)
         case 1: numberLabel.textColor = UIColor(hex: "BB8FF1", alpha: 1)
@@ -189,6 +198,12 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: numberLabel, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
         
         return containerView
+    }
+    
+    private func updateStatView(){
+        for i in 0...2{
+            (statArr[2-i].viewWithTag(1) as! UILabel).text = String(lateCounts[i])
+        }
     }
     
     //MARK: - Key

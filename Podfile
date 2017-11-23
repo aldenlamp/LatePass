@@ -17,6 +17,7 @@ target 'sidebar test' do
 
   target 'sidebar testTests' do
     inherit! :search_paths
+    pod 'Firebase'
     # Pods for testing
   end
 

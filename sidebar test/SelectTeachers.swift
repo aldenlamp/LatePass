@@ -12,6 +12,9 @@ import Firebase
 
 class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSource{
 
+    var selectedArray = [UserCell]()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
@@ -21,8 +24,8 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
         setUpSearchBar()
         setUpTableView()
         
-//        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
-//        view.addGestureRecognizer(tap)
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "dismissKeyboard")
+        view.addGestureRecognizer(tap)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -33,21 +36,20 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
             //print("\n\n\(String(describing: self?.titleLabel.text))\n\n")
 //        }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
-        
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
-        
-        
-        //            NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
+        //This will be the mechanism for reloading the tableView if it has not loaded yet
+//        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
+//        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
+//        NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
+
         
         
     }
     
     
-    @objc func testingReloadTableview(){
-//        print("TESTINGIGNGINGINGIn")
+//    @objc func testingReloadTableview(){
+//        print("\n\nTESTINGIGNGINGINGIn\n\n")
 //        print("\n\n\(String(describing: self.titleLabel.text))\n\n")
-    }
+//    }
     
     func dismissKeyboard() { view.endEditing(true) }
     
@@ -104,9 +106,8 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let attributes = [NSAttributedStringKey.foregroundColor: UIColor(hex: "8290AB", alpha: 1), NSAttributedStringKey.font : UIFont(name: "Avenir-Medium", size: 15)!]
         textField.attributedPlaceholder = NSAttributedString(string: "Search For Student", attributes: attributes) //Change Text Of PlaceHolder
-        
-        
         textField.translatesAutoresizingMaskIntoConstraints = false
+        
         return textField
     }()
     
@@ -158,8 +159,6 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
         searchView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         searchView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         searchView.heightAnchor.constraint(equalToConstant: 42).isActive = true
-        
-        
     }
     
     
@@ -186,27 +185,56 @@ class SelectTeachers: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { return 5 }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if firebaseData!.currentUser!.userType == .student{
+                return firebaseData!.allTeachers.count
+        }else{
+            return firebaseData!.allStudents.count
+        }
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UserCell()
+        var cell = UserCell()
         
-        // GET CELLS FROM FIREBASE DATA
-        
-//        cell.setUpCell(userImage: currentImage!, name: "Alden Lamp", email: "aldenblamp@gmail.com", containsSeparator: indexPath.row != 0, userImageAlpha: 1)
-        if indexPath.row != 0{
-            cell.contentView.alpha = 0.6
+        if firebaseData!.currentUser!.userType == .student{
+            cell = firebaseData!.allTeachers[indexPath.row]
+        }else{
+            cell = firebaseData!.allStudents[indexPath.row]
         }
         
-        cell.selectionStyle = .none
+        if indexPath.row != 0 {cell.addSeparator()}
+        
+        if firebaseData!.currentUser!.userType == .teacher && !cell.isChosen{
+            cell.contentView.alpha = 0.6
+        }else{
+            cell.contentView.alpha = 0.8
+        }
+        
+//        cell.selectionStyle = .none
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    }
-
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        let cell = tableView.cellForRow(at: indexPath) as! UserCell
+//        if firebaseData!.currentUser!.userType == .student{
+//            //dissmiss view and return the user
+//        }else{
+//            if cell.isChosen && selectedArray.contains(cell){
+//                selectedArray.remove(at: selectedArray.index(of: cell)!)
+//                cell.contentView.alpha = 0.6
+//            }else{
+//                cell.isChosen = true
+//                selectedArray.append(cell)
+//                cell.contentView.alpha = 0.8
+//            }
+//        }
+//    }
+//
+//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+//        print(indexPath)
+//    }
+//
     
-  
 //    Things that work when finished
 //    func teacherChosen(){
 //        selectedPerson = "helpMePlsPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSPLSpl"

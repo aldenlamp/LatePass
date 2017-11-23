@@ -59,9 +59,6 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
                 secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
             }
         }
-        
-        
-        
     }
     
     //MARK: - Cancel Button
