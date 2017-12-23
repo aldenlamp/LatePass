@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import Firebase
 
-var selectedPerson: String?
-var editedTextField: Int?
+var selectedPeople: [User]?
+var toTeacher: User?
+var didEdit: Bool = false
 
 class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
@@ -27,10 +29,23 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
         
-        selectedPerson = nil
-        editedTextField = nil
+        if firebaseData.currentUser.userType == .teacher{
+            
+//            print
+            
+//            firebaseData.allTeachers.remove(at: firebaseData.allTeachers.index(of: firebaseData.currentUser)!)
+        }
         
-        selectOne = SelectTeachers()
+        
+        selectedPeople = nil
+        toTeacher = nil
+        didEdit = false
+        
+        if firebaseData.currentUser.userType != .student{
+            selectOne.selectStudents = true
+        }else{
+            selectOne.isFirstSelecion = true
+        }
         
         setUpCancelButton()
         setUpTitleView()
@@ -47,17 +62,19 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         // User better methose of passing data between views such as a delgate and protocol
         
         // Pulling the data from select Teacher view Comtroller
-        if selectedPerson != nil{
-            if editedTextField! == 0{
-                
-                //HERERERERE
-                
-                firstTextField.text = "\(String(describing: selectedPerson!))"
-                firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
-            }else{
-                secondTextField.text = "\(String(describing: selectedPerson!))"
-                secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
-            }
+        
+        //TODO: - Save the people to be requested
+        if (selectedPeople != nil && selectedPeople! != []) || didEdit{
+            var listOfPeople = ""
+            for i in selectedPeople!{ listOfPeople += "\(i.userName), " }
+            listOfPeople = String(listOfPeople.dropLast(2))
+            
+            firstTextField.text = "\(listOfPeople)"
+            firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        }
+        if toTeacher != nil{
+            secondTextField.text = "\(String(describing: toTeacher!.userName))"
+            secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
         }
     }
     
@@ -105,7 +122,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         breakView.heightAnchor.constraint(equalToConstant: 6).isActive = true
         breakView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
     }
-
+    
     //MARK: - Selecting teachers
     
     var firstView = UIView()
@@ -116,8 +133,8 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     let secondTextField = UITextField()
     
     func setUpPicker(){
-        firstView = createQuestion(placeholder: "Select Teacher", question: "Where are you comming from?", num : 0)
-        secondView = createQuestion(placeholder: "Select Teacher", question: "Who are you going to?", num: 1)
+        firstView = createQuestion(placeholder: "Select \(firebaseData.currentUser.userType == .student ? "Teacher" : "Students")", question: firebaseData.currentUser.userType == .student ? "Where are you comming from?" : "Who will be late?", num : 0)
+        secondView = createQuestion(placeholder: "Select Teacher", question: "Who are \(firebaseData.currentUser.userType == .student ? "you" : "they") going to?", num: 1)
         
         firstView.translatesAutoresizingMaskIntoConstraints = false
         secondView.translatesAutoresizingMaskIntoConstraints = false
@@ -196,11 +213,9 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
             
             //Determing which textField it is to choose with selectTexther view to show
             if textField == firstTextField{
-                editedTextField = 0
-                 present(selectOne, animated: true, completion: nil)
+                present(selectOne, animated: true, completion: nil)
             }else{
-                editedTextField = 1
-                 present(selectTwo, animated: true, completion: nil)
+                present(selectTwo, animated: true, completion: nil)
             }
         }
         return false
@@ -368,8 +383,66 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     @objc func makeRequest(){
         if isEditable{
-            //To be fixed with connection to firbase
-            self.dismiss(animated: true, completion: nil)
+            
+            let reasoning = self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!
+            
+            
+            
+            guard let student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
+                self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
+                return
+            }
+            
+            guard let origin = firebaseData.currentUser.userType == .student ? selectedPeople?[0].userStringID : firebaseData.userID else{
+                self.alert(title: "No Origin", message: "Please enter a user as the origin", buttonTitle: "Okay")
+                return
+            }
+            
+            guard let dest = toTeacher?.userStringID else{
+                self.alert(title: "No Destination", message: "Please enter a user as the destination", buttonTitle: "Okay")
+                return
+            }
+            
+            FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
+                if error == nil{
+                    
+                    let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/request"
+                    var request = URLRequest(url: URL(string: requestURL)!)
+                    request.httpMethod = "POST"
+                    request.addValue("application/json", forHTTPHeaderField: "Content-type")
+                    request.addValue(token!, forHTTPHeaderField: "Authorization")
+                    
+                    
+                    //TODO: - Input The Correct people
+                    //TODO: - Multi Person Pass
+                    
+                    
+                    
+//                    request.httpBody = "{\"destination\":\"\(toTeacher!.userStringID!)\",\"origin\":\"\(firebaseData.userID!)\",\"student\":\"\(true ? "FVjUVkKjPaWBE6UAhcRQXejAXHU2" : selectedPeople![0].userStringID!)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\"\(student)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+
+                    
+//                    Prints the full request
+                    print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+                    
+                    
+                    URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
+                        
+                        let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
+                        print("\nData: \(responseMessage) \n\n")
+                        
+                        if responseMessage != ""{
+                            self?.alert(title: "Request Error", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+                        }
+                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n\n") }
+                        self?.dismiss(animated: true, completion: nil)
+                    }).resume()
+                }else{
+                    print("FIRSTERROR: \(String(describing: error))")
+                }
+            })
+            
+            
         }
     }
 }
@@ -395,6 +468,4 @@ extension UITextView{
         self.textContainerInset = UIEdgeInsetsMake(8,16,8,16) //top right bottom left
     }
 }
-
-
 

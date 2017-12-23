@@ -43,6 +43,9 @@ class MainNavigationViewController: UINavigationController {
                 self.setViewControllers(self.mainVCS, animated: true)
             }
         })
+        notificationCenter.addObserver(forName: WifiDisconectedNotification, object: nil, queue: nil, using:  {(notification) in
+            self.viewControllers.last?.alert(title: "No Wifi", message: "Please connect to WiFi", buttonTitle: "Okay")
+        })
     }
     
     func storeVCs(){

@@ -24,7 +24,10 @@
 		BFA5069B1F4BE33800B8DE09 /* sidebar_testTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA5069A1F4BE33800B8DE09 /* sidebar_testTests.swift */; };
 		BFA506A61F4BE33800B8DE09 /* sidebar_testUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA506A51F4BE33800B8DE09 /* sidebar_testUITests.swift */; };
 		BFBFD7911F5A16D300437639 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBFD7901F5A16D300437639 /* Request.swift */; };
-		BFDCE1CD1FC62F4C00EA5EE0 /* Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */; };
+		BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */; };
+		BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */; };
+		BFDCE1D11FC691B000EA5EE0 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */; };
+		BFDCE1D31FC691B700EA5EE0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1D21FC691B700EA5EE0 /* User.swift */; };
 		E2F58A72ADD7AE66D41ED5AA /* Pods_sidebar_testTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C66CCD972745F18E0F4B58D /* Pods_sidebar_testTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -75,7 +78,10 @@
 		BFA506A51F4BE33800B8DE09 /* sidebar_testUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = sidebar_testUITests.swift; sourceTree = "<group>"; };
 		BFA506A71F4BE33800B8DE09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFBFD7901F5A16D300437639 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
-		BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cell.swift; sourceTree = "<group>"; };
+		BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryData.swift; sourceTree = "<group>"; };
+		BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
+		BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		BFDCE1D21FC691B700EA5EE0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		D69AD1696ED49A5AA5F0D992 /* Pods-sidebar testTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sidebar testTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-sidebar testTests/Pods-sidebar testTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -115,6 +121,15 @@
 				3CAB91D5F312FB515E467A01 /* Pods_sidebar_testUITests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF1BE8191FD83906003A0786 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */,
+				BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		BF9D153F1F50BABC00ED4681 /* Navigation */ = {
@@ -165,12 +180,10 @@
 			isa = PBXGroup;
 			children = (
 				BF9D153F1F50BABC00ED4681 /* Navigation */,
-				BFA506871F4BE33700B8DE09 /* Home.swift */,
+				BFDCE1D41FC691D000EA5EE0 /* View Controllers */,
 				BF1E19631FA409330076F044 /* FirebaseDataClass.swift */,
-				BFDCE1CC1FC62F4C00EA5EE0 /* Cell.swift */,
-				BFBFD7901F5A16D300437639 /* Request.swift */,
-				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
-				BF01EAD01F74C30D00D9769A /* ExpandedCell.swift */,
+				BF1BE8191FD83906003A0786 /* Cells */,
+				BFCB9CFA1FC697700062D291 /* Model */,
 				BFA5068C1F4BE33700B8DE09 /* Assets.xcassets */,
 				BF9D15461F58A41600ED4681 /* Other */,
 			);
@@ -193,6 +206,26 @@
 				BFA506A71F4BE33800B8DE09 /* Info.plist */,
 			);
 			path = "sidebar testUITests";
+			sourceTree = "<group>";
+		};
+		BFCB9CFA1FC697700062D291 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */,
+				BFDCE1D21FC691B700EA5EE0 /* User.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		BFDCE1D41FC691D000EA5EE0 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				BFA506871F4BE33700B8DE09 /* Home.swift */,
+				BF01EAD01F74C30D00D9769A /* ExpandedCell.swift */,
+				BFBFD7901F5A16D300437639 /* Request.swift */,
+				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
+			);
+			name = "View Controllers";
 			sourceTree = "<group>";
 		};
 		FBB0C6324ECCD633A04D510F /* Pods */ = {
@@ -518,14 +551,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF01EAD51F780DD800D9769A /* SelectTeachers.swift in Sources */,
+				BFDCE1D11FC691B000EA5EE0 /* UserCell.swift in Sources */,
+				BFDCE1D31FC691B700EA5EE0 /* User.swift in Sources */,
 				BFA506881F4BE33700B8DE09 /* Home.swift in Sources */,
 				BFBFD7911F5A16D300437639 /* Request.swift in Sources */,
 				BF9D15411F50BC2100ED4681 /* MainNavigationViewController.swift in Sources */,
 				BF076CB21F6B754A0082299D /* LogIn.swift in Sources */,
 				BF9D15451F511CD500ED4681 /* ContainerViewController.swift in Sources */,
+				BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */,
 				BF9D15431F50BD9600ED4681 /* SideBar.swift in Sources */,
 				BF01EAD11F74C30D00D9769A /* ExpandedCell.swift in Sources */,
-				BFDCE1CD1FC62F4C00EA5EE0 /* Cell.swift in Sources */,
+				BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */,
 				BFA506861F4BE33700B8DE09 /* AppDelegate.swift in Sources */,
 				BF1E19641FA409330076F044 /* FirebaseDataClass.swift in Sources */,
 			);

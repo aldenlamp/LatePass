@@ -9,11 +9,11 @@
 import UIKit
 import Firebase
 
-var firebaseData: FirebaseDataClass?
+var firebaseData: FirebaseDataClass!
 
-let reloadDataNotification = NSNotification.Name(rawValue: "ReloadData")
-
-
+let studentDataLoaded = NSNotification.Name(rawValue: "ReloadStudentData")
+let teacherDataLoaded = NSNotification.Name(rawValue: "ReloadTeacherData")
+let WifiDisconectedNotification = NSNotification.Name(rawValue: "WifiDisconectedNotification")
 var testImage: UIImage?
 
 class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, FirebaseProtocol{
@@ -27,7 +27,8 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         self.view.backgroundColor = UIColor(red: 0.973, green: 0.973, blue: 0.984, alpha: 1.00)
         
         firebaseData = FirebaseDataClass()
-        firebaseData?.firebaseDataDelegate = self
+        firebaseData.firebaseDataDelegate = self
+        if firebaseData.userID != nil{ firebaseData.pullingAllData() }
         
         //Setting up USER INTERFACE
         setUpNavigation()
@@ -43,13 +44,13 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     }
     
     func historyArrayDidLoad() {
-        firebaseData?.allItems += firebaseData!.historyItems
-        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData!.allItems.count - 1)
+        firebaseData.allItems += firebaseData.historyItems
+        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData.allItems.count - 1)
         historyTableView.reloadData()
         tableViewExists()
         
         //this is for the numbers and statistics on the top
-        for i in firebaseData!.allItems{
+        for i in firebaseData.allItems{
             if (i.thisCellType! == .fromHistory || i.thisCellType == .studentHistory) && i.status! != .rejected{
                 switch i.thisTimeFrame!{
                 case .thisWeek: lateCounts[0] += 1;
@@ -64,8 +65,8 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     }
     
     func requestArrayDidLoad() {
-        firebaseData?.allItems += firebaseData!.requestItems
-        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData!.allItems.count - 1)
+        firebaseData.allItems += firebaseData.requestItems
+        historyQuickSort(lowerIndex: 0, higherIndex: firebaseData.allItems.count - 1)
         historyTableView.reloadData()
         tableViewExists()
         
@@ -76,10 +77,10 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     func historyQuickSort(lowerIndex: Int, higherIndex: Int){
         var lower = lowerIndex
         var higher = higherIndex
-        let pivot = firebaseData!.allItems[lower + (higher - lower) / 2].timeStarted!
+        let pivot = firebaseData.allItems[lower + (higher - lower) / 2].timeStarted!
         while(lower <= higher){
-            while(firebaseData!.allItems[lower].timeStarted! > pivot){ lower += 1 }
-            while(firebaseData!.allItems[higher].timeStarted! < pivot){ higher -= 1 }
+            while(firebaseData.allItems[lower].timeStarted! > pivot){ lower += 1 }
+            while(firebaseData.allItems[higher].timeStarted! < pivot){ higher -= 1 }
             if lower <= higher{
                 exchangeNumbers(lower: lower, higher: higher)
                 lower += 1
@@ -91,9 +92,9 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     }
     
     func exchangeNumbers(lower: Int, higher: Int){
-        let temp = firebaseData!.allItems[lower]
-        firebaseData!.allItems[lower] = firebaseData!.allItems[higher]
-        firebaseData!.allItems[higher] = temp
+        let temp = firebaseData.allItems[lower]
+        firebaseData.allItems[lower] = firebaseData.allItems[higher]
+        firebaseData.allItems[higher] = temp
     }
     
     //MARK: - Navigation
@@ -132,10 +133,15 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     }
     
     @objc private func openNewRequest(){
-        let requestViewController = Request() as UIViewController
-        self.present(requestViewController, animated: true, completion: nil)
         
         
+        
+        if firebaseData.currentUser != nil{
+            let requestViewController = Request() as UIViewController
+            self.present(requestViewController, animated: true, completion: nil)
+        }else{
+            alert(title: "No Wifi", message: "Please Connect to WIFI", buttonTitle: "Okay")
+        }
     }
     
     //MARK: - Stats
@@ -353,13 +359,13 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     var tableViewIsShown = false
     
     func tableViewExists(){
-        if !tableViewIsShown && firebaseData!.allItems.count > 0{
+        if !tableViewIsShown && firebaseData.allItems.count > 0{
             
             shadowView.addSubview(historyTableView)
             setHistoryAnchors(to: true)
             
             tableViewIsShown = !tableViewIsShown
-        }else if tableViewIsShown && firebaseData!.allItems.count == 0{
+        }else if tableViewIsShown && firebaseData.allItems.count == 0{
             
             setHistoryAnchors(to: false)
             historyTableView.removeFromSuperview()
@@ -370,33 +376,36 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return firebaseData!.allItems.count
+        return firebaseData.allItems.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 90 }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        if indexPath.row <= (firebaseData?.allItems.count)! - 1{
         
-        let cell = firebaseData?.allItems[indexPath.row].toHistoryCell()
-        return cell!
-            
-//        }else{
-//            let cell2 = tableView.dequeueReusableCell(withIdentifier: "Cell") as! HistoryCell
-//            print(indexPath.row)
-//            return cell2
-//        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
+        
+        let historyData = firebaseData.allItems[indexPath.row]
+        cell.updateWithHistoryData(data: historyData)
+        
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+        
         let cell = tableView.cellForRow(at: indexPath) as! HistoryCell
         cell.setSelected(false, animated: true)
         
+        let data = firebaseData.allItems[indexPath.row]
+        
+        
         // Creating the new cell with attributes
         let vc = ExpandedCell()
+        vc.historyData = data
         vc.titleLabel.text = cell.titleLabel.text
         vc.dateLabel.text = cell.dateLabel.text
-            
+        
         self.present(vc, animated: true, completion: nil)
     }
         
@@ -404,46 +413,35 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
     
 }
 
-extension UIImage {
-    func maskWithColor(color: UIColor) -> UIImage? {
-        let maskImage = cgImage!
-        
-        let width = size.width
-        let height = size.height
-        let bounds = CGRect(x: 0, y: 0, width: width, height: height)
-        
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
-        let context = CGContext(data: nil, width: Int(width), height: Int(height), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)!
-        
-        context.clip(to: bounds, mask: maskImage)
-        context.setFillColor(color.cgColor)
-        context.fill(bounds)
-        
-        if let cgImage = context.makeImage() {
-            let coloredImage = UIImage(cgImage: cgImage)
-            return coloredImage
-        } else {
-            return nil
-        }
-    }
-}
-
 
 extension UIColor{
     convenience init (hex: String, alpha: CGFloat){
-        var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
-        if ((cString.characters.count) != 6) {
-            print("YOU FUCKEDDDD UPPPPP!!!!!!")
-        }
+        if ((cString.count) != 6) {  }
         
         var rgbValue:UInt32 = 0
         Scanner(string: cString).scanHexInt32(&rgbValue)
         self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0, green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0, blue: CGFloat(rgbValue & 0x0000FF) / 255.0, alpha: alpha)
     }
 }
-
+ 
+ 
+ 
+ extension UIViewController{
+    
+    func alert(title: String, message: String, buttonTitle: String = "Done"){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: buttonTitle, style: .default, handler: {(handler) in
+            alert.dismiss(animated: true, completion: nil)
+        })
+        alert.addAction(alertAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    
+ }
+ 
 /*
  
  Making a request in js
