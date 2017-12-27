@@ -72,13 +72,13 @@ class FirebaseDataClass{
         
         
         //TODO: - Organixe how to handle checking WiFi Connections
-//        ref.child(".info/connected").observe(.value, with: { (snap) in
-//            if snap.value as! Bool == false{
-//                NotificationCenter.default.post(Notification(name: WifiDisconectedNotification))
-//            }
-//
-//        })
-
+        //        ref.child(".info/connected").observe(.value, with: { (snap) in
+        //            if snap.value as! Bool == false{
+        //                NotificationCenter.default.post(Notification(name: WifiDisconectedNotification))
+        //            }
+        //
+        //        })
+        
         
     }
     
@@ -123,10 +123,10 @@ class FirebaseDataClass{
             self?.getStudentList(studentType: "teachers", potentialItem: "potentialTeachers")
             if self?.currentUser.userType != .student {
                 self?.getStudentList(studentType: "students", potentialItem: "potentialStudents")
-                self?.getRequestItems()
+                //                self?.getRequestItems()
             }
             
-//            self?.getStudentList(studentType: self?.currentUser.userType != .student ? "students" : "teachers", potentialItem: self?.currentUser.userType != .student ? "potentialStudents" : "potentialTeachers")
+            //            self?.getStudentList(studentType: self?.currentUser.userType != .student ? "students" : "teachers", potentialItem: self?.currentUser.userType != .student ? "potentialStudents" : "potentialTeachers")
         })
     }
     
@@ -134,9 +134,39 @@ class FirebaseDataClass{
     
     //MARK: - Get history items
     
+    var calcBoth = false
+    
+    func reloadAllHistory(fromHistory history: Bool){
+        calcBoth = true
+        
+        allStudentsLoaded = false
+        allTeachersLoaded = false
+        
+        self.allItems.removeAll()
+        self.historyItems.removeAll()
+        self.requestItems.removeAll()
+        if history{
+            getRequestItems()
+        }else{
+            getHistoryItems()
+        }
+    }
+    
     func getHistoryItems(){
-        self.ref.child("users").child(userID).child("history").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
+        self.ref.child("users").child(userID).child("history").observe(.value, with: { [weak self] (snapshot) in
             if snapshot.exists(){
+                //                if (self?.calcBoth)! {
+                //                    self?.calcBoth = false
+                //                    self?.allItems.removeAll()
+                //                    self?.getRequestItems()
+                //                }
+                //                self?.historyItems.removeAll()
+                
+                if !(self?.calcBoth)! {
+                    self?.reloadAllHistory(fromHistory: true)
+                    
+                }
+                
                 let values = snapshot.value as! [String : String]
                 let historyKeys = Array(values.keys)
                 
@@ -269,13 +299,26 @@ class FirebaseDataClass{
     }
     
     func getRequestItems(){
-        self.ref.child("users").child(userID).child("requests").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
+        self.ref.child("users").child(userID).child("requests").observe(.value, with: { [weak self] (snapshot) in
             if snapshot.exists(){
-                // needed: timeCreated, to, student, reason,
+                //                if (self?.calcBoth)! {
+                //                    self?.calcBoth = false
+                //                    self?.allItems.removeAll()
+                //                    self?.getHistoryItems()
+                //                }
+                //
+                //                self?.requestItems.removeAll()
+                
+                
+                if !(self?.calcBoth)! {
+                    self?.reloadAllHistory(fromHistory: false)
+                    
+                }
+                
                 let requestKeys = (snapshot.value as! [String: String]).keys
                 var requestCount = 0
                 
-//                print("count: \(requestCount) \ttotalCount: \(requestKeys.count)")
+                //                print("count: \(requestCount) \ttotalCount: \(requestKeys.count)")
                 
                 for key in requestKeys{
                     
@@ -346,65 +389,70 @@ class FirebaseDataClass{
         var realStudents = false
         var imaginaryStudents = false
         
-        self.ref.child(studentType).observeSingleEvent(of: .value, with: { [weak self] (snapshotStudents) in
+        self.ref.child(studentType).observe(.value, with: { [weak self] (snapshotStudents) in
+            realStudents = false
+            imaginaryStudents = false
             let studentKeys = Array((snapshotStudents.value! as! [String: Bool]).keys)
             var finishCount = 0
             
             for i in studentKeys{
                 
-                let userCell = User()
-                userCell.userType = .student
-                userCell.userStringID = i
-                
-                self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
-                    userCell.userName = snapshot.value! as! String
-                    finishCount += 1
-                    if finishCount == studentKeys.count * 3{
-                        realStudents = true
-                        if imaginaryStudents == true{
-                            if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
-                            NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                if studentType == "students" || (self?.currentUser.userStringID)! != i{
+                    
+                    let userCell = User()
+                    userCell.userType = .student
+                    userCell.userStringID = i
+                    
+                    self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
+                        userCell.userName = snapshot.value! as! String
+                        finishCount += 1
+                        if finishCount == studentKeys.count * 3{
+                            realStudents = true
+                            if imaginaryStudents == true{
+                                if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                                NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                            }
                         }
-                    }
-                })
-                
-                self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: { (snapshot) in
-                    userCell.userEmail = snapshot.value! as! String
-                    finishCount += 1
-                    if finishCount == studentKeys.count * 3{
-                        realStudents = true
-                        if imaginaryStudents == true{
-                            if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
-                            NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                    })
+                    
+                    self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: { (snapshot) in
+                        userCell.userEmail = snapshot.value! as! String
+                        finishCount += 1
+                        if finishCount == studentKeys.count * 3{
+                            realStudents = true
+                            if imaginaryStudents == true{
+                                if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                                NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                            }
                         }
-                    }
-                })
-                
-                self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: {(snapshot) in
-                    let photoString = snapshot.value! as! String
-                    do{
-                        let image = try UIImage(data: Data(contentsOf: URL(string: photoString)!))!
-                        userCell.userImage = image
-                    }catch{
-                        print("\nimage Failed with id: \(i)\n")
-                        userCell.userImage = #imageLiteral(resourceName: "BlankUser")
-                    }
-                    finishCount += 1
-                    if finishCount == studentKeys.count * 3{
-                        realStudents = true
-                        if imaginaryStudents == true{
-                            if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
-                            NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                    })
+                    
+                    self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: {(snapshot) in
+                        let photoString = snapshot.value! as! String
+                        do{
+                            let image = try UIImage(data: Data(contentsOf: URL(string: photoString)!))!
+                            userCell.userImage = image
+                        }catch{
+                            print("\nimage Failed with id: \(i)\n")
+                            userCell.userImage = #imageLiteral(resourceName: "BlankUser")
                         }
+                        finishCount += 1
+                        if finishCount == studentKeys.count * 3{
+                            realStudents = true
+                            if imaginaryStudents == true{
+                                if studentType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                                NotificationCenter.default.post(name: studentType == "students" ? studentDataLoaded : teacherDataLoaded, object: nil)
+                            }
+                        }
+                    })
+                    
+                    if studentType == "students"{
+                        self?.allStudents.append(userCell)
+                        userCell.userIndex = (self?.allStudents.count)! - 1
+                    }else{
+                        self?.allTeachers.append(userCell)
+                        userCell.userIndex = (self?.allTeachers.count)! - 1
                     }
-                })
-                
-                if studentType == "students"{
-                    self?.allStudents.append(userCell)
-                    userCell.userIndex = (self?.allStudents.count)! - 1
-                }else{
-                    self?.allTeachers.append(userCell)
-                    userCell.userIndex = (self?.allTeachers.count)! - 1
                 }
             }
         })

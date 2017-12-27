@@ -61,6 +61,7 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         }
         
         updateStatView()
+        firebaseData.calcBoth = false
         print("\n\nhistory data loaded\n\n")
     }
     
@@ -69,7 +70,7 @@ class Home: UIViewController, UITableViewDelegate, UITableViewDataSource, Fireba
         historyQuickSort(lowerIndex: 0, higherIndex: firebaseData.allItems.count - 1)
         historyTableView.reloadData()
         tableViewExists()
-        
+        firebaseData.calcBoth = false
         print("\n\nrequest data loaded\n\n")
     }
     
@@ -441,69 +442,3 @@ extension UIColor{
     
     
  }
- 
-/*
- 
- Making a request in js
- 
- this.pushPass = function(pass) {
- console.log(pass);
- // var requestURL = 'http://localhost:5000/late-pass-lab/us-central1/app/request';
- var requestURL = 'https://us-central1-late-pass-lab.cloudfunctions.net/app/request';
- firebase.auth().currentUser.getToken(true).then(function(token) {
- // console.log(token);
- // console.log(JSON.stringify({
- //   destination: pass.destination,
- //   origin: 't',
- //   student: pass.student,
- //   reason: pass.reason
- // }));
- $http({
- method: 'POST',
- url: requestURL,
- // processData: false,
- // crossDomain: true,
- headers: {
- 'Content-type': 'application/json',
- 'Authorization': token
- },
- data: JSON.stringify({
- destination: pass.destination,
- origin: pass.origin,
- student: pass.student,
- reason: pass.reason
- })
- }).then(function(response) {
- Interface.showResultToast(true);
- }, function(response) {
- Interface.showResultToast(false, 'Error ' + response.status + ': ' + response.data);
- });
- });
- };
- //TODO: Return something?
- this.approveRequest = function(request, approval) {
- if (typeof approval === 'undefined') approval = true;
- // var approveURL = 'http://localhost:5000/late-pass-lab/us-central1/app/approve';
- var approveURL = 'https://us-central1-late-pass-lab.cloudfunctions.net/app/approve';
- firebase.auth().currentUser.getToken(true).then(function(token) {
- $http({
- method: 'POST',
- url: approveURL,
- headers: {
- 'Content-type': 'application/json',
- 'Authorization': token
- },
- data: JSON.stringify({
- request: request,
- approval: approval
- })
- }).then(function(response) {
- Interface.showResultToast(true);
- }, function(response) {
- Interface.showResultToast(false, 'Error ' + response.status + ': ' + response.data);
- });
- });
- };
- }]);
- */
-

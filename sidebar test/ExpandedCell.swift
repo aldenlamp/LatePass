@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import Firebase
 
 class ExpandedCell: UIViewController {
     
     var historyData: HistoryData!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
@@ -19,6 +20,14 @@ class ExpandedCell: UIViewController {
         setUpCancelButton()
         setUpTitleLabels()
         setUpInfoDisplay()
+        if historyData.thisCellType == .request && firebaseData.currentUser.userType == .teacher{
+            setUpSelectionView()
+        }else{
+            setUpCenterView()
+        }
+        
+        
+        
     }
     
     //MARK: - Title Label
@@ -41,7 +50,7 @@ class ExpandedCell: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .center
         titleLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-//        titleLabel.text = "May 23, 2017"
+        //        titleLabel.text = "May 23, 2017"
         return titleLabel
     }()
     
@@ -58,8 +67,10 @@ class ExpandedCell: UIViewController {
         self.view.addSubview(titleLabel)
         titleLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 73).isActive = true
         titleLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+        titleLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -25).isActive = true
+        titleLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
         
-//        dateLabel.text = "" //Change Later
+        //        dateLabel.text = "" //Change Later
         self.view.addSubview(dateLabel)
         dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0).isActive = true
         dateLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
@@ -83,18 +94,19 @@ class ExpandedCell: UIViewController {
         self.dismiss(animated: true, completion: nil)
     }
     
-    //TODO: - Make the bottom view
-    
-    //TODO: - Make the approved rejected view
-    
     //TODO: - Allow pending passes to be accepted or rejceted
     
-    var infoDisplay: UIView = UIView()
+    //MARK: - Info Display
+    
+    
+    var timeRequested = UIView()
+    var timeApproved = UIView()
+    var reasonView = UIView()
     
     func setUpInfoDisplay(){
-        let timeRequested = getTimeView(fromAccepted: false)
-        let timeApproved = getTimeView(fromAccepted: true)
-        let reasonView = getReasonView()
+        timeRequested = getTimeView(fromAccepted: false)
+        timeApproved = getTimeView(fromAccepted: true)
+        reasonView = getReasonView()
         
         reasonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
         timeApproved.bottomAnchor.constraint(equalTo: reasonView.topAnchor, constant: 0).isActive = true
@@ -103,9 +115,6 @@ class ExpandedCell: UIViewController {
     
     
     func getTimeView(fromAccepted style: Bool) -> UIView{
-        //height = 60
-        //distToSide = 45
-        
         let timeView = UIView()
         self.view.addSubview(timeView)
         timeView.translatesAutoresizingMaskIntoConstraints = false
@@ -131,14 +140,14 @@ class ExpandedCell: UIViewController {
         time.font = UIFont(name: "Avenir-Medium", size: 16)
         time.textAlignment = .right
         time.adjustsFontSizeToFitWidth = true
-    
+        
         timeView.addSubview(time)
         time.translatesAutoresizingMaskIntoConstraints = false
         time.heightAnchor.constraint(equalToConstant: 60).isActive = true
         time.rightAnchor.constraint(equalTo: timeView.rightAnchor, constant: 0).isActive = true
         time.leftAnchor.constraint(equalTo: timeView.leftAnchor, constant: 115).isActive = true
         time.centerYAnchor.constraint(equalTo: timeView.centerYAnchor, constant: 0).isActive = true
-    
+        
         let sep = UIView()
         sep.backgroundColor = UIColor(hex: "E3E3E3", alpha: 1)
         
@@ -172,7 +181,7 @@ class ExpandedCell: UIViewController {
         
         let reason = UILabel()
         reason.text = historyData.reason == "" ? "..." : historyData.reason
-//        reason.text = "THIS IS A REALLY LONG MESSAGE IN ORDDER TO TEST THINGS"
+        //        reason.text = "THIS IS A REALLY LONG MESSAGE IN ORDDER TO TEST THINGS"
         reason.textColor = UIColor(hex: "3D4C68", alpha: 1)
         reason.font = UIFont(name: "Avenir-Medium", size: 16)
         reason.textAlignment = .right
@@ -180,7 +189,6 @@ class ExpandedCell: UIViewController {
         
         let maxSize = CGSize(width: self.view.frame.width - (90), height: CGFloat.greatestFiniteMagnitude)
         let requiredSize = reason.sizeThatFits(maxSize)
-        print(requiredSize.height)
         
         reasonView.addSubview(reason)
         reason.translatesAutoresizingMaskIntoConstraints = false
@@ -192,41 +200,7 @@ class ExpandedCell: UIViewController {
         reasonView.heightAnchor.constraint(equalToConstant: requiredSize.height + 50).isActive = true
         reasonView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
         reasonView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
-        
-        
-        /*
-         
-         */
-        
-        
-//        timeView.addSubview(reason)
-//        reason.translatesAutoresizingMaskIntoConstraints = false
-//        reason.heightAnchor.constraint(equalToConstant: 60).isActive = true
-//        reason.rightAnchor.constraint(equalTo: timeView.rightAnchor, constant: 0).isActive = true
-//        reason.centerYAnchor.constraint(equalTo: timeView.centerYAnchor, constant: 0).isActive = true
-        
-        
-        
-        /*
-         cell.firstLabel.text = keys[indexPath.row]
-         cell.firstLabel.frame = firstViewHeight(indexPath: indexPath)
-         cell.firstVie.frame.size = CGSize(width: firstViewHeight(indexPath: indexPath).width, height: firstViewHeight(indexPath: indexPath).height)// + 16)
-         cell.constraint.constant = firstViewHeight(indexPath: indexPath).height
-         cell.summaryLabel.frame = caluclateSummaryLabelFrame(cell: cell, indexPath: indexPath)
-         cell.summaryLabel.text = values[indexPath.row]
-         */
         return reasonView
-    }
-    
-    
-    
-    
-    
-    func getTimeFrom(fromAccepted style: Bool) -> String{
-        let formatter = DateFormatter()
-        formatter.dateFormat = "hh:mm "
-        let timeInterval = TimeInterval(historyData.timeStarted)
-        return formatter.string(from: Date(timeIntervalSince1970: timeInterval))
     }
     
     func getTimeString(fromAccepted style: Bool) -> String{
@@ -246,6 +220,258 @@ class ExpandedCell: UIViewController {
         
         return "\(hour)\(formatter.string(from: date))"
     }
+    
+    //MARK: - Center View
+    
+    func setUpCenterView(){
+        
+        let centerSectionView = UIView()
+        self.view.addSubview(centerSectionView)
+        centerSectionView.translatesAutoresizingMaskIntoConstraints = false
+        centerSectionView.topAnchor.constraint(equalTo: breakView.bottomAnchor, constant: 10).isActive = true
+        centerSectionView.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: -10).isActive = true
+        
+        let centerView = UIView()
+        centerSectionView.addSubview(centerView)
+        centerView.backgroundColor = UIColor(hex: "F8F8F8", alpha: 1)
+        centerView.translatesAutoresizingMaskIntoConstraints = false
+        centerView.heightAnchor.constraint(equalToConstant: 90).isActive = true
+        centerView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -35).isActive = true
+        centerView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 35).isActive = true
+        centerView.centerYAnchor.constraint(equalTo: centerSectionView.centerYAnchor, constant: 0).isActive = true
+        
+        let containerView = UIView()
+        containerView.backgroundColor = UIColor.clear
+        
+        centerView.addSubview(containerView)
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        containerView.widthAnchor.constraint(equalToConstant: 160).isActive = true
+        containerView.centerYAnchor.constraint(equalTo: centerView.centerYAnchor, constant: 0).isActive = true
+        containerView.centerXAnchor.constraint(equalTo: centerView.centerXAnchor, constant: 0).isActive = true
+        
+        let imageView = UIImageView()
+        imageView.image = #imageLiteral(resourceName: "pending-lightBlue")
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(imageView)
+        imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0).isActive = true
+        imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0).isActive = true
+        imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        let labelView = UILabel()
+        labelView.translatesAutoresizingMaskIntoConstraints = false
+        
+        
+        switch historyData.status! {
+        case .accepted:
+            labelView.text = "Approved"
+            switch historyData.thisTimeFrame!{
+            case .thisWeek:
+                imageView.image = #imageLiteral(resourceName: "approved-lightBlue")
+                break
+            case .thisMonth:
+                imageView.image = #imageLiteral(resourceName: "approved-purple")
+                break
+            case .thisYear:
+                imageView.image = #imageLiteral(resourceName: "approved-blue")
+                break
+            }
+        case .pending:
+            labelView.text = "Pending"
+            imageView.image = #imageLiteral(resourceName: "pending-lightBlue")
+            break
+        case .rejected:
+            imageView.image = #imageLiteral(resourceName: "rejected-red")
+            labelView.text = "Rejected"
+            break
+        }
+        
+        labelView.font = UIFont(name: "Avenir-Book", size: 22)
+        labelView.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        labelView.textAlignment = .right
+        
+        containerView.addSubview(labelView)
+        labelView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
+        labelView.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 10).isActive = true
+        labelView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 0).isActive = true
+        labelView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+    }
+    
+    
+    
+    
+    //MARK: - Selection View
+    func setUpSelectionView(){
+        
+        let centerSectionView = UIView()
+        self.view.addSubview(centerSectionView)
+        
+        centerSectionView.translatesAutoresizingMaskIntoConstraints = false
+        centerSectionView.topAnchor.constraint(equalTo: breakView.bottomAnchor, constant: 10).isActive = true
+        centerSectionView.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: -10).isActive = true
+        centerSectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        centerSectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        
+        let centerView = UIView()
+        centerSectionView.addSubview(centerView)
+        centerView.translatesAutoresizingMaskIntoConstraints = false
+        centerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        centerView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -35).isActive = true
+        centerView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 35).isActive = true
+        centerView.centerYAnchor.constraint(equalTo: centerSectionView.centerYAnchor, constant: 0).isActive = true
+        
+        let acceptView = UIButton()
+        centerView.addSubview(acceptView)
+        acceptView.addTarget(self, action: #selector(tapAccepted), for: .touchUpInside)
+        acceptView.backgroundColor = UIColor(hex: "F6F6F6", alpha: 1)
+        acceptView.translatesAutoresizingMaskIntoConstraints = false
+        acceptView.topAnchor.constraint(equalTo: centerView.topAnchor, constant: 0).isActive = true
+        acceptView.bottomAnchor.constraint(equalTo: centerView.bottomAnchor, constant: 0).isActive = true
+        acceptView.leftAnchor.constraint(equalTo: centerView.leftAnchor, constant: 0).isActive = true
+        
+        let acceptImageView = UIImageView()
+        acceptImageView.image = #imageLiteral(resourceName: "approved-lightBlue")
+        acceptImageView.translatesAutoresizingMaskIntoConstraints = false
+        acceptView.addSubview(acceptImageView)
+        acceptImageView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        acceptImageView.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        acceptImageView.centerXAnchor.constraint(equalTo: acceptView.centerXAnchor, constant: 0).isActive = true
+        acceptImageView.topAnchor.constraint(equalTo: acceptView.topAnchor, constant: 10).isActive = true
+        
+        
+        let acceptLabel = UILabel()
+        acceptLabel.text = "Accept"
+        acceptLabel.font = UIFont(name: "Avenir-Book", size: 20)
+        acceptLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        acceptLabel.textAlignment = .center
+        
+        acceptLabel.translatesAutoresizingMaskIntoConstraints = false
+        acceptView.addSubview(acceptLabel)
+        acceptLabel.topAnchor.constraint(equalTo: acceptImageView.bottomAnchor, constant: 0).isActive = true
+        acceptLabel.rightAnchor.constraint(equalTo: acceptView.rightAnchor, constant: 0).isActive = true
+        acceptLabel.leftAnchor.constraint(equalTo: acceptView.leftAnchor, constant: 0).isActive = true
+        acceptLabel.bottomAnchor.constraint(equalTo: acceptView.bottomAnchor, constant: 0).isActive = true
+        
+        let rejectView = UIButton()
+        centerView.addSubview(rejectView)
+        rejectView.addTarget(self, action: #selector(tapRejected), for: .touchUpInside)
+        
+        rejectView.backgroundColor = UIColor(hex: "F6F6F6", alpha: 1)
+        rejectView.translatesAutoresizingMaskIntoConstraints = false
+        rejectView.topAnchor.constraint(equalTo: centerView.topAnchor, constant: 0).isActive = true
+        rejectView.bottomAnchor.constraint(equalTo: centerView.bottomAnchor, constant: 0).isActive = true
+        rejectView.rightAnchor.constraint(equalTo: centerView.rightAnchor, constant: 0).isActive = true
+        rejectView.leftAnchor.constraint(equalTo: acceptView.rightAnchor, constant: 20).isActive = true
+
+        NSLayoutConstraint(item: rejectView, attribute: .width, relatedBy: .equal, toItem: acceptLabel, attribute: .width, multiplier: 1, constant: 0).isActive = true
+        
+        let rejectImageView = UIImageView()
+        rejectImageView.image = #imageLiteral(resourceName: "rejected-red")
+
+        rejectImageView.translatesAutoresizingMaskIntoConstraints = false
+        rejectView.addSubview(rejectImageView)
+        rejectImageView.heightAnchor.constraint(equalToConstant: 42).isActive = true
+        rejectImageView.widthAnchor.constraint(equalToConstant: 42).isActive = true
+        rejectImageView.centerXAnchor.constraint(equalTo: rejectView.centerXAnchor, constant: 0).isActive = true
+        rejectImageView.topAnchor.constraint(equalTo: rejectView.topAnchor, constant: 10).isActive = true
+
+
+        let rejectLabel = UILabel()
+        rejectLabel.text = "Reject"
+        rejectLabel.font = UIFont(name: "Avenir-Book", size: 20)
+        rejectLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        rejectLabel.textAlignment = .center
+
+        rejectLabel.translatesAutoresizingMaskIntoConstraints = false
+        rejectView.addSubview(rejectLabel)
+        rejectLabel.topAnchor.constraint(equalTo: rejectImageView.bottomAnchor, constant: 0).isActive = true
+        rejectLabel.rightAnchor.constraint(equalTo: rejectView.rightAnchor, constant: 0).isActive = true
+        rejectLabel.leftAnchor.constraint(equalTo: rejectView.leftAnchor, constant: 0).isActive = true
+        rejectLabel.bottomAnchor.constraint(equalTo: rejectView.bottomAnchor, constant: 0).isActive = true
+        
+        self.view.layoutIfNeeded()
+    }
+    
+    //MARK: - Accept or Reject LatePass
+    
+    @objc func tapAccepted(){ respondToRequest(withAccept: true) }
+    
+    @objc func tapRejected(){ respondToRequest(withAccept: false) }
+    
+    func respondToRequest(withAccept accepted: Bool){
+//        print("pass is \(accepted ? "accepted" : "rejected")")
+        
+        
+        
+        let rqID = historyData.ID
+        
+        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
+            if error == nil{
+                
+                let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/approve"
+                var request = URLRequest(url: URL(string: requestURL)!)
+                request.httpMethod = "POST"
+                request.addValue("application/json", forHTTPHeaderField: "Content-type")
+                request.addValue(token!, forHTTPHeaderField: "Authorization")
+                
+                request.httpBody = "{\"request\":\"\(rqID!)\",\"approval\":\(accepted)}".data(using: String.Encoding.utf8)
+                
+                print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+                
+                URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
+                    
+                    let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
+                    print("\nData: \(responseMessage) \n\n")
+                    
+                    if responseMessage != ""{
+                        self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
+                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
+                    }else{
+                        self?.dismiss(animated: true, completion: nil)
+                    }
+                }).resume()
+            }else{
+                print("FIRSTERROR: \(String(describing: error))")
+            }
+        })
+        
+        
+        
+        /*
+         this.approveRequest = function(request, approval) {
+         if (typeof approval === 'undefined') approval = true;
+         // var approveURL = 'http://localhost:5000/late-pass-lab/us-central1/app/approve';
+         var approveURL = 'https://us-central1-late-pass-lab.cloudfunctions.net/app/approve';
+         firebase.auth().currentUser.getToken(true).then(function(token) {
+         $http({
+         method: 'POST',
+         url: approveURL,
+         headers: {
+         'Content-type': 'application/json',
+         'Authorization': token
+         },
+         data: JSON.stringify({
+         request: request,
+         approval: approval
+         })
+         }).then(function(response) {
+         Interface.showResultToast(true);
+         }, function(response) {
+         Interface.showResultToast(false, 'Error ' + response.status + ': ' + response.data);
+         });
+         });
+         };
+         }]);
+         */
+        
+        
+        
+        
+        
+    }
+    
     
     
 }

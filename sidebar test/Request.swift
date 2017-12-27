@@ -27,15 +27,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white
-        
-        if firebaseData.currentUser.userType == .teacher{
-            
-//            print
-            
-//            firebaseData.allTeachers.remove(at: firebaseData.allTeachers.index(of: firebaseData.currentUser)!)
-        }
-        
+        view.backgroundColor = UIColor.white 
         
         selectedPeople = nil
         toTeacher = nil
@@ -245,6 +237,8 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         view.layer.cornerRadius = 11
         view.setLeftPaddingPoints()
         
+        view.returnKeyType = .done
+        
         return view
     }()
     
@@ -269,7 +263,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         labelView.leftAnchor.constraint(equalTo: requestingView.leftAnchor, constant: 0).isActive = true
         labelView.topAnchor.constraint(equalTo: requestingView.topAnchor, constant: 0).isActive = true
         
-        self.view.addSubview(reasoning)
+        self.view .addSubview(reasoning)
         reasoning.delegate = self
         reasoning.rightAnchor.constraint(equalTo: requestingView.rightAnchor, constant: 0).isActive = true
         reasoning.leftAnchor.constraint(equalTo: requestingView.leftAnchor, constant: 0).isActive = true
@@ -287,7 +281,18 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     //Text View Functions
     
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if (text == "\n") {
+            textView.resignFirstResponder()
+            self.view.endEditing(true)
+        }
+        return true
+    }
+    
     func textViewDidBeginEditing(_ textView: UITextView) {
+//        print("firstView: \(view.frame) \t\t ")
+        
+        
         textView.textColor = UIColor(hex: "3D4C68", alpha: 1)
         if textView.text == "Reason for late pass"{
             textView.text = ""
@@ -304,8 +309,6 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
             self.view.layoutIfNeeded()
             self.decreaseAlpha()
         })
-        
-        
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -420,7 +423,9 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
                     
 //                    request.httpBody = "{\"destination\":\"\(toTeacher!.userStringID!)\",\"origin\":\"\(firebaseData.userID!)\",\"student\":\"\(true ? "FVjUVkKjPaWBE6UAhcRQXejAXHU2" : selectedPeople![0].userStringID!)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
                     request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\"\(student)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
-
+//                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\"EMYt90C5PzfhhTXXpz2Ctay7ONR2\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+                    
+//                    EMYt90C5PzfhhTXXpz2Ctay7ONR2
                     
 //                    Prints the full request
                     print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
@@ -432,10 +437,13 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
                         print("\nData: \(responseMessage) \n\n")
                         
                         if responseMessage != ""{
-                            self?.alert(title: "Request Error", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+                            self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
+                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
+                        }else{
+                            
+                            self?.dismiss(animated: true, completion: nil)
                         }
-                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n\n") }
-                        self?.dismiss(animated: true, completion: nil)
                     }).resume()
                 }else{
                     print("FIRSTERROR: \(String(describing: error))")
