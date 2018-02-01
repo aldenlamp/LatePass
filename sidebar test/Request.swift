@@ -27,7 +27,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.white 
+        view.backgroundColor = UIColor.white
         
         selectedPeople = nil
         toTeacher = nil
@@ -391,7 +391,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
             
             
             
-            guard let student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
+            guard var student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
                 self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
                 return
             }
@@ -406,6 +406,18 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
                 return
             }
             
+            
+            
+            if firebaseData.currentUser.userType != .student{
+                student = "["
+                for i in selectedPeople!{
+                    student += "\"\(i.userStringID!)\","
+                }
+                student = student.substring(to: student.index(before: student.endIndex))
+                student += "]"
+                print(student)
+            }
+            
             FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
                 if error == nil{
                     
@@ -415,19 +427,14 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
                     request.addValue("application/json", forHTTPHeaderField: "Content-type")
                     request.addValue(token!, forHTTPHeaderField: "Authorization")
                     
-                    
-                    //TODO: - Input The Correct people
                     //TODO: - Multi Person Pass
                     
                     
+                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+                    print(student)
+                    print(firebaseData.userID)
                     
-//                    request.httpBody = "{\"destination\":\"\(toTeacher!.userStringID!)\",\"origin\":\"\(firebaseData.userID!)\",\"student\":\"\(true ? "FVjUVkKjPaWBE6UAhcRQXejAXHU2" : selectedPeople![0].userStringID!)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
-                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\"\(student)\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
-//                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\"EMYt90C5PzfhhTXXpz2Ctay7ONR2\",\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
                     
-//                    EMYt90C5PzfhhTXXpz2Ctay7ONR2
-                    
-//                    Prints the full request
                     print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
                     
                     

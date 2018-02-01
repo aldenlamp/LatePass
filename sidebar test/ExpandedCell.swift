@@ -429,6 +429,9 @@ class ExpandedCell: UIViewController {
                         if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
                         if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
                     }else{
+                        
+                        //TODO: - create a notification for updating the tableView in new tableView View
+//                        (self?.navigationController!.viewControllers[0] as! Home).historyTableView.reloadData()
                         self?.dismiss(animated: true, completion: nil)
                     }
                 }).resume()

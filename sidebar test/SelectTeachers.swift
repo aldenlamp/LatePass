@@ -82,6 +82,13 @@ class SelectTeachers: UIViewController{
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+        print("View deInited")
+        selectedArray.forEach { (user) in
+            user.isChosen = false
+        }
+        
+        selectedArray.removeAll()
+        
     }
     
     //MARK: - Title
