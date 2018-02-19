@@ -13,6 +13,7 @@ target 'sidebar test' do
   pod 'Firebase/Auth'
   pod 'Firebase/Core'
   pod 'GoogleSignIn'
+  pod 'GoogleAPIClientForREST/Classroom', '~> 1.2.1'
 
 
   target 'sidebar testTests' do

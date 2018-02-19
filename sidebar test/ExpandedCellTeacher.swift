@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class ExpandedCell: UIViewController {
+class ExpandedCellTeacher: UIViewController {
     
     var historyData: HistoryData!
     
@@ -266,7 +266,7 @@ class ExpandedCell: UIViewController {
         switch historyData.status! {
         case .accepted:
             labelView.text = "Approved"
-            switch historyData.thisTimeFrame!{
+            switch historyData.thisTimeFrame! {
             case .thisWeek:
                 imageView.image = #imageLiteral(resourceName: "approved-lightBlue")
                 break
@@ -402,77 +402,52 @@ class ExpandedCell: UIViewController {
     func respondToRequest(withAccept accepted: Bool){
 //        print("pass is \(accepted ? "accepted" : "rejected")")
         
-        
-        
-        let rqID = historyData.ID
-        
-        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
-            if error == nil{
-                
-                let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/approve"
-                var request = URLRequest(url: URL(string: requestURL)!)
-                request.httpMethod = "POST"
-                request.addValue("application/json", forHTTPHeaderField: "Content-type")
-                request.addValue(token!, forHTTPHeaderField: "Authorization")
-                
-                request.httpBody = "{\"request\":\"\(rqID!)\",\"approval\":\(accepted)}".data(using: String.Encoding.utf8)
-                
-                print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
-                
-                URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
-                    
-                    let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
-                    print("\nData: \(responseMessage) \n\n")
-                    
-                    if responseMessage != ""{
-                        self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
-                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
-                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
-                    }else{
-                        
-                        //TODO: - create a notification for updating the tableView in new tableView View
-//                        (self?.navigationController!.viewControllers[0] as! Home).historyTableView.reloadData()
-                        self?.dismiss(animated: true, completion: nil)
-                    }
-                }).resume()
+        FirebaseRequests.acceptPass(withStatus: accepted, data: historyData) { (title, message, buttonTitle, worked) in
+            print("\(title)\t\(message)\t\(buttonTitle)\t\(worked)")
+            if worked{
+                self.dismiss(animated: true, completion: nil)
             }else{
-                print("FIRSTERROR: \(String(describing: error))")
+                self.alert(title: title, message: message, buttonTitle: buttonTitle)
             }
-        })
+        }
         
         
-        
-        /*
-         this.approveRequest = function(request, approval) {
-         if (typeof approval === 'undefined') approval = true;
-         // var approveURL = 'http://localhost:5000/late-pass-lab/us-central1/app/approve';
-         var approveURL = 'https://us-central1-late-pass-lab.cloudfunctions.net/app/approve';
-         firebase.auth().currentUser.getToken(true).then(function(token) {
-         $http({
-         method: 'POST',
-         url: approveURL,
-         headers: {
-         'Content-type': 'application/json',
-         'Authorization': token
-         },
-         data: JSON.stringify({
-         request: request,
-         approval: approval
-         })
-         }).then(function(response) {
-         Interface.showResultToast(true);
-         }, function(response) {
-         Interface.showResultToast(false, 'Error ' + response.status + ': ' + response.data);
-         });
-         });
-         };
-         }]);
-         */
-        
-        
-        
-        
-        
+//        
+//        let rqID = historyData.ID
+//        
+//        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
+//            if error == nil{
+//                
+//                let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/approve"
+//                var request = URLRequest(url: URL(string: requestURL)!)
+//                request.httpMethod = "POST"
+//                request.addValue("application/json", forHTTPHeaderField: "Content-type")
+//                request.addValue(token!, forHTTPHeaderField: "Authorization")
+//                
+//                request.httpBody = "{\"request\":\"\(rqID)\",\"approval\":\(accepted)}".data(using: String.Encoding.utf8)
+//                
+//                print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+//                
+//                URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
+//                    
+//                    let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
+//                    print("\nData: \(responseMessage) \n\n")
+//                    
+//                    if responseMessage != ""{
+//                        self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+//                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
+//                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
+//                    }else{
+//                        
+//                        //TODO: - create a notification for updating the tableView in new tableView View
+////                        (self?.navigationController!.viewControllers[0] as! Home).historyTableView.reloadData()
+//                        self?.dismiss(animated: true, completion: nil)
+//                    }
+//                }).resume()
+//            }else{
+//                print("FIRSTERROR: \(String(describing: error))")
+//            }
+//        })
     }
     
     

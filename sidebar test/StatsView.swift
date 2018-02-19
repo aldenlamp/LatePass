@@ -11,6 +11,7 @@ import UIKit
 
 class StatsView: UIView {
     
+    //INDEX 0: this week, 1: this month, 2: this year
     var lateCounts = [0, 0, 0]{
         didSet{
             updateStatView()

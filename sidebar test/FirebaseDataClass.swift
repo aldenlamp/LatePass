@@ -38,9 +38,7 @@ enum timeFrames{
 }
 
 protocol FirebaseProtocol {
-    func uesrDataDidLoad()
     func historyArrayDidLoad()
-    func requestArrayDidLoad()
 }
 
 var allStudentsLoaded = false
@@ -84,7 +82,13 @@ class FirebaseDataClass{
     
     func pullingAllData(){
         getCurrentUser()
+        reloadHistoryData()
+        
+    }
+    
+    func reloadHistoryData(){
         getHistoryItems()
+        getRequestItems()
     }
     
     func resetingUserIndex (){ for i in allStudents{ i.userIndex = allStudents.index(of: i) } }
@@ -118,12 +122,10 @@ class FirebaseDataClass{
             
             
             self?.currentUser = User(type: tier, image: image, name: name, email: email, stringID: (self?.userID)!)
-            self?.firebaseDataDelegate.uesrDataDidLoad()
             
             self?.getStudentList(studentType: "teachers", potentialItem: "potentialTeachers")
             if self?.currentUser.userType != .student {
                 self?.getStudentList(studentType: "students", potentialItem: "potentialStudents")
-                self?.getRequestItems()
             }
             
             //            self?.getStudentList(studentType: self?.currentUser.userType != .student ? "students" : "teachers", potentialItem: self?.currentUser.userType != .student ? "potentialStudents" : "potentialTeachers")
@@ -134,10 +136,23 @@ class FirebaseDataClass{
     
     //MARK: - Get history items
     
-    var historyLoaded = false
-    var requestsLoaded = false
+    //    var historyLoaded = false
+    //    var requestsLoaded = false
     
-    func historyCellsDidLoad(){
+    var isPullingHistory = false
+    var isPullingRequest = false
+    
+    func historyCellsDidLoad(fromHistory: Bool){
+        if fromHistory{
+            isPullingHistory = false
+        }else{
+            isPullingRequest = false
+        }
+        
+        //        print(historyItems)
+        
+        //        print("COUNTTT: \(historyItems.count)")
+        
         self.allItems.removeAll()
         allItems += historyItems
         allItems += requestItems
@@ -171,14 +186,14 @@ class FirebaseDataClass{
     
     func getHistoryItems(){
         self.ref.child("users").child(userID).child("history").observe(.value, with: { [weak self] (snapshot) in
-            if snapshot.exists(){
-                
+            if snapshot.exists() && !(self?.isPullingHistory)!{
+                self?.isPullingHistory = true
                 self?.historyItems.removeAll()
                 
                 let values = snapshot.value as! [String : String]
                 let historyKeys = Array(values.keys)
                 
-                print(historyKeys.count)
+                //                print("COUNT: \(historyKeys.count)")
                 
                 // Increased when the data is pulled from the follwing users: Student, origin, destination
                 // when all are equil to history keys.count * 2 (one is left out because of above), deleage data realoaded called
@@ -190,7 +205,11 @@ class FirebaseDataClass{
                     // origin, destination, student, cellType, timeStart, timeEnd
                     //Get each item as a key
                     
-                    self?.ref.child("history").child(key).observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
+                    self?.ref.child("history").child(key).observe(.value, with: { [weak self] (snapshot) in
+                        if !(self?.isPullingHistory)!{
+                            self?.reloadHistoryData()
+                            return
+                        }
                         let historyValues = snapshot.value as! [String: Any]
                         
                         let originID = historyValues["origin"] as! String
@@ -225,14 +244,14 @@ class FirebaseDataClass{
                                     cell.origin = originNameSnapshot.value as? String// originName
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
-                                        self?.historyCellsDidLoad()
+                                        self?.historyCellsDidLoad(fromHistory: true)
                                     }
                                 }else{
                                     self?.ref.child("potentialTeachers").child(originID).observeSingleEvent(of: .value, with: { [weak self] (potentialOriginNameSnapshot) in
                                         cell.origin = potentialOriginNameSnapshot.value as? String// originName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
-                                            self?.historyCellsDidLoad()
+                                            self?.historyCellsDidLoad(fromHistory: true)
                                         }
                                     })
                                 }
@@ -245,14 +264,14 @@ class FirebaseDataClass{
                                     cell.destination = destinationNameSnapshot.value as? String// destinationName
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
-                                        self?.historyCellsDidLoad()
+                                        self?.historyCellsDidLoad(fromHistory: true)
                                     }
                                 }else{
                                     self?.ref.child("potentialTeachers").child(destinationID).observeSingleEvent(of: .value, with: { [weak self] (potentialDestinationNameSnapshot) in
                                         cell.destination = potentialDestinationNameSnapshot.value as? String// destinationName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
-                                            self?.historyCellsDidLoad()
+                                            self?.historyCellsDidLoad(fromHistory: true)
                                         }
                                     })
                                 }
@@ -265,7 +284,7 @@ class FirebaseDataClass{
                                     cell.student = studentNameSnapshot.value as? String
                                     userCount += 1
                                     if userCount == historyKeys.count * 2{
-                                        self?.historyCellsDidLoad()
+                                        self?.historyCellsDidLoad(fromHistory: true)
                                     }
                                 }else{
                                     self?.ref.child("potentialStudents").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
@@ -273,7 +292,7 @@ class FirebaseDataClass{
                                         cell.student = potentialStudentNameSnapshot.value as? String//studentName
                                         userCount += 1
                                         if userCount == historyKeys.count * 2{
-                                            self?.historyCellsDidLoad()
+                                            self?.historyCellsDidLoad(fromHistory: true)
                                         }
                                     })
                                 }
@@ -301,16 +320,22 @@ class FirebaseDataClass{
                         }
                         
                     })
+                    
                 }
+                print("finished")
             }
         })
     }
     
     func getRequestItems(){
         self.ref.child("users").child(userID).child("requests").observe(.value, with: { [weak self] (snapshot) in
-            if snapshot.exists(){
+            //            print(self?.isPullingRequest)!)
+            if snapshot.exists() && !(self?.isPullingRequest)!{
+                self?.isPullingRequest = true
                 
+                print(self?.requestItems)
                 self?.requestItems.removeAll()
+                print(self?.requestItems)
                 
                 let requestKeys = (snapshot.value as! [String: String]).keys
                 var requestCount = 0
@@ -325,12 +350,16 @@ class FirebaseDataClass{
                         
                         let studentID = requestData["student"] as! String
                         
-                        self?.ref.child("users").child(destinationID).child("name").observeSingleEvent(of: .value, with: { [weak self] (destinationNameSnapshot) in
+                        self?.ref.child("users").child(destinationID).child("name").observe(.value, with: { [weak self] (destinationNameSnapshot) in
+                            if !(self?.isPullingRequest)!{
+                                self?.reloadHistoryData()
+                                return
+                            }
                             if destinationNameSnapshot.exists(){
                                 cell.destination = destinationNameSnapshot.value as? String
                                 requestCount += 1
                                 if requestCount == requestKeys.count * 2{
-                                    self?.historyCellsDidLoad()
+                                    self?.historyCellsDidLoad(fromHistory: false)
                                 }
                             }else{
                                 
@@ -338,7 +367,7 @@ class FirebaseDataClass{
                                     cell.destination = potentialDestinationNameSnapshot.value as? String
                                     requestCount += 1
                                     if requestCount == requestKeys.count * 2{
-                                        self?.historyCellsDidLoad()
+                                        self?.historyCellsDidLoad(fromHistory: false)
                                     }
                                 })
                             }
@@ -349,14 +378,14 @@ class FirebaseDataClass{
                                 cell.student = studentNameSnapshot.value as? String
                                 requestCount += 1
                                 if requestCount == requestKeys.count * 2{
-                                    self?.historyCellsDidLoad()
+                                    self?.historyCellsDidLoad(fromHistory: false)
                                 }
                             }else{
                                 self?.ref.child("potentialStudent").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
                                     cell.student = potentialStudentNameSnapshot.value as? String
                                     requestCount += 1
                                     if requestCount == requestKeys.count * 2  {
-                                        self?.historyCellsDidLoad()
+                                        self?.historyCellsDidLoad(fromHistory: false)
                                     }
                                 })
                             }

@@ -9,11 +9,13 @@
 import UIKit
 import Firebase
 
-var selectedPeople: [User]?
-var toTeacher: User?
-var didEdit: Bool = false
-
-class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
+class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, SelectTeacherDelegate {
+   
+    
+    
+    var selectedPeople: [User]?
+    var toTeacher: User?
+    var didEdit: Bool = false
     
     var isEditable = true
     
@@ -25,6 +27,8 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     let selectTwo = SelectTeachers()
     
     
+    let selectTest = SelectTeachers()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
@@ -33,11 +37,22 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         toTeacher = nil
         didEdit = false
         
+//        selectOne.selectStudents = firebaseData.currentUser.userType != .student
+//        selectOne.isFirstSelecion = firebaseData.currentUser.userType == .student
+//
         if firebaseData.currentUser.userType != .student{
             selectOne.selectStudents = true
+            selectOne.isFirstSelecion = false
         }else{
             selectOne.isFirstSelecion = true
+            selectOne.selectStudents = false
         }
+        
+        selectTest.isFirstSelecion = false
+        selectTest.selectStudents = false
+        
+        selectOne.delegate = self
+        selectTwo.delegate = self
         
         setUpCancelButton()
         setUpTitleView()
@@ -49,6 +64,11 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         view.addGestureRecognizer(tap)
     }
     
+    deinit {
+        
+        print("\n\nPLSSSSSS DEINIT\n\n")
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         
         // User better methose of passing data between views such as a delgate and protocol
@@ -56,18 +76,37 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
         // Pulling the data from select Teacher view Comtroller
         
         //TODO: - Save the people to be requested
-        if (selectedPeople != nil && selectedPeople! != []) || didEdit{
-            var listOfPeople = ""
-            for i in selectedPeople!{ listOfPeople += "\(i.userName), " }
-            listOfPeople = String(listOfPeople.dropLast(2))
-            
-            firstTextField.text = "\(listOfPeople)"
-            firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
-        }
-        if toTeacher != nil{
-            secondTextField.text = "\(String(describing: toTeacher!.userName))"
-            secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
-        }
+//        if (selectedPeople != nil && selectedPeople! != []) || didEdit{
+//            var listOfPeople = ""
+//            for i in selectedPeople!{ listOfPeople += "\(i.userName), " }
+//            listOfPeople = String(listOfPeople.dropLast(2))
+//            
+//            firstTextField.text = "\(listOfPeople)"
+//            firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+//        }
+//        if toTeacher != nil{
+//            secondTextField.text = "\(String(describing: toTeacher!.userName))"
+//            secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+//        }
+    }
+    
+     func didSelectDestination(user: User) {
+        toTeacher = user
+        didEdit = true
+
+        secondTextField.text = "\(String(describing: toTeacher!.userName))"
+        secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+    }
+
+    func didSelectFirst(users: [User]) {
+        selectedPeople = users
+        didEdit = true
+
+        var listOfPeople = ""
+        for i in selectedPeople!{ listOfPeople += "\(i.userName), " }
+        listOfPeople = String(listOfPeople.dropLast(2))
+        firstTextField.text = "\(listOfPeople)"
+        firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
     }
     
     //MARK: - Cancel Button
@@ -387,76 +426,92 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     @objc func makeRequest(){
         if isEditable{
             
-            let reasoning = self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!
+
             
-            
-            
-            guard var student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
-                self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
-                return
+            if selectedPeople != nil && toTeacher != nil{
+                FirebaseRequests.makeRequest(from: selectedPeople!, toTeacher: toTeacher ?? User(), reason:  self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!, completion: { [weak self] (title, message, buttonTitle, worked) in
+                    
+                    if (!worked){
+                        self?.alert(title: title, message: message, buttonTitle: buttonTitle)
+                    }else{
+                        self?.dismiss(animated: true, completion: nil)
+                    }
+                    
+                })
             }
             
-            guard let origin = firebaseData.currentUser.userType == .student ? selectedPeople?[0].userStringID : firebaseData.userID else{
-                self.alert(title: "No Origin", message: "Please enter a user as the origin", buttonTitle: "Okay")
-                return
-            }
+//            FirebaseRequests.makeRequest(reason:  self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!, completion{ (title, message, buttonTitle, worked)
+//
+//                
+//            })
             
-            guard let dest = toTeacher?.userStringID else{
-                self.alert(title: "No Destination", message: "Please enter a user as the destination", buttonTitle: "Okay")
-                return
-            }
-            
-            
-            
-            if firebaseData.currentUser.userType != .student{
-                student = "["
-                for i in selectedPeople!{
-                    student += "\"\(i.userStringID!)\","
-                }
-                student = student.substring(to: student.index(before: student.endIndex))
-                student += "]"
-                print(student)
-            }
-            
-            FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
-                if error == nil{
-                    
-                    let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/request"
-                    var request = URLRequest(url: URL(string: requestURL)!)
-                    request.httpMethod = "POST"
-                    request.addValue("application/json", forHTTPHeaderField: "Content-type")
-                    request.addValue(token!, forHTTPHeaderField: "Authorization")
-                    
-                    //TODO: - Multi Person Pass
-                    
-                    
-                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
-                    print(student)
-                    print(firebaseData.userID)
-                    
-                    
-                    print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
-                    
-                    
-                    URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
-                        
-                        let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
-                        print("\nData: \(responseMessage) \n\n")
-                        
-                        if responseMessage != ""{
-                            self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
-                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
-                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
-                        }else{
-                            
-                            self?.dismiss(animated: true, completion: nil)
-                        }
-                    }).resume()
-                }else{
-                    print("FIRSTERROR: \(String(describing: error))")
-                }
-            })
-            
+//            let reasoning = self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!
+//
+//            guard var student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
+//                self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
+//                return
+//            }
+//
+//            guard let origin = firebaseData.currentUser.userType == .student ? selectedPeople?[0].userStringID : firebaseData.userID else{
+//                self.alert(title: "No Origin", message: "Please enter a user as the origin", buttonTitle: "Okay")
+//                return
+//            }
+//
+//            guard let dest = toTeacher?.userStringID else{
+//                self.alert(title: "No Destination", message: "Please enter a user as the destination", buttonTitle: "Okay")
+//                return
+//            }
+//
+//
+//
+//            if firebaseData.currentUser.userType != .student{
+//                student = "["
+//                for i in selectedPeople!{
+//                    student += "\"\(i.userStringID!)\","
+//                }
+//                student = student.substring(to: student.index(before: student.endIndex))
+//                student += "]"
+//                print(student)
+//            }
+//
+//            FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
+//                if error == nil{
+//
+//                    let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/request"
+//                    var request = URLRequest(url: URL(string: requestURL)!)
+//                    request.httpMethod = "POST"
+//                    request.addValue("application/json", forHTTPHeaderField: "Content-type")
+//                    request.addValue(token!, forHTTPHeaderField: "Authorization")
+//
+//                    //TODO: - Multi Person Pass
+//
+//
+//                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+//
+//                    print(student)
+//                    print(firebaseData.userID)
+//
+//                    print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+//
+//                    URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
+//
+//                        let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
+//                        print("\nData: \(responseMessage) \n\n")
+//
+//                        if responseMessage != ""{
+//                            self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
+//                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
+//                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
+//                        }else{
+//
+//                            self?.dismiss(animated: true, completion: nil)
+//                        }
+//                    }).resume()
+//                }else{
+//                    print("FIRSTERROR: \(String(describing: error))")
+//                }
+//            })
+//
             
         }
     }

@@ -195,7 +195,9 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
         let historyData = infoArray[indexPath.row]
-        cell.updateWithHistoryData(data: historyData)
+        
+//        cell.updateWithHistoryData(data: historyData)
+        cell.createCellWith(data: historyData)
         return cell
     }
     

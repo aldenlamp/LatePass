@@ -16,35 +16,37 @@ class HistoryCell: UITableViewCell{
     var thisTimeFrame: timeFrames!
     
     
-    func updateWithHistoryData(data: HistoryData){
-        
-        switch data.thisCellType {
-        case .studentHistory:
-            setUpCell(titleLabel: "\(data.origin!) to \(String(describing: data.destination!))", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-            break
-        case .toHistory:
-            setUpCell(titleLabel: "\(String(describing: data.student!)) will be late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-            break
-        case .fromHistory:
-            setUpCell(titleLabel: "\(String(describing: data.student!)) left late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-            break
-        case .request:
-            setUpCell(titleLabel: "\(String(describing: data.student!)) requests a latepass", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-            break
-        default: print("something went wrong")
-        }
-    }
+//    func updateWithHistoryData(data: HistoryData){
+//
+////        switch data.thisCellType {
+////        case .studentHistory:
+////            setUpCell(titleLabel: "\(data.origin!) to \(String(describing: data.destination!))", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
+////            break
+////        case .toHistory:
+////            setUpCell(titleLabel: "\(String(describing: data.student!)) will be late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
+////            break
+////        case .fromHistory:
+////            setUpCell(titleLabel: "\(String(describing: data.student!)) left late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
+////            break
+////        case .request:
+////            setUpCell(titleLabel: "\(String(describing: data.student!)) requests a latepass", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
+////            break
+////        default: print("something went wrong")
+////        }
+//
+//        setUpCell(titleLabel: data.toStringReadable(), status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
+//}
     
-    private func setUpCell(titleLabel: String, status: acceptedStatus, unixDate: Int, thisTimeFrame: timeFrames){
-        dateLabel.text = getDateString(unix: Double(unixDate))
-        timeLabel.text = getTimeString(unix: Double(unixDate))
-        self.titleLabel.text = titleLabel
+    public func createCellWith(data: HistoryData){
+        dateLabel.text = data.getDateString()
+        timeLabel.text = data.getTimeString()
+        self.titleLabel.text = data.toStringReadable()
         timeLabel.adjustsFontSizeToFitWidth = true
         
-        switch status {
+        switch data.status! {
         case .accepted:
             
-            switch thisTimeFrame{
+            switch data.thisTimeFrame! {
             case .thisWeek:
                 iconImage.image = #imageLiteral(resourceName: "approved-lightBlue")
                 break
@@ -81,6 +83,54 @@ class HistoryCell: UITableViewCell{
         textView.heightAnchor.constraint(equalToConstant: 51).isActive = true
         textView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
     }
+    
+    
+//    private func setUpCell(titleLabel: String, status: acceptedStatus, unixDate: Int, thisTimeFrame: timeFrames){
+//        dateLabel.text = getDateString()
+//        timeLabel.text = getTimeString()
+//        self.titleLabel.text = titleLabel
+//        timeLabel.adjustsFontSizeToFitWidth = true
+//
+//        switch status {
+//        case .accepted:
+//
+//            switch thisTimeFrame{
+//            case .thisWeek:
+//                iconImage.image = #imageLiteral(resourceName: "approved-lightBlue")
+//                break
+//            case .thisMonth:
+//                iconImage.image = #imageLiteral(resourceName: "approved-purple")
+//                break
+//            case .thisYear:
+//                iconImage.image = #imageLiteral(resourceName: "approved-blue")
+//                break
+//            }
+//        case .pending:
+//            iconImage.image = #imageLiteral(resourceName: "pending-lightBlue")
+//            break
+//        case .rejected:
+//            iconImage.image = #imageLiteral(resourceName: "rejected-red")
+//            break
+//        }
+//
+//        self.contentView.addSubview(iconImage)
+//        iconImage.translatesAutoresizingMaskIntoConstraints = false
+//
+//        iconImage.widthAnchor.constraint(equalToConstant: 45).isActive = true
+//        iconImage.heightAnchor.constraint(equalToConstant: 45).isActive = true
+//
+//        iconImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 22.5).isActive = true
+//        //        iconImage.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -22.5).isActive = true
+//        iconImage.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 30).isActive = true
+//
+//        let textView = generateLabelView()
+//        self.contentView.addSubview(textView)
+//
+//        NSLayoutConstraint(item: textView, attribute: .left, relatedBy: .equal, toItem: iconImage, attribute: .right, multiplier: 1, constant: 35).isActive = true
+//        textView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20).isActive = true
+//        textView.heightAnchor.constraint(equalToConstant: 51).isActive = true
+//        textView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
+//    }
     
     //MARK: - Setting up view
     
@@ -187,27 +237,7 @@ class HistoryCell: UITableViewCell{
         
     }
     
-    func getDateString(unix: Double) -> String{
-        let date = Date(timeIntervalSince1970: TimeInterval(unix))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MM/dd/yy"
-        return formatter.string(from: date)
-    }
     
-    func getTimeString(unix: Double) -> String{
-        let date = Date(timeIntervalSince1970: TimeInterval(unix))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH"
-        var hour = Int(formatter.string(from: date))!
-        if (hour > 12){
-            hour -= 12
-        }
-        formatter.amSymbol = "am"
-        formatter.pmSymbol = "pm"
-        formatter.dateFormat = ":mm a"
-        
-        return "\(hour)\(formatter.string(from: date))"
-    }
 }
 
 

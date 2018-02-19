@@ -10,16 +10,19 @@ import UIKit
 import Firebase
 
 
+protocol SelectTeacherDelegate: class {
+    func didSelectDestination(user: User)
+    func didSelectFirst(users: [User])
+}
 
 
-class SelectTeachers: UIViewController{
+class SelectTeachers: UIViewController, UserTableViewDelegate{
     
-    var selectedArray = [User]()
-    var filteredUsers = [User]()
-    var isSearching = false
+    //This is if a student is selecting, is he selecting the first teacher or the second teahcer
+    //LONG STORY SHORT: different thatn selectStudents
     var isFirstSelecion = false
-    
     var selectStudents = false
+    weak var delegate: SelectTeacherDelegate!
     
     
     override func viewDidLoad() {
@@ -50,7 +53,7 @@ class SelectTeachers: UIViewController{
         NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: teacherDataLoaded, object: nil)
 //                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
 //                NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
-//
+
         
         
     }
@@ -58,7 +61,9 @@ class SelectTeachers: UIViewController{
     
         @objc func testingReloadTableview(){
             print("shit is happeneing")
-            if (selectStudents && allStudentsLoaded) || (!selectStudents && allTeachersLoaded){ tableView.reloadData() }
+            if (selectStudents && allStudentsLoaded) || (!selectStudents && allTeachersLoaded){
+                tableView.update()
+            }
         }
     
     @objc func dismissKeyboard() { view.endEditing(true) }
@@ -75,20 +80,17 @@ class SelectTeachers: UIViewController{
     }
     
     @objc private func cancel(){
-        selectedPeople = selectedArray.reversed()
-        didEdit = true
+        delegate.didSelectFirst(users: tableView.selectedArray.reversed())
         self.dismiss(animated: true, completion: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
         print("View deInited")
-        selectedArray.forEach { (user) in
+        tableView.selectedArray.forEach { (user) in
             user.isChosen = false
         }
-        
-        selectedArray.removeAll()
-        
+        tableView.selectedArray.removeAll()
     }
     
     //MARK: - Title
@@ -186,141 +188,45 @@ class SelectTeachers: UIViewController{
     
     
     @objc func textFieldDidChange(_ textField: UITextField){
-        filteredUsers.removeAll()
-        let text = textField.text!.lowercased()
-        if text == ""{
-            isSearching = false
-        }else{
-            isSearching = true
-            for i in selectStudents ? firebaseData.allStudents : firebaseData.allTeachers{
-                if i.userName.lowercased().contains(text) || i.userEmail.lowercased().contains(text){
-                    filteredUsers.append(i)
-                }
-            }
-            
-        }
-        tableView.reloadData()
+        tableView.textDidChange(to: textField.text!.lowercased())
     }
     
     //MARK: - TableView
-    let tableView: UITableView = UITableView()
+    let tableView: UserTableView = UserTableView()
     
     func setUpTableView(){
         tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorStyle = .none
+        let users: [User]
+        if firebaseData.currentUser.userType == .student{
+            users = firebaseData.allTeachers
+        }else{
+            users = selectStudents ? firebaseData.allStudents : firebaseData.allTeachers
+        }
+        
+        tableView.setUpTableView(withUsers: users, multipleSelect: selectStudents)
+        
         self.view.addSubview(tableView)
         
         tableView.translatesAutoresizingMaskIntoConstraints  = false
-        tableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 0).isActive = true // Change to search bar
+        tableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 0).isActive = true
         tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
         tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive  = true
         tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
-        
-        tableView.register(UserCell.self, forCellReuseIdentifier: "UserCell")
-    }
-}
-
-
-extension SelectTeachers: UITableViewDelegate,  UITableViewDataSource{
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 65 }
-    
-    func numberOfSections(in tableView: UITableView) -> Int { return 1 }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isSearching ? filteredUsers.count : selectStudents ? firebaseData.allStudents.count : firebaseData.allTeachers.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func singleUserSelected(selectedUser: User) {
+        searchTextField.text = ""
+        searchTextField.endEditing(true)
         
-        let userCell = isSearching ? filteredUsers[indexPath.row] : selectStudents ? firebaseData.allStudents[indexPath.row] : firebaseData.allTeachers[indexPath.row]
-        let cell = tableView.dequeueReusableCell(withIdentifier: "UserCell", for: indexPath) as! UserCell
-        
-        cell.userNameLabel.text = userCell.userName
-        cell.userImageView.image = userCell.userImage
-        cell.userEmailLabel.text = userCell.userEmail
-        
-        if indexPath.row != 0 { cell.addSeparator() }
-        
-        if selectStudents && !userCell.isChosen{
-            cell.contentView.alpha = 0.65
+        if isFirstSelecion {
+            delegate.didSelectFirst(users: [selectedUser])
         }else{
-            cell.contentView.alpha = 1
+            delegate.didSelectDestination(user: selectedUser)
         }
-        
-        cell.selectionStyle = .none
-        return cell
+        dismiss(animated: true, completion: nil)
     }
     
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! UserCell
-        
-        if !selectStudents{
-            //TODO: - dissmiss view and return the user
-            let user = isSearching ? filteredUsers[indexPath.row] : firebaseData.allTeachers[indexPath.row]
-//            toTeacher = user
-            if isFirstSelecion {
-                selectedArray.removeAll()
-                selectedArray.append(user)
-                cancel()
-            }else{
-                toTeacher = user
-            }
-            
-            
-            self.dismiss(animated: true, completion: nil)
-        }else{
-            let user = isSearching ? filteredUsers[indexPath.row] : firebaseData.allStudents[indexPath.row]
-            
-            if user.isChosen{
-                user.isChosen = false
-                cell.contentView.alpha = 0.65
-                //more away from the top of the array
-                
-                if indexPath.row != User.numberOfSelected{
-                    let removedUser = firebaseData.allStudents.remove(at: user.userIndex!)
-                    if !isSearching{ tableView.deleteRows(at: [indexPath], with: .automatic) }
-                    firebaseData.allStudents.insert(removedUser, at: User.numberOfSelected)
-                    if !isSearching{ tableView.insertRows(at: [ IndexPath(row: User.numberOfSelected,section: 0) ] , with: .automatic) }
-                }
-                
-                selectedArray.remove(at: selectedArray.index(of: user)!)
-                
-                firebaseData.resetingUserIndex()
-                
-            }else{
-                user.isChosen = true
-                cell.contentView.alpha = 1
-                //move to the top of the array
-                
-                if indexPath.row != 0{
-                    let removedUser = firebaseData.allStudents.remove(at: user.userIndex!)
-                    if (!isSearching){ tableView.deleteRows(at: [indexPath], with: .automatic) }
-                    firebaseData.allStudents.insert(removedUser, at: 0)
-                    if (!isSearching){ tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic) }
-                }
-                
-                selectedArray.append(user)
-                
-                firebaseData.resetingUserIndex()
-            }
-        }
-        
-        if selectStudents{
-            searchTextField.text = ""
-            isSearching = false
-            searchTextField.endEditing(true)
-        }
-        
-
-        //For testing if the order is in the right way wiht the User index only for the teachers
-//        for i in firebaseData.userSelection{
-//            print("INDEX: \(i.userIndex)\t\tuserName: \(i.userName)\temail: \(i.userEmail)")
-//        }
-//        print("\n\n\n")
-//
-    }
 }
 
 

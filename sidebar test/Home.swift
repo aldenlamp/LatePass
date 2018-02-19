@@ -22,70 +22,93 @@ var testImage: UIImage?
     let historyTableView = HistoryTableView()
     let statView = StatsView()
     
-    
-    //INDEX 0: this week, 1: this month, 2: this year
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(red: 0.973, green: 0.973, blue: 0.984, alpha: 1.00)
         
-        historyTableView.historyDelegate = self
-        
         firebaseData = FirebaseDataClass()
         firebaseData.firebaseDataDelegate = self
-        if firebaseData.userID != nil{ firebaseData.pullingAllData() }
+        historyTableView.historyDelegate = self
+        
+        if firebaseData.userID != nil{
+            firebaseData.pullingAllData()
+        }
         
         //Setting up USER INTERFACE
         setUpNavigation()
         setUpStats()
-        
         setUpTableView()
-        
-        
-        
     }
     
     //MARK: - reloading Data
-    // FirebaseDataDelegae functions
-    func uesrDataDidLoad() {
-        print("\n\nuser data loaded\n\n")
-    }
     
     func historyArrayDidLoad() {
-//        firebaseData.historyLoaded = false
-//        firebaseData.allItems += firebaseData.historyItems
-        
-//        historyTableView.reloadData()
-//        tableViewExists()
         var lateCounts = [0, 0, 0]
-        //this is for the numbers and statistics on the top
         for i in firebaseData.allItems{
-            if (i.thisCellType! == .fromHistory || i.thisCellType == .studentHistory) && i.status! != .rejected{
-                switch i.thisTimeFrame!{
+            if (i.thisCellType == .fromHistory || i.thisCellType == .studentHistory) && i.status != .rejected{
+                switch i.thisTimeFrame{
                 case .thisWeek: lateCounts[0] += 1;
                 case .thisMonth: lateCounts[1] += 1
                 case .thisYear: lateCounts[2] += 1
+                default: break
                 }
             }
         }
-        
         statView.lateCounts = lateCounts
         
         historyTableView.infoArray = firebaseData.allItems
         historyTableView.tableViewIsHidden = false
+        
         print("\n\nhistory data loaded\n\n")
     }
     
-    func requestArrayDidLoad() {
-//        historyTableView.reloadData()
-//        tableViewExists()
-//        print("\n\nrequest data loaded\n\n")
+    //MARK: - Stats
+    
+    func setUpStats(){
+        statView.setUpStats()
+        self.view.addSubview(statView)
+        statView.translatesAutoresizingMaskIntoConstraints = false
+        statView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 84).isActive = true
+        statView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        statView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
     }
     
     
+    //MARK: - TableView
+    
+    func setUpTableView(){
+        self.view.addSubview(historyTableView)
+        historyTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        historyTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+        historyTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        historyTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        historyTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 200).isActive = true
+        
+        historyTableView.tableViewIsHidden = true
+        
+        historyTableView.infoArray = firebaseData.allItems
+        
+        historyTableView.start()
+        
+    }
+    
+    func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
+        
+        let data = firebaseData.allItems[indexPath.row]
+        // Creating the new cell with attributes
+        let vc = ExpandedCellTeacher()
+        vc.historyData = data
+        
+        
+        vc.titleLabel.text = historyData.toStringReadable()
+        vc.dateLabel.text = historyData.getDateString()
+        self.present(vc, animated: true, completion: nil)
+    }
+    
     
     //MARK: - Navigation
+    
     private func setUpNavigation(){
         navigationController?.navigationBar.backgroundColor = UIColor.white
         navigationController?.navigationBar.layer.borderColor = UIColor.white.cgColor
@@ -121,62 +144,12 @@ var testImage: UIImage?
     }
     
     @objc private func openNewRequest(){
-        
-        
-        
         if firebaseData.currentUser != nil{
             let requestViewController = Request() as UIViewController
             self.present(requestViewController, animated: true, completion: nil)
         }else{
             alert(title: "No Wifi", message: "Please Connect to WIFI", buttonTitle: "Okay")
         }
-    }
-    
-    //MARK: - Stats
-    
-    
-    func setUpStats(){
-        statView.setUpStats()
-        self.view.addSubview(statView)
-        statView.translatesAutoresizingMaskIntoConstraints = false
-        statView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 84).isActive = true
-        statView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
-        statView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
-    }
-    
-    
-    //MARK: - NewTableView
-    
-    func setUpTableView(){
-        self.view.addSubview(historyTableView)
-        historyTableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        historyTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
-        historyTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
-        historyTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
-        historyTableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 200).isActive = true
-        
-        historyTableView.tableViewIsHidden = true
-        
-        historyTableView.infoArray = firebaseData.allItems
-        
-        historyTableView.start()
-        
-    }
-    
-    func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
-        
-        let data = firebaseData.allItems[indexPath.row]
-        // Creating the new cell with attributes
-        let vc = ExpandedCell()
-        vc.historyData = data
-        
-        
-        //TODO: - FormatTitle
-//        vc.titleLabel.text = cell.titleLabel.text
-//        vc.dateLabel.text = cell.dateLabel.text
-        
-        self.present(vc, animated: true, completion: nil)
     }
 }
 
