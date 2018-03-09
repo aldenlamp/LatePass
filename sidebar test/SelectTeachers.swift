@@ -9,7 +9,6 @@
 import UIKit
 import Firebase
 
-
 protocol SelectTeacherDelegate: class {
     func didSelectDestination(user: User)
     func didSelectFirst(users: [User])

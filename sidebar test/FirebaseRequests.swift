@@ -82,6 +82,7 @@ struct FirebaseRequests{
                     }else{
                         
                         completion("", "", "", true)
+                        firebaseData.reloadHistoryData()
                     }
                 }).resume()
             }else{
@@ -131,6 +132,7 @@ struct FirebaseRequests{
                         //                        self?.dismiss(animated: true, completion: nil)
                         
                         completion("", "", "", true)
+                        firebaseData.reloadHistoryData()
                     }
                 }).resume()
             }else{

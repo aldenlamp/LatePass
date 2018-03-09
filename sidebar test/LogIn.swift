@@ -9,20 +9,31 @@
 import UIKit
 import Firebase
 import GoogleSignIn
+import GoogleAPIClientForREST
+import Google
+    
+class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
 
-class LogIn: UIViewController, GIDSignInUIDelegate {
+    var observer : NSObjectProtocol!
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
         
+        
+//        setUpGoogle()
         setUpView()
         setUpAuth()
         
         //Called after Login has been completed
-        NotificationCenter.default.addObserver(forName: logInCompleteNotification, object: nil, queue: nil) { (notification) in
+        observer = NotificationCenter.default.addObserver(forName: logInCompleteNotification, object: nil, queue: nil) { (notification) in
             NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "allowSideBarExtension")))
             NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "setUpUserAttributesSideBar")))
         }
+    }
+    
+    
+    deinit{
+        NotificationCenter.default.removeObserver(observer)
     }
     
     func setUpAuth(){
@@ -78,7 +89,9 @@ class LogIn: UIViewController, GIDSignInUIDelegate {
         
     }
     
-    @objc func googleSignIn(){ GIDSignIn.sharedInstance().signIn() }
+    @objc func googleSignIn(){
+        GIDSignIn.sharedInstance().signIn()
+    }
     
     func setUpView(){
         let imageView = UIImageView(image: #imageLiteral(resourceName: "clock"))

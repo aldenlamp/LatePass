@@ -18,6 +18,10 @@ class StatsView: UIView {
         }
     }
     
+    deinit{
+        print("stat view did DeInit")
+    }
+    
     
     private var numberArr = [UILabel]()
     

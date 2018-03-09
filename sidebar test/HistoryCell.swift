@@ -16,54 +16,14 @@ class HistoryCell: UITableViewCell{
     var thisTimeFrame: timeFrames!
     
     
-//    func updateWithHistoryData(data: HistoryData){
-//
-////        switch data.thisCellType {
-////        case .studentHistory:
-////            setUpCell(titleLabel: "\(data.origin!) to \(String(describing: data.destination!))", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-////            break
-////        case .toHistory:
-////            setUpCell(titleLabel: "\(String(describing: data.student!)) will be late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-////            break
-////        case .fromHistory:
-////            setUpCell(titleLabel: "\(String(describing: data.student!)) left late", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-////            break
-////        case .request:
-////            setUpCell(titleLabel: "\(String(describing: data.student!)) requests a latepass", status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-////            break
-////        default: print("something went wrong")
-////        }
-//
-//        setUpCell(titleLabel: data.toStringReadable(), status: data.status!, unixDate: data.timeStarted!, thisTimeFrame: data.thisTimeFrame)
-//}
+
     
     public func createCellWith(data: HistoryData){
         dateLabel.text = data.getDateString()
         timeLabel.text = data.getTimeString()
         self.titleLabel.text = data.toStringReadable()
         timeLabel.adjustsFontSizeToFitWidth = true
-        
-        switch data.status! {
-        case .accepted:
-            
-            switch data.thisTimeFrame! {
-            case .thisWeek:
-                iconImage.image = #imageLiteral(resourceName: "approved-lightBlue")
-                break
-            case .thisMonth:
-                iconImage.image = #imageLiteral(resourceName: "approved-purple")
-                break
-            case .thisYear:
-                iconImage.image = #imageLiteral(resourceName: "approved-blue")
-                break
-            }
-        case .pending:
-            iconImage.image = #imageLiteral(resourceName: "pending-lightBlue")
-            break
-        case .rejected:
-            iconImage.image = #imageLiteral(resourceName: "rejected-red")
-            break
-        }
+        iconImage.image = data.image
         
         self.contentView.addSubview(iconImage)
         iconImage.translatesAutoresizingMaskIntoConstraints = false

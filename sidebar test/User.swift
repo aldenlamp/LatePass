@@ -12,7 +12,7 @@ import UIKit
 class User: Hashable{
     
     var hashValue: Int {
-        return Int(userID)
+        return userEmail.hashValue
     }
     
     static func ==(lhs: User, rhs: User) -> Bool {
@@ -36,7 +36,24 @@ class User: Hashable{
     init(){
         self.userType = .student
         self.userName = ""
-        self.userEmail = ""
+        
+        self.userImage = #imageLiteral(resourceName: "BlankUser")
+        var id: UInt32 = 0
+        while(true){
+            id = arc4random_uniform(UInt32.max)
+            if !User.allUserIds.contains(id) { break }
+        }
+        self.userEmail = "\(id)"
+        self.userID = id
+        self.isChosen = false
+        User.numberOfSelected = 0
+        User.allUserIds.append(id)
+    }
+    
+    init(email: String){
+        self.userType = .student
+        self.userName = ""
+        self.userEmail = email
         self.userImage = #imageLiteral(resourceName: "BlankUser")
         var id: UInt32 = 0
         while(true){

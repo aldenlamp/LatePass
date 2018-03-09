@@ -30,17 +30,17 @@ class MainNavigationViewController: UINavigationController {
     func addObservers(){
         let notificationCenter = NotificationCenter.default
         firstSelectedObserver = notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.first), object: nil, queue: nil, using: { (notification) in
-            self.storeVCs()
+//            self.storeVCs()
             if self.mainVCS.count > 0{
                 self.setViewControllers(self.mainVCS, animated: true)
             }else{
                 
-                //WHAT IS HAPPENING HERE??????
+                print("WHAT IS HAPPENING HERE??????")
                 
-                
-                let mainVC = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "first")
-                self.mainVCS = [mainVC]
-                self.setViewControllers(self.mainVCS, animated: true)
+//
+//                let mainVC = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "first")
+//                self.mainVCS = [mainVC]
+//                self.setViewControllers(self.mainVCS, animated: true)
             }
         })
         notificationCenter.addObserver(forName: WifiDisconectedNotification, object: nil, queue: nil, using:  {(notification) in

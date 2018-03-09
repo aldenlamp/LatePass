@@ -22,6 +22,28 @@ class HistoryData{
     var thisCellType: cellTypes!
     var thisTimeFrame: timeFrames!
     
+    var image: UIImage {
+        get{
+            if status == nil || thisTimeFrame == nil{
+             return #imageLiteral(resourceName: "rejected-red")
+            }  
+            switch status! {
+            case .accepted:
+                switch thisTimeFrame! {
+                case .thisWeek:
+                    return #imageLiteral(resourceName: "approved-lightBlue")
+                case .thisMonth:
+                    return #imageLiteral(resourceName: "approved-purple")
+                case .thisYear:
+                    return #imageLiteral(resourceName: "approved-blue")
+                }
+            case .pending:
+                return #imageLiteral(resourceName: "pending-lightBlue")
+            case .rejected:
+                return #imageLiteral(resourceName: "rejected-red")
+            }
+        }
+    }
     
     func initData(ID: String, origin: String, destination: String?, student: String, timeStarted: Int, timeCompleted: Int?, reason: String, status: acceptedStatus, cellType: cellTypes){
         
@@ -65,14 +87,11 @@ class HistoryData{
     
     func toStringReadable() -> String{
         switch thisCellType! {
-        case .studentHistory:
-        return "\(origin!) to \(String(describing: destination!))"
-        case .toHistory:
-        return "\(String(describing: student!)) will be late"
-        case .fromHistory:
-        return "\(String(describing: student!)) left late"
-        case .request:
-        return "\(String(describing: student!)) requests a latepass"
+        case .studentHistory:   return "\(origin!) to \(String(describing: destination!))"
+        case .toHistory:        return "\(String(describing: student!)) will be late"
+        case .fromHistory:      return "\(String(describing: student!)) left late"
+        case .request:          return "\(String(describing: student!)) requests a latepass"
+        case .studentRequest:   return "\(String(describing: student!)) left late"
         }
     }
     

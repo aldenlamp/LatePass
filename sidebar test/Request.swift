@@ -165,7 +165,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
     
     func setUpPicker(){
         firstView = createQuestion(placeholder: "Select \(firebaseData.currentUser.userType == .student ? "Teacher" : "Students")", question: firebaseData.currentUser.userType == .student ? "Where are you comming from?" : "Who will be late?", num : 0)
-        secondView = createQuestion(placeholder: "Select Teacher", question: "Who are \(firebaseData.currentUser.userType == .student ? "you" : "they") going to?", num: 1)
+        secondView = createQuestion(placeholder: "Select Teacher\(firebaseData.currentUser.userType == .student ? "" : " (OPTIONAL)")", question: "Who are \(firebaseData.currentUser.userType == .student ? "you" : "they") going to?", num: 1)
         
         firstView.translatesAutoresizingMaskIntoConstraints = false
         secondView.translatesAutoresizingMaskIntoConstraints = false
@@ -425,9 +425,6 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
     
     @objc func makeRequest(){
         if isEditable{
-            
-
-            
             if selectedPeople != nil && toTeacher != nil{
                 FirebaseRequests.makeRequest(from: selectedPeople!, toTeacher: toTeacher ?? User(), reason:  self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!, completion: { [weak self] (title, message, buttonTitle, worked) in
                     
@@ -439,80 +436,6 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
                     
                 })
             }
-            
-//            FirebaseRequests.makeRequest(reason:  self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!, completion{ (title, message, buttonTitle, worked)
-//
-//                
-//            })
-            
-//            let reasoning = self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!
-//
-//            guard var student = firebaseData.currentUser.userType == .student ? firebaseData.userID : selectedPeople?[0].userStringID else{
-//                self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
-//                return
-//            }
-//
-//            guard let origin = firebaseData.currentUser.userType == .student ? selectedPeople?[0].userStringID : firebaseData.userID else{
-//                self.alert(title: "No Origin", message: "Please enter a user as the origin", buttonTitle: "Okay")
-//                return
-//            }
-//
-//            guard let dest = toTeacher?.userStringID else{
-//                self.alert(title: "No Destination", message: "Please enter a user as the destination", buttonTitle: "Okay")
-//                return
-//            }
-//
-//
-//
-//            if firebaseData.currentUser.userType != .student{
-//                student = "["
-//                for i in selectedPeople!{
-//                    student += "\"\(i.userStringID!)\","
-//                }
-//                student = student.substring(to: student.index(before: student.endIndex))
-//                student += "]"
-//                print(student)
-//            }
-//
-//            FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
-//                if error == nil{
-//
-//                    let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/request"
-//                    var request = URLRequest(url: URL(string: requestURL)!)
-//                    request.httpMethod = "POST"
-//                    request.addValue("application/json", forHTTPHeaderField: "Content-type")
-//                    request.addValue(token!, forHTTPHeaderField: "Authorization")
-//
-//                    //TODO: - Multi Person Pass
-//
-//
-//                    request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
-//
-//                    print(student)
-//                    print(firebaseData.userID)
-//
-//                    print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
-//
-//                    URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
-//
-//                        let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
-//                        print("\nData: \(responseMessage) \n\n")
-//
-//                        if responseMessage != ""{
-//                            self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
-//                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
-//                            if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
-//                        }else{
-//
-//                            self?.dismiss(animated: true, completion: nil)
-//                        }
-//                    }).resume()
-//                }else{
-//                    print("FIRSTERROR: \(String(describing: error))")
-//                }
-//            })
-//
-            
         }
     }
 }

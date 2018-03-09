@@ -16,11 +16,12 @@ enum SlideState{
 
 let ReturnToLoginNotificationName = NSNotification.Name(rawValue: "ReturnToLoginNotification")
 let logInCompleteNotification = NSNotification.Name(rawValue: "LogInComplete")
+let GIDSignInLoaded = NSNotification.Name(rawValue: "signInLoaded")
 
 
 class ContainerViewController: UIViewController {
     var activeNavigationController: MainNavigationViewController!
-    var activeViewController: UIViewController!
+//    var activeViewController: UIViewController!
     var currentState: SlideState = .mainVC
     var allowSlide = true
     
@@ -67,7 +68,8 @@ class ContainerViewController: UIViewController {
         })
         
         NotificationCenter.default.addObserver(forName: ReturnToLoginNotificationName, object: nil, queue: nil) { (notification) in
-            self.activeNavigationController.viewControllers = [LogIn()]
+            self.activeNavigationController.mainVCS = [LogIn()]
+            self.activeNavigationController.viewControllers = self.activeNavigationController.mainVCS
             self.allowSlide = false
             self.activeNavigationController.navigationBar.isHidden = true
             if self.currentState == .leftPanelExpanded{
@@ -86,17 +88,6 @@ class ContainerViewController: UIViewController {
     var callSetUpSideBar = true
     
     override func viewDidAppear(_ animated: Bool) {
-        //        NotificationCenter.default.addObserver(forName: ReturnToLoginNotificationName, object: nil, queue: nil) { (notification) in
-        //
-        //            if self.currentState == .leftPanelExpanded{
-        //                NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: NavigationNotifications.toggleMenu), object: self))
-        //            }
-        //
-        //            let vc = LogIn()
-        //
-        //            self.present(vc, animated: true, completion: nil)
-        //            vc.didMove(toParentViewController: self)
-        //        }
         
         if (callSetUpSideBar){
             if FIRAuth.auth()?.currentUser == nil{
@@ -146,7 +137,7 @@ class ContainerViewController: UIViewController {
     }
     
     func addLeftPanelViewController() {
-        leftPanelController = SideBar()//UIStoryboard(name: "Navigation", bundle: Bundle.main).instantiateViewController(withIdentifier: "sideBar") as! SideBar
+//        leftPanelController = SideBar()//UIStoryboard(name: "Navigation", bundle: Bundle.main).instantiateViewController(withIdentifier: "sideBar") as! SideBar
         leftPanelController.view.frame = CGRect(x: -leftPanelWidth, y: 0, width:leftPanelWidth, height: self.view.frame.height)
         view.addSubview(leftPanelController.view)
         leftPanelController.didMove(toParentViewController: self)

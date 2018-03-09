@@ -8,13 +8,15 @@
 
 import UIKit
 import Firebase
+import Google
 import GoogleSignIn
+import GoogleAPIClientForREST
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate{
 
     var window: UIWindow?
-
+    private let scopes = [kGTLRAuthScopeClassroomCoursesReadonly, kGTLRAuthScopeClassroomRostersReadonly, kGTLRAuthScopeClassroomProfileEmails]
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
@@ -25,45 +27,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         self.window?.rootViewController = initialViewController
         self.window?.makeKeyAndVisible()
-
-//        NotificationCenter.default.addObserver(forName: ReturnToLoginNotificationName, object: nil, queue: nil) { (notification) in
-//
-////            if self.currentState == .leftPanelExpanded{
-////                NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: NavigationNotifications.toggleMenu), object: self))
-////            }
-//
-//            let vc = LogIn()
-//
-//            self.window = UIWindow(frame: UIScreen.main.bounds)
-//
-//            self.window?.rootViewController = vc
-//            self.window?.makeKeyAndVisible()
-//
-//
-////            self.present(vc, animated: true, completion: nil)
-////            vc.didMove(toParentViewController: self)
-//        }
-        
-//        NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: "helpMe"), object: nil, queue: nil) { (notification) in
-//            print("test")
-//            self.window = UIWindow(frame: UIScreen.main.bounds)
-//
-//            let initialViewController = ContainerViewController()
-//
-//            self.window?.rootViewController = initialViewController
-//            self.window?.makeKeyAndVisible()
-//
-//
-//        }
-//
         
         FIRApp.configure()
         
+        
+        GIDSignIn.sharedInstance().scopes = scopes
         GIDSignIn.sharedInstance().clientID = FIRApp.defaultApp()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
+        GIDSignIn.sharedInstance().signInSilently()
         
+
         FIRAnalyticsConfiguration.sharedInstance().setAnalyticsCollectionEnabled(false)
         
+        
+        var configureError: NSError?
+        GGLContext.sharedInstance().configureWithError(&configureError)
+        assert(configureError == nil, "Error configuring Google services: \(String(describing: configureError))")
+        
+//        setUpGoogle()
         
 //        FIRAuth.auth()?.currentUser?.getTokenWithCompletion({ (lol, errorr) in
 //            print(lol)
@@ -76,37 +57,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 //        }catch{
 //            
 //        }
-        
-        
         return true
     }
     
     func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any]) -> Bool {
-            return GIDSignIn.sharedInstance().handle(url, sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: [:])
+        let annotation = options[UIApplicationOpenURLOptionsKey.annotation]
+        return GIDSignIn.sharedInstance().handle(url, sourceApplication:options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: annotation)
     }
+    
 
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
         return GIDSignIn.sharedInstance().handle(url, sourceApplication: sourceApplication, annotation: annotation)
     }
 
+    // If modifying these scopes, delete your previously saved credentials by
+    // resetting the iOS simulator or uninstall the app.
+
+//
+//    private let service = GTLRClassroomService()
+
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        // Perform any operations when the user disconnects from app here.
+    }
+
+
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
         if error != nil {
+//            showAlert(title: "Authentication Error", message: (error?.localizedDescription)!)
+//            self.service.authorizer = nil
             return
         }
-        
+
         guard let authentication = user.authentication else { return }
-        
+
         let credential = FIRGoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
         FIRAuth.auth()?.signIn(with: credential) { (user, error) in
             if error != nil { return }
             NotificationCenter.default.post(Notification(name: logInCompleteNotification))
-            
         }
-    }
-    
-    
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        // Perform any operations when the user disconnects from app here.
+        //        self.signInButton.isHidden = true
+        //        self.output.isHidden = false
+//        self.service.authorizer = user.authentication.fetcherAuthorizer()
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

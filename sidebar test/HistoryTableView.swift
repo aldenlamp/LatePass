@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-protocol HistoryTableViewDelegate{
+protocol HistoryTableViewDelegate: class{
     func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData)
 }
 class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
@@ -18,26 +18,109 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     private let historyTableView = UITableView()
     private let shadowView = UIView()
     private let keyView = UIView()
+    private let activityIndicator = UIActivityIndicatorView()
+    private let simpleLabel = UILabel()
     
-    var historyDelegate: HistoryTableViewDelegate!
+    weak var historyDelegate: HistoryTableViewDelegate!
     
     var infoArray = [HistoryData]() {
         didSet{
+            simpleLabel.isHidden = !infoArray.isEmpty
             historyTableView.reloadData()
+            tableViewIsHidden = infoArray.isEmpty
+            stopActivityIndicator()
         }
     }
     
-    func start(){
+    deinit{
+        print("History Table View did DeInit")
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setUpKey()
         setUpTableView()
+        setUpActivityIndicator()
+        setUpNoHistory()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func start(){
+//        setUpKey()
+//        setUpTableView()
+//        setUpActivityIndicator()
+    }
+    
+    var animateActivityIndicator: Bool = false{
+        willSet{
+            if newValue{
+                self.startActivityIndicator()
+            }else{
+                self.stopActivityIndicator()
+            }
+        }
     }
     
     var tableViewIsHidden = false {
         willSet{
             historyTableView.isHidden = newValue
+            self.animateActivityIndicator = newValue
         }
     }
     
+    
+    //MARK: - Activity Indicator
+    
+    private func setUpActivityIndicator(){
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.activityIndicatorViewStyle = .whiteLarge
+        activityIndicator.color = UIColor(hex: "55596B", alpha: 1)
+        activityIndicator.sizeThatFits(CGSize(width: 100, height: 100))
+        
+        addSubview(activityIndicator)
+        activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor, constant: 0).isActive = true
+        activityIndicator.topAnchor.constraint(equalTo: keyView.bottomAnchor, constant: 40).isActive = true
+    }
+    
+    private func startActivityIndicator(){
+        if !activityIndicator.isAnimating{
+            activityIndicator.isHidden = false
+            activityIndicator.startAnimating()
+        }
+    }
+    
+    private func stopActivityIndicator(){
+        if activityIndicator.isAnimating{
+            activityIndicator.isHidden = false
+            activityIndicator.stopAnimating()
+        }
+    }
+    
+    
+    //MARK: - No History
+
+    private func setUpNoHistory(){
+        simpleLabel.text = "No New Notifications"
+        simpleLabel.font = UIFont(name: "Avenir-Book", size: 19)
+        simpleLabel.textColor = UIColor(hex: "435575", alpha: 1)
+        simpleLabel.adjustsFontSizeToFitWidth = true
+        simpleLabel.textAlignment = .center
+
+        simpleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        self.addSubview(simpleLabel)
+        simpleLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        simpleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0).isActive = true
+        simpleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
+        simpleLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 100).isActive = true
+        simpleLabel.isHidden = true
+        historyTableView.isHidden = true
+    }
+
     //MARK: - Key
     private func setUpKey(){
         keyView.frame = CGRect(x: 0, y: 230, width: self.frame.width, height: 50)
@@ -150,10 +233,6 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
         shadowView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
         NSLayoutConstraint(item: shadowView, attribute: .top, relatedBy: .equal, toItem: keyView, attribute: .bottom, multiplier: 1.0, constant: 0.0).isActive = true
         
-//        historyTopAnchor = historyTableView.topAnchor.constraint(equalTo: shadowView.topAnchor, constant: 0)
-//        historyBottomAnchor = historyTableView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor, constant: 0)
-//        historyLeftAnchor = historyTableView.leftAnchor.constraint(equalTo: shadowView.leftAnchor, constant: 0)
-//        historyRightAnchor = historyTableView.rightAnchor.constraint(equalTo: shadowView.rightAnchor, constant: 0)
         historyTableView.topAnchor.constraint(equalTo: shadowView.topAnchor, constant: 0).isActive = true
         historyTableView.bottomAnchor.constraint(equalTo: shadowView.bottomAnchor, constant: 0).isActive = true
         historyTableView.leftAnchor.constraint(equalTo: shadowView.leftAnchor, constant: 0).isActive = true
@@ -163,26 +242,7 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
         historyTableView.translatesAutoresizingMaskIntoConstraints = false
         
         historyTableView.register(HistoryCell.self, forCellReuseIdentifier: "Cell")
-        
-//        historyTableView.removeFromSuperview()
     }
-    
-//    var tableViewIsShown = false
-    
-//    func tableViewExists(){
-//        if !tableViewIsShown && firebaseData.allItems.count > 0{
-//
-//            shadowView.addSubview(historyTableView)
-//            setHistoryAnchors(to: true)
-//
-//            tableViewIsShown = !tableViewIsShown
-//        }else if tableViewIsShown && firebaseData.allItems.count == 0{
-//
-//            setHistoryAnchors(to: false)
-//            historyTableView.removeFromSuperview()
-//            tableViewIsShown = !tableViewIsShown
-//        }
-//    }
     
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
     
@@ -195,31 +255,20 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
         let historyData = infoArray[indexPath.row]
-        
-//        cell.updateWithHistoryData(data: historyData)
         cell.createCellWith(data: historyData)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        for i in infoArray{
+            print(i.ID)
+        }
         let cell = tableView.cellForRow(at: indexPath) as! HistoryCell
         cell.setSelected(false, animated: true)
         
         let data = infoArray[indexPath.row]
         
         historyDelegate.historyTableView(tableView, didSelectRowAt: indexPath, with: data)
-        
-//        let cell = tableView.cellForRow(at: indexPath) as! HistoryCell
-//        cell.setSelected(false, animated: true)
-//
-//        let data = firebaseData.allItems[indexPath.row]
-//
-//
-//        // Creating the new cell with attributes
-//        let vc = ExpandedCell()
-//        vc.historyData = data
-//        vc.titleLabel.text = cell.titleLabel.text
-//        vc.dateLabel.text = cell.dateLabel.text
     }
     
     
