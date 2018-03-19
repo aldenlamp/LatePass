@@ -19,6 +19,7 @@ var firebaseData: FirebaseDataClass!
 let studentDataLoaded = NSNotification.Name(rawValue: "ReloadStudentData")
 let teacherDataLoaded = NSNotification.Name(rawValue: "ReloadTeacherData")
 let WifiDisconectedNotification = NSNotification.Name(rawValue: "WifiDisconectedNotification")
+let userDataDidLoadNotif = NSNotification.Name(rawValue: "userDataDidLoad")
 var testImage: UIImage?
  let activityIndicator = UIActivityIndicatorView()
 
@@ -84,10 +85,10 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         
         historyStackView.createStack(arr: firebaseData.filteredItems)
         
-        for i in firebaseData.filteredItems{
-            print(i.ID)
-            print(i.status)
-        }
+//        for i in firebaseData.filteredItems{
+//            print(i.ID)
+//            print(i.status)
+//        }
         
 //        historyTableView.infoArray = firebaseData.allItems
         
@@ -212,61 +213,26 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     
     
     //MARK: - Navigation
-    
+//
     private func setUpNavigation(){
-        navigationController?.navigationBar.backgroundColor = UIColor.white
-        navigationController?.navigationBar.layer.borderColor = UIColor.white.cgColor
-        navigationController?.navigationBar.layer.borderWidth = 0
-        navigationController?.navigationBar.layer.shadowColor = UIColor.lightGray.cgColor
-        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 1, height: 2)
-        navigationController?.navigationBar.layer.shadowRadius = 1
-        navigationController?.navigationBar.layer.shadowOpacity = 0.3
+        
+        guard let navController = navigationController as? MainNavigationViewController else{
+            print("THings got messed up")
+            return
+        }
         
         let titleImage = UIImageView(image: #imageLiteral(resourceName: "Title"))
-        
         navigationItem.titleView = titleImage
         
-        let menuButton = UIButton()
-        menuButton.translatesAutoresizingMaskIntoConstraints = false
-        menuButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        menuButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        menuButton.addTarget(self, action: #selector(openSideBar), for: .touchUpInside)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navController.rightRequestButton)
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: navController.leftMenuButton)
         
-        let openImageView = UIImageView()
-        menuButton.addSubview(openImageView)
-        openImageView.image = #imageLiteral(resourceName: "icons8-menu_filled").withRenderingMode(.alwaysOriginal)
-        openImageView.translatesAutoresizingMaskIntoConstraints = false
-        openImageView.heightAnchor.constraint(equalToConstant: 23).isActive = true
-        openImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        openImageView.centerXAnchor.constraint(equalTo: menuButton.centerXAnchor, constant: 0).isActive = true
-        openImageView.centerYAnchor.constraint(equalTo: menuButton.centerYAnchor, constant: 0).isActive = true
+        navController.rightRequestButton.addTarget(self, action: #selector(openNewRequest), for: .touchUpInside)
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: menuButton)
-        
-        let plusButton = UIButton()
-        plusButton.translatesAutoresizingMaskIntoConstraints = false
-        plusButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        plusButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
-        plusButton.addTarget(self, action: #selector(Home.openNewRequest), for: .touchUpInside)
-        
-        
-        let plusImageView = UIImageView()
-        plusButton.addSubview(plusImageView)
-        plusImageView.translatesAutoresizingMaskIntoConstraints = false
-        plusImageView.image = #imageLiteral(resourceName: "icons8-plus_math_filled").withRenderingMode(.alwaysOriginal)
-        plusImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
-        plusImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
-        plusImageView.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor, constant: 0).isActive = true
-        plusImageView.centerXAnchor.constraint(equalTo: plusButton.centerXAnchor, constant: 0).isActive = true
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: plusButton)
+        navController.plusButtonIsHidden = false
     }
     
-    @objc private func openSideBar() {
-        NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: NavigationNotifications.toggleMenu), object: self))
-    }
-    
-    @objc private func openNewRequest(){
+    @objc func openNewRequest(){
         if firebaseData.currentUser != nil{
             let requestViewController = Request() as UIViewController
             self.present(requestViewController, animated: true, completion: nil)
@@ -304,3 +270,8 @@ extension UIColor{
     
     
  }
+
+
+extension UIColor{
+    static var textColor = UIColor(hex: "3D4C68", alpha: 1)
+}

@@ -82,11 +82,11 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
 //            listOfPeople = String(listOfPeople.dropLast(2))
 //            
 //            firstTextField.text = "\(listOfPeople)"
-//            firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+//            firstTextField.textColor = UIColor.textColor
 //        }
 //        if toTeacher != nil{
 //            secondTextField.text = "\(String(describing: toTeacher!.userName))"
-//            secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+//            secondTextField.textColor = UIColor.textColor
 //        }
     }
     
@@ -95,7 +95,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         didEdit = true
 
         secondTextField.text = "\(String(describing: toTeacher!.userName))"
-        secondTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        secondTextField.textColor = UIColor.textColor
     }
 
     func didSelectFirst(users: [User]) {
@@ -106,7 +106,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         for i in selectedPeople!{ listOfPeople += "\(i.userName), " }
         listOfPeople = String(listOfPeople.dropLast(2))
         firstTextField.text = "\(listOfPeople)"
-        firstTextField.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        firstTextField.textColor = UIColor.textColor
     }
     
     //MARK: - Cancel Button
@@ -133,7 +133,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         titleLabel.text = "Request Late Pass" // Create Late Pass -> for teachers
         titleLabel.font = UIFont(name: "Avenir-Light", size: 25)
         titleLabel.textAlignment = .center
-        titleLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        titleLabel.textColor = UIColor.textColor
         
         titleLabel.widthAnchor.constraint(greaterThanOrEqualToConstant: 240).isActive = true
         
@@ -197,7 +197,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         let labelView = UILabel()
         labelView.text = question
         labelView.font = UIFont(name: "Avenir-Medium", size: 15)
-        labelView.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        labelView.textColor = UIColor.textColor
         labelView.textAlignment = .left
         
         view.addSubview(labelView)
@@ -215,8 +215,8 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         
         textField.attributedPlaceholder = NSAttributedString(string: "\(placeholder)", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hex: "8290AB", alpha: 1), NSAttributedStringKey.font: UIFont(name: "Avenir-Medium", size: 16)!])
         textField.font = UIFont(name: "Avenir-Medium", size: 16)
-        textField.textColor = UIColor(hex: "3D4C68", alpha: 1)
-        textField.tintColor = UIColor(hex: "3D4C68", alpha: 1)
+        textField.textColor = UIColor.textColor
+        textField.tintColor = UIColor.textColor
         
         textField.layer.borderColor = UIColor(hex: "E7E7E7", alpha: 1).cgColor
         textField.layer.borderWidth = 1
@@ -267,7 +267,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         view.font = UIFont(name: "Avenir-Medium", size: 15)
         view.text = "Reason for late pass"
         view.textColor = UIColor(hex: "8290AB", alpha: 1)
-        view.tintColor = UIColor(hex: "3D4C68", alpha: 1)
+        view.tintColor = UIColor.textColor
         view.backgroundColor = UIColor(hex: "F9F9F9", alpha: 1)
         
         view.layer.borderColor = UIColor(hex: "E7E7E7", alpha: 1).cgColor
@@ -293,7 +293,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         let labelView = UILabel()
         labelView.text = "Additional Details"
         labelView.font = UIFont(name: "Avenir-Medium", size: 15)
-        labelView.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        labelView.textColor = UIColor.textColor
         labelView.textAlignment = .left
         
         view.addSubview(labelView)
@@ -332,7 +332,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
 //        print("firstView: \(view.frame) \t\t ")
         
         
-        textView.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        textView.textColor = UIColor.textColor
         if textView.text == "Reason for late pass"{
             textView.text = ""
         }

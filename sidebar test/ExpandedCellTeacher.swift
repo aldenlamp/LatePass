@@ -35,7 +35,7 @@ class ExpandedCellTeacher: UIViewController {
         let titleLabel = UILabel()
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.font = UIFont(name: "Avenir-Light", size: 22)
-        titleLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        titleLabel.textColor = UIColor.textColor
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .center
         titleLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -46,7 +46,7 @@ class ExpandedCellTeacher: UIViewController {
         let titleLabel = UILabel()
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.font = UIFont(name: "Avenir-Light", size: 22)
-        titleLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        titleLabel.textColor = UIColor.textColor
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .center
         titleLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -125,7 +125,7 @@ class ExpandedCellTeacher: UIViewController {
         let timeIdentifier = UILabel()
         timeIdentifier.text = style ? "Time Approved" : "Time Requested"
         timeIdentifier.font = UIFont(name: "Avenir-Medium", size: 15)
-        timeIdentifier.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        timeIdentifier.textColor = UIColor.textColor
         timeIdentifier.textAlignment = .left
         
         timeView.addSubview(timeIdentifier)
@@ -136,7 +136,7 @@ class ExpandedCellTeacher: UIViewController {
         
         let time = UILabel()
         time.text = getTimeString(fromAccepted: style)
-        time.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        time.textColor = UIColor.textColor
         time.font = UIFont(name: "Avenir-Medium", size: 16)
         time.textAlignment = .right
         time.adjustsFontSizeToFitWidth = true
@@ -171,7 +171,7 @@ class ExpandedCellTeacher: UIViewController {
         let reasonIdentifier = UILabel()
         reasonIdentifier.text = "Reason"
         reasonIdentifier.font = UIFont(name: "Avenir-Medium", size: 15)
-        reasonIdentifier.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        reasonIdentifier.textColor = UIColor.textColor
         reasonIdentifier.textAlignment = .left
         
         reasonView.addSubview(reasonIdentifier)
@@ -182,7 +182,7 @@ class ExpandedCellTeacher: UIViewController {
         let reason = UILabel()
         reason.text = historyData.reason == "" ? "..." : historyData.reason
         //        reason.text = "THIS IS A REALLY LONG MESSAGE IN ORDDER TO TEST THINGS"
-        reason.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        reason.textColor = UIColor.textColor
         reason.font = UIFont(name: "Avenir-Medium", size: 16)
         reason.textAlignment = .right
         reason.numberOfLines = 3
@@ -288,7 +288,7 @@ class ExpandedCellTeacher: UIViewController {
         }
         
         labelView.font = UIFont(name: "Avenir-Book", size: 22)
-        labelView.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        labelView.textColor = UIColor.textColor
         labelView.textAlignment = .right
         
         containerView.addSubview(labelView)
@@ -343,7 +343,7 @@ class ExpandedCellTeacher: UIViewController {
         let acceptLabel = UILabel()
         acceptLabel.text = "Accept"
         acceptLabel.font = UIFont(name: "Avenir-Book", size: 20)
-        acceptLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        acceptLabel.textColor = UIColor.textColor
         acceptLabel.textAlignment = .center
         
         acceptLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -380,7 +380,7 @@ class ExpandedCellTeacher: UIViewController {
         let rejectLabel = UILabel()
         rejectLabel.text = "Reject"
         rejectLabel.font = UIFont(name: "Avenir-Book", size: 20)
-        rejectLabel.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        rejectLabel.textColor = UIColor.textColor
         rejectLabel.textAlignment = .center
 
         rejectLabel.translatesAutoresizingMaskIntoConstraints = false

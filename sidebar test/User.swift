@@ -19,6 +19,13 @@ class User: Hashable{
         return lhs.hashValue == rhs.hashValue
     }
     
+    static func ==(lhs: User, rhs: String) -> Bool{
+        guard let strID = lhs.userStringID else{
+            return lhs.userEmail == rhs
+        }
+        return strID == rhs
+    }
+    
     
     var userType: userType
     var userName: String
@@ -31,9 +38,18 @@ class User: Hashable{
     public static var numberOfSelected = 0
     private static var allUserIds = [UInt32]()
     
-    var isChosen: Bool { didSet{ if isChosen { User.numberOfSelected += 1 } else { User.numberOfSelected -= 1 } } }
+//    static func ==(lhs: User, rhs: String) -> Bool{
+//        return lhs.userStringID == rhs
+//    }
+    
+    var isChosen: Bool { didSet{ if isChosen { User.numberOfSelected += 1 } else { User.numberOfSelected -= 1 }
+        
+//        print(self == "test")
+//        print("this is a " test "test")
+        } }
     
     init(){
+        
         self.userType = .student
         self.userName = ""
         

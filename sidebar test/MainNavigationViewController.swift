@@ -10,61 +10,117 @@ import UIKit
 
 class MainNavigationViewController: UINavigationController {
     
-    fileprivate var firstSelectedObserver: NSObjectProtocol?
-    fileprivate var secondSelectedObserver: NSObjectProtocol?
-    fileprivate var thirdSelectedObserver: NSObjectProtocol?
-
-    var mainVCS = [UIViewController]()
+    fileprivate var homeSelectedObserver: NSObjectProtocol?
+    fileprivate var allTableViewSelectedObserver: NSObjectProtocol?
     
+    public var homeVC: Home!
+    private let plusButton = UIButton()
     
+    var plusButtonIsHidden: Bool = false {
+        willSet{
+            plusButton.isHidden = newValue
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         self.isNavigationBarHidden = false
         addObservers()
-        
     }
     override func viewWillDisappear(_ animated: Bool) {
         removeObservers()
     }
     
+    
+    //MARK: - NavigationItem
+    
+    let leftMenuButton: UIButton = {
+        let menuButton = UIButton()
+        menuButton.translatesAutoresizingMaskIntoConstraints = false
+        menuButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        menuButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        menuButton.addTarget(self, action: #selector(openSideBar), for: .touchUpInside)
+        
+        let openImageView = UIImageView()
+        menuButton.addSubview(openImageView)
+        openImageView.image = #imageLiteral(resourceName: "icons8-menu_filled").withRenderingMode(.alwaysOriginal)
+        openImageView.translatesAutoresizingMaskIntoConstraints = false
+        openImageView.heightAnchor.constraint(equalToConstant: 23).isActive = true
+        openImageView.widthAnchor.constraint(equalToConstant: 20).isActive = true
+        openImageView.centerXAnchor.constraint(equalTo: menuButton.centerXAnchor, constant: 0).isActive = true
+        openImageView.centerYAnchor.constraint(equalTo: menuButton.centerYAnchor, constant: 0).isActive = true
+        
+        return menuButton
+    }()
+    
+    var rightRequestButton: UIButton = {
+        let plusButton = UIButton()
+        plusButton.translatesAutoresizingMaskIntoConstraints = false
+        plusButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        plusButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        let plusImageView = UIImageView()
+        plusButton.addSubview(plusImageView)
+        plusImageView.translatesAutoresizingMaskIntoConstraints = false
+        plusImageView.image = #imageLiteral(resourceName: "icons8-plus_math_filled").withRenderingMode(.alwaysOriginal)
+        plusImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        plusImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        plusImageView.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor, constant: 0).isActive = true
+        plusImageView.centerXAnchor.constraint(equalTo: plusButton.centerXAnchor, constant: 0).isActive = true
+        
+        return plusButton
+    }()
+    
+    public func setUpNavigation(){
+        self.navigationBar.backgroundColor = UIColor.white
+        self.navigationBar.layer.borderColor = UIColor.white.cgColor
+        self.navigationBar.layer.borderWidth = 0
+        self.navigationBar.layer.shadowColor = UIColor.lightGray.cgColor
+        self.navigationBar.layer.shadowOffset = CGSize(width: 1, height: 2)
+        self.navigationBar.layer.shadowRadius = 1
+        self.navigationBar.layer.shadowOpacity = 0.3
+    }
+    
+    @objc func openSideBar(){
+        NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: NavigationNotifications.toggleMenu.rawValue), object: self))
+    }
+    
+    
+    
+    //MARK: - Switch View Observers
+    
     func addObservers(){
         let notificationCenter = NotificationCenter.default
-        firstSelectedObserver = notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.first), object: nil, queue: nil, using: { (notification) in
-//            self.storeVCs()
-            if self.mainVCS.count > 0{
-                self.setViewControllers(self.mainVCS, animated: true)
-            }else{
-                
-                print("WHAT IS HAPPENING HERE??????")
-                
-//
-//                let mainVC = UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "first")
-//                self.mainVCS = [mainVC]
-//                self.setViewControllers(self.mainVCS, animated: true)
-            }
+        homeSelectedObserver = notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.home.rawValue), object: nil, queue: nil, using: { [weak self] (notification) in
+            self?.switchViewToHome()
         })
+        
+        allTableViewSelectedObserver = notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.allItemController.rawValue), object: nil, queue: nil, using: { [weak self] (notification) in
+            self?.switchViewTo(AllItemsController())
+        })
+        
         notificationCenter.addObserver(forName: WifiDisconectedNotification, object: nil, queue: nil, using:  {(notification) in
             self.viewControllers.last?.alert(title: "No Wifi", message: "Please connect to WiFi", buttonTitle: "Okay")
         })
     }
     
-    func storeVCs(){
-        if (self.viewControllers.first as? Home) != nil{
-            self.mainVCS = self.viewControllers
+    func switchViewTo(_ viewController: UIViewController){
+        if let vc = viewControllers.first as? Home{
+            homeVC = vc
         }
+        setViewControllers([viewController], animated: false)
     }
+    
+    func switchViewToHome(){ setViewControllers([self.homeVC], animated: false) }
     
     func removeObservers(){
         let notificationCenter = NotificationCenter.default
         
-        if firstSelectedObserver != nil{
-            notificationCenter.removeObserver(firstSelectedObserver!)
+        if homeSelectedObserver != nil{
+            notificationCenter.removeObserver(homeSelectedObserver!)
         }
-//        if secondSelectedObserver != nil{
-//            notificationCenter.removeObserver(secondSelectedObserver!)
-//        }
-//        if thirdSelectedObserver != nil{
-//            notificationCenter.removeObserver(thirdSelectedObserver!)
-//        }
+        
+        if allTableViewSelectedObserver != nil{
+            notificationCenter.removeObserver(allTableViewSelectedObserver!)
+        }
     }
 }

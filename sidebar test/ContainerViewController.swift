@@ -40,8 +40,10 @@ class ContainerViewController: UIViewController {
         activeNavigationController.didMove(toParentViewController: self)
         
 //        let mainVC = Home()//UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "first")
-        activeNavigationController.mainVCS = [Home()]
-        activeNavigationController.setViewControllers(activeNavigationController.mainVCS, animated: false)
+        activeNavigationController.homeVC = Home()
+    
+    
+        activeNavigationController.setViewControllers([activeNavigationController.homeVC], animated: false)
         
         containerOverlay = UIButton(frame: self.view.frame)
         containerOverlay.backgroundColor = UIColor.black
@@ -63,13 +65,12 @@ class ContainerViewController: UIViewController {
         leftPanelController.view.addGestureRecognizer(tableViewPanGestureRecognizer)
         
         let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.toggleMenu), object: nil, queue: nil, using: { (notification) in
+        notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.toggleMenu.rawValue), object: nil, queue: nil, using: { (notification) in
             self.toggleMenu()
         })
         
         NotificationCenter.default.addObserver(forName: ReturnToLoginNotificationName, object: nil, queue: nil) { (notification) in
-            self.activeNavigationController.mainVCS = [LogIn()]
-            self.activeNavigationController.viewControllers = self.activeNavigationController.mainVCS
+            self.activeNavigationController.switchViewTo(LogIn())
             self.allowSlide = false
             self.activeNavigationController.navigationBar.isHidden = true
             if self.currentState == .leftPanelExpanded{
@@ -80,7 +81,8 @@ class ContainerViewController: UIViewController {
         NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: "allowSideBarExtension"), object: nil, queue: nil) { (notification) in
             self.allowSlide = true
             self.activeNavigationController.navigationBar.isHidden = false
-            self.activeNavigationController.viewControllers = [Home()]
+//            self.activeNavigationController.viewControllers = [Home()]
+            self.activeNavigationController.switchViewToHome()
         }
         
     }

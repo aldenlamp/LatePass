@@ -97,7 +97,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
     let titleLabel : UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "Avenir-Light", size: 22)
-        label.textColor = UIColor(hex: "3D4C68", alpha: 1)
+        label.textColor = UIColor.textColor
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textAlignment = .center
         label.heightAnchor.constraint(equalToConstant: 30).isActive = true

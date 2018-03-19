@@ -21,22 +21,6 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.517845"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "205"
-            endingLineNumber = "205"
-            landmarkName = "historyCellsDidLoad(fromHistory:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseRequests.swift"
             timestampString = "542274629.518472"
             startingColumnNumber = "9223372036854775807"
@@ -45,22 +29,6 @@
             endingLineNumber = "16"
             landmarkName = "makeRequest(from:toTeacher:reason:completion:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.518672"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
-            landmarkName = "FirebaseDataClass"
-            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -101,108 +69,12 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.519012"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "110"
-            endingLineNumber = "110"
-            landmarkName = "deinit"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.519238"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "init()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.519462"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "deinit"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.519673"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
-            landmarkName = "FirebaseDataClass"
-            landmarkType = "3">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sidebar_test.FirebaseDataClass.__allocating_init() -&gt; sidebar_test.FirebaseDataClass"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "541147008.6154439"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "0"
-                  endingLineNumber = "0"
-                  offsetFromSymbolStart = "4">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sidebar_test.FirebaseDataClass.init() -&gt; sidebar_test.FirebaseDataClass"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "541147008.631144"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "55"
-                  endingLineNumber = "55"
-                  offsetFromSymbolStart = "73">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "sidebar test/Home.swift"
-            timestampString = "542274629.5199209"
+            timestampString = "543114062.841"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
             landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
@@ -214,44 +86,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/Home.swift"
-            timestampString = "542274629.520137"
+            timestampString = "543114062.841068"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "51"
-            endingLineNumber = "51"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
             landmarkName = "deinit"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/ContainerViewController.swift"
-            timestampString = "541964408.462366"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "81"
-            endingLineNumber = "81"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "sidebar test/ContainerViewController.swift"
-            timestampString = "541964408.462653"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -326,7 +166,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/ExpandedCellTeacher.swift"
-            timestampString = "542274629.5206569"
+            timestampString = "543114062.841167"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "23"
@@ -438,45 +278,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.5212491"
+            timestampString = "543114062.841272"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "400"
-            endingLineNumber = "400"
-            landmarkName = "getRequestItems()"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "historyCellsDidLoad(fromHistory:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sidebar_test.FirebaseDataClass.getRequestItems() -&gt; ()"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "542274044.517176"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__ObjC.FIRDataSnapshot) -&gt; () in sidebar_test.FirebaseDataClass.getRequestItems() -&gt; ()"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "542274044.519138"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "28">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -486,60 +294,76 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.521502"
+            timestampString = "543114062.841313"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "399"
-            endingLineNumber = "399"
+            startingLineNumber = "539"
+            endingLineNumber = "539"
             landmarkName = "getRequestItems()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "sidebar_test.FirebaseDataClass.getRequestItems() -&gt; ()"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "542274044.5229909"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "20">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (__ObjC.FIRDataSnapshot) -&gt; () in sidebar_test.FirebaseDataClass.getRequestItems() -&gt; ()"
-                  moduleName = "sidebar test"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/alden/Developer/Mobil/iOS/2017/Late%20Pass/sidebar%20test/sidebar%20test/FirebaseDataClass.swift"
-                  timestampString = "542274044.524631"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "398"
-                  endingLineNumber = "398"
-                  offsetFromSymbolStart = "28">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.521701"
+            timestampString = "543114062.841349"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
-            landmarkName = "reloadHistoryData()"
+            startingLineNumber = "609"
+            endingLineNumber = "609"
+            landmarkName = "getStudentList(studentType:potentialItem:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "sidebar test/FirebaseDataClass.swift"
+            timestampString = "543114062.841383"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "606"
+            endingLineNumber = "606"
+            landmarkName = "getStudentList(studentType:potentialItem:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "sidebar test/FirebaseDataClass.swift"
+            timestampString = "543114062.841418"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "604"
+            endingLineNumber = "604"
+            landmarkName = "getStudentList(studentType:potentialItem:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "sidebar test/FirebaseDataClass.swift"
+            timestampString = "543114062.841451"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "610"
+            endingLineNumber = "610"
+            landmarkName = "getStudentList(studentType:potentialItem:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -550,12 +374,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.52189"
+            timestampString = "543114062.841485"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "reloadHistoryData()"
+            startingLineNumber = "289"
+            endingLineNumber = "289"
+            landmarkName = "getHistoryItems()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -566,12 +390,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.522077"
+            timestampString = "543114062.84152"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "121"
-            endingLineNumber = "121"
-            landmarkName = "reloadHistoryData()"
+            startingLineNumber = "296"
+            endingLineNumber = "296"
+            landmarkName = "getHistoryItems()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -582,12 +406,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.522259"
+            timestampString = "543114062.841553"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "122"
-            endingLineNumber = "122"
-            landmarkName = "reloadHistoryData()"
+            startingLineNumber = "303"
+            endingLineNumber = "303"
+            landmarkName = "getHistoryItems()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -598,12 +422,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274629.52244"
+            timestampString = "543114062.841588"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "218"
-            endingLineNumber = "218"
-            landmarkName = "historyCellsDidLoad(fromHistory:)"
+            startingLineNumber = "468"
+            endingLineNumber = "468"
+            landmarkName = "getRequestItems()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -614,12 +438,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "sidebar test/FirebaseDataClass.swift"
-            timestampString = "542274647.475065"
+            timestampString = "543114062.8416229"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
-            landmarkName = "historyCellsDidLoad(fromHistory:)"
+            startingLineNumber = "475"
+            endingLineNumber = "475"
+            landmarkName = "getRequestItems()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
