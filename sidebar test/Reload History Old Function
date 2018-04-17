@@ -1,0 +1,117 @@
+pulling user history data
+
+
+
+//Getting the user names from the IDs to put into the cell
+//                            if cellType != .fromHistory{
+//                                self?.ref.child("users").child(originID).child("name").observeSingleEvent(of: .value, with: { [weak self] (originNameSnapshot) in
+//
+//                                    // A check and alternate pull from the database is necessary in order to find potential users
+//                                    // (those in our school who did not sign up)
+//                                    // The key in this is not a UID it is the users' email
+//                                    if originNameSnapshot.exists(){
+//                                        cell.origin = originNameSnapshot.value as? String// originName
+//                                        userCount += 1
+//                                        if userCount == historyKeys.count * 2{
+//                                            self?.historyCellsDidLoad(fromHistory: true)
+//                                        }
+//                                    }else{
+//                                        self?.ref.child("potentialTeachers").child(originID).observeSingleEvent(of: .value, with: { [weak self] (potentialOriginNameSnapshot) in
+//                                            cell.origin = potentialOriginNameSnapshot.value as? String// originName
+//                                            userCount += 1
+//                                            if userCount == historyKeys.count * 2{
+//                                                self?.historyCellsDidLoad(fromHistory: true)
+//                                            }
+//                                        })
+//                                    }
+//                                })
+//                            }
+//
+//                            if cellType != .toHistory{
+//                                self?.ref.child("users").child(destinationID).child("name").observeSingleEvent(of: .value, with: { [weak self] (destinationNameSnapshot) in
+//                                    if destinationNameSnapshot.exists(){
+//                                        cell.destination = destinationNameSnapshot.value as? String// destinationName
+//                                        userCount += 1
+//                                        if userCount == historyKeys.count * 2{
+//                                            self?.historyCellsDidLoad(fromHistory: true)
+//                                        }
+//                                    }else{
+//                                        self?.ref.child("potentialTeachers").child(destinationID).observeSingleEvent(of: .value, with: { [weak self] (potentialDestinationNameSnapshot) in
+//                                            cell.destination = potentialDestinationNameSnapshot.value as? String// destinationName
+//                                            userCount += 1
+//                                            if userCount == historyKeys.count * 2{
+//                                                self?.historyCellsDidLoad(fromHistory: true)
+//                                            }
+//                                        })
+//                                    }
+//                                })
+//                            }
+//
+//                            if cellType != .studentHistory{
+//                                self?.ref.child("users").child(studentID).child("name").observeSingleEvent(of: .value, with: { [weak self] (studentNameSnapshot) in
+//                                    if studentNameSnapshot.exists(){
+//                                        cell.student = studentNameSnapshot.value as? String
+//                                        userCount += 1
+//                                        if userCount == historyKeys.count * 2{
+//                                            self?.historyCellsDidLoad(fromHistory: true)
+//                                        }
+//                                    }else{
+//                                        self?.ref.child("potentialStudents").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
+//                                            //                                        studentName = potentialStudentNameSnapshot.value as? String
+//                                            cell.student = potentialStudentNameSnapshot.value as? String//studentName
+//                                            userCount += 1
+//                                            if userCount == historyKeys.count * 2{
+//                                                self?.historyCellsDidLoad(fromHistory: true)
+//                                            }
+//                                        })
+//                                    }
+//                                })
+//                            }
+
+
+
+
+
+
+pulling user request data
+//
+//                            self?.ref.child("users").child(destinationID).child("name").observe(.value, with: { [weak self] (destinationNameSnapshot) in
+//                                //                                if !(self?.isPullingRequest)!{
+//                                //                                    self?.reloadHistoryData()
+//                                //                                    return
+//                                //                                }
+//                                if destinationNameSnapshot.exists(){
+//                                    cell.destination = destinationNameSnapshot.value as? String
+//                                    requestCount += 1
+//                                    if requestCount == requestKeys.count * 2{
+//                                        self?.historyCellsDidLoad(fromHistory: false)
+//                                    }
+//                                }else{
+//
+//                                    self?.ref.child("potentialTeachers").child(destinationID).observeSingleEvent(of: .value, with: { [weak self] (potentialDestinationNameSnapshot) in
+//                                        cell.destination = potentialDestinationNameSnapshot.value as? String
+//                                        requestCount += 1
+//                                        if requestCount == requestKeys.count * 2{
+//                                            self?.historyCellsDidLoad(fromHistory: false)
+//                                        }
+//                                    })
+//                                }
+//                            })
+//
+//                            self?.ref.child("users").child(studentID).child("name").observeSingleEvent(of: .value, with: { [weak self] (studentNameSnapshot) in
+//                                if studentNameSnapshot.exists(){
+//                                    cell.student = studentNameSnapshot.value as? String
+//                                    requestCount += 1
+//                                    if requestCount == requestKeys.count * 2{
+//                                        self?.historyCellsDidLoad(fromHistory: false)
+//                                    }
+//                                }else{
+//                                    self?.ref.child("potentialStudent").child(studentID).observeSingleEvent(of: .value, with: { [weak self] (potentialStudentNameSnapshot) in
+//                                        cell.student = potentialStudentNameSnapshot.value as? String
+//                                        requestCount += 1
+//                                        if requestCount == requestKeys.count * 2  {
+//                                            self?.historyCellsDidLoad(fromHistory: false)
+//                                        }
+//                                    })
+//                                }
+//                            })

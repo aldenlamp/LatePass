@@ -262,29 +262,15 @@ class ExpandedCellTeacher: UIViewController {
         let labelView = UILabel()
         labelView.translatesAutoresizingMaskIntoConstraints = false
         
+        imageView.image = historyData.image
         
-        switch historyData.status! {
+        switch historyData.status {
         case .accepted:
             labelView.text = "Approved"
-            switch historyData.thisTimeFrame! {
-            case .thisWeek:
-                imageView.image = #imageLiteral(resourceName: "approved-lightBlue")
-                break
-            case .thisMonth:
-                imageView.image = #imageLiteral(resourceName: "approved-purple")
-                break
-            case .thisYear:
-                imageView.image = #imageLiteral(resourceName: "approved-blue")
-                break
-            }
         case .pending:
             labelView.text = "Pending"
-            imageView.image = #imageLiteral(resourceName: "pending-lightBlue")
-            break
         case .rejected:
-            imageView.image = #imageLiteral(resourceName: "rejected-red")
             labelView.text = "Rejected"
-            break
         }
         
         labelView.font = UIFont(name: "Avenir-Book", size: 22)

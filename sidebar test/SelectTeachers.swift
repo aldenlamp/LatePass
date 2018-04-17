@@ -48,8 +48,8 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         //Testing Pulling data to reload tableViews and such
         
         //This will be the mechanism for reloading the tableView if it has not loaded yet
-        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: studentDataLoaded, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: teacherDataLoaded, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: userDataLoadedNotification, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: teacherDataLoaded, object: nil)
 //                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
 //                NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
 
@@ -57,14 +57,14 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         
     }
     
-    
-        @objc func testingReloadTableview(){
-            print("shit is happeneing")
-            if (selectStudents && allStudentsLoaded) || (!selectStudents && allTeachersLoaded){
-                tableView.update()
-            }
+
+    @objc func testingReloadTableview(){
+        print("shit is happeneing")
+        if (selectStudents && allStudentsLoaded) || (!selectStudents && allTeachersLoaded){
+            tableView.update()
         }
-    
+    }
+
     @objc func dismissKeyboard() { view.endEditing(true) }
     
     //MARK: - Cancel Button
@@ -86,9 +86,6 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
     deinit {
         NotificationCenter.default.removeObserver(self)
         print("View deInited")
-        tableView.selectedArray.forEach { (user) in
-            user.isChosen = false
-        }
         tableView.selectedArray.removeAll()
     }
     

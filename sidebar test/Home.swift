@@ -16,8 +16,9 @@ import GoogleAPIClientForREST
  
 var firebaseData: FirebaseDataClass!
 
-let studentDataLoaded = NSNotification.Name(rawValue: "ReloadStudentData")
-let teacherDataLoaded = NSNotification.Name(rawValue: "ReloadTeacherData")
+//let studentDataLoaded = NSNotification.Name(rawValue: "ReloadStudentData")
+//let teacherDataLoaded = NSNotification.Name(rawValue: "ReloadTeacherData")
+let userDataLoadedNotification = NSNotification.Name(rawValue: "ReloadUserData")
 let WifiDisconectedNotification = NSNotification.Name(rawValue: "WifiDisconectedNotification")
 let userDataDidLoadNotif = NSNotification.Name(rawValue: "userDataDidLoad")
 var testImage: UIImage?
@@ -26,7 +27,7 @@ var testImage: UIImage?
 class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, HistoryStackViewDelegate{
     
     let historyTableView = HistoryTableView()
-    let statView = StatsView()
+    let statView = StudentStatsView()
     let historyStackView = HistoryStackView()
     var withStats: Bool!
     
@@ -50,14 +51,15 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     }
     
     deinit{
-        print("Home View Controller did Deinit")
-        UserDefaults.standard.set(nil, forKey: "userType")
-        firebaseData = nil
+//        print("Home View Controller did Deinit")
+//        UserDefaults.standard.set(nil, forKey: "userType")
     }
     
     
     //MARK: - reloading Data
     
+    
+    //TODO: - Reload History tableView when pass is accepted or rejecteed Using Notifications
     internal func historyArrayDidLoad() {
         
         
@@ -68,7 +70,6 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
                 case .thisWeek: lateCounts[0] += 1;
                 case .thisMonth: lateCounts[1] += 1
                 case .thisYear: lateCounts[2] += 1
-                default: break
                 }
             }
         }
@@ -77,12 +78,12 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         
         
         historyTableView.animateActivityIndicator = false
-        if !firebaseData.filteredItems.isEmpty{
-            historyTableView.infoArray = firebaseData.filteredItems
-        }else{
-            historyTableView.infoArray = firebaseData.filteredItems
-        }
-        
+//        if !firebaseData.filteredItems.isEmpty{
+//            historyTableView.infoArray = firebaseData.filteredItems
+//        }else{
+//            historyTableView.infoArray = firebaseData.filteredItems
+//        }
+        historyTableView.infoArray = firebaseData.filteredItems
         historyStackView.createStack(arr: firebaseData.filteredItems)
         
 //        for i in firebaseData.filteredItems{
@@ -186,15 +187,11 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         
         historyTableView.tableViewIsHidden = true
         
-//        historyTableView.infoArray = firebaseData.allItems
-        
         if stats {
             setUpStats()
         }else{
             setUpNotificationView()
         }
-        
-        historyTableView.start()
         
     }
     
@@ -204,12 +201,18 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         // Creating the new cell with attributes
         let vc = ExpandedCellTeacher()
         vc.historyData = historyData//data
+        print("ExpandedCellID: \(historyData.ID)")
         
         
         vc.titleLabel.text = historyData.toStringReadable()
         vc.dateLabel.text = historyData.getDateString()
         self.present(vc, animated: true, completion: nil)
     }
+    
+    func searchDidFinish(withCount count: Int) {
+        //Just to satisfy the delegate
+    }
+    
     
     
     //MARK: - Navigation

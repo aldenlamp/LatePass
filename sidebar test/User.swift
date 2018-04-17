@@ -20,66 +20,25 @@ class User: Hashable{
     }
     
     static func ==(lhs: User, rhs: String) -> Bool{
-        guard let strID = lhs.userStringID else{
-            return lhs.userEmail == rhs
-        }
-        return strID == rhs
+        return lhs.userStringID == rhs || lhs.userEmail == rhs
     }
     
     
     var userType: userType
     var userName: String
-    private var userID: UInt32
+    private var userIDHash: Int{
+        willSet{
+            User.allUserIds.append(newValue)
+        }
+    }
     var userEmail: String
     var userImage: UIImage
-    var userIndex: Int?
     var userStringID: String?
     
-    public static var numberOfSelected = 0
-    private static var allUserIds = [UInt32]()
+    private static var allUserIds = [Int]()
     
-//    static func ==(lhs: User, rhs: String) -> Bool{
-//        return lhs.userStringID == rhs
-//    }
-    
-    var isChosen: Bool { didSet{ if isChosen { User.numberOfSelected += 1 } else { User.numberOfSelected -= 1 }
-        
-//        print(self == "test")
-//        print("this is a " test "test")
-        } }
-    
-    init(){
-        
-        self.userType = .student
-        self.userName = ""
-        
-        self.userImage = #imageLiteral(resourceName: "BlankUser")
-        var id: UInt32 = 0
-        while(true){
-            id = arc4random_uniform(UInt32.max)
-            if !User.allUserIds.contains(id) { break }
-        }
-        self.userEmail = "\(id)"
-        self.userID = id
-        self.isChosen = false
-        User.numberOfSelected = 0
-        User.allUserIds.append(id)
-    }
-    
-    init(email: String){
-        self.userType = .student
-        self.userName = ""
-        self.userEmail = email
-        self.userImage = #imageLiteral(resourceName: "BlankUser")
-        var id: UInt32 = 0
-        while(true){
-            id = arc4random_uniform(UInt32.max)
-            if !User.allUserIds.contains(id) { break }
-        }
-        self.userID = id
-        self.isChosen = false
-        User.numberOfSelected = 0
-        User.allUserIds.append(id)
+    deinit {
+        User.allUserIds.remove(at: User.allUserIds.index(of: self.userIDHash)!)
     }
     
     init(type: userType, name: String, email: String){
@@ -87,40 +46,27 @@ class User: Hashable{
         self.userName = name
         self.userEmail = email
         self.userImage = #imageLiteral(resourceName: "BlankUser")
-        var id: UInt32 = 0
-        while(true){
-            id = arc4random_uniform(UInt32.max)
-            if !User.allUserIds.contains(id) { break }
-        }
-        self.userID = id
-        self.isChosen = false
-        User.numberOfSelected = 0
-        User.allUserIds.append(userID)
+        self.userIDHash = email.hashValue
     }
     
-    init(type: userType, image: UIImage, name: String, email: String, stringID: String){
-        userType = type
-        userName = name
-        userEmail = email
-        userImage = image
-        var id: UInt32 = 0
-        while(true){
-            id = arc4random_uniform(UInt32.max)
-            if !User.allUserIds.contains(id) { break }
+    init(email: String?, type: userType = .student, name: String = "", image: UIImage = #imageLiteral(resourceName: "BlankUser"), stringID: String? = nil){
+        self.userEmail = "email"
+        if let email = email{
+            self.userEmail = email
+        }else{
+            while(true){
+                let id = arc4random_uniform(UInt32.max).hashValue
+                if !User.allUserIds.contains(id) {
+                    self.userEmail = "\(id)"
+                    break
+                }
+            }
         }
-        self.userID = id
-        self.userStringID = stringID
-        self.isChosen = false
-        User.numberOfSelected = 0
-        User.allUserIds.append(userID)
+        self.userIDHash = userEmail.hashValue
+        self.userType = type
+        self.userName = name
+        self.userImage = image
+        self.userStringID = stringID;
+//        self.isChosen = false
     }
-    
-//    private func makeNewUID() -> Int{
-//        while(true){
-//            let newRand = Int(arc4random_uniform(UInt32(Int.max)))
-//            if !User.allUserIds.contains(newRand) {
-//                return newRand
-//            }
-//        }
-//    }
 }

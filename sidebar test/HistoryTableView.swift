@@ -11,6 +11,7 @@ import UIKit
 
 protocol HistoryTableViewDelegate: class{
     func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData)
+    func searchDidFinish(withCount count: Int)
 }
 class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     
@@ -21,10 +22,20 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     private let activityIndicator = UIActivityIndicatorView()
     private let simpleLabel = UILabel()
     
-    weak var historyDelegate: HistoryTableViewDelegate!
+    weak var historyDelegate: HistoryTableViewDelegate?
+    
+    //In order to search the historyItems
+    public var filterString = ""{
+        didSet{
+            filterItems()
+        }
+    }
+    private var filteredInfoArray = [HistoryData]()
+    private var resultCount = 0
     
     var infoArray = [HistoryData]() {
         didSet{
+            filterItems()
             simpleLabel.isHidden = !infoArray.isEmpty
             historyTableView.reloadData()
             tableViewIsHidden = infoArray.isEmpty
@@ -46,12 +57,6 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    func start(){
-//        setUpKey()
-//        setUpTableView()
-//        setUpActivityIndicator()
     }
     
     var animateActivityIndicator: Bool = false{
@@ -210,6 +215,35 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
         return view
     }
     
+    //MARK: - Search Table View Functions
+    
+    func filterItems(){
+        filteredInfoArray.removeAll()
+        resultCount = 0
+        if self.filterString == ""{
+            historyTableView.reloadData()
+            resultCount = infoArray.count
+        }else{
+            for i in infoArray{
+                if i.origin.userName.lowercased().contains(filterString) ||  i.student.userName.lowercased().contains(filterString){
+                    filteredInfoArray.append(i)
+                    resultCount += 1
+                }
+                
+                guard let dest = i.destination else{
+                    continue
+                }
+                if (dest.userName.lowercased().contains(filterString)){
+                    filteredInfoArray.append(i)
+                    resultCount += 1
+                }
+            }
+            historyTableView.reloadData()
+        }
+        historyDelegate?.searchDidFinish(withCount: resultCount)
+    }
+    
+    
     //MARK: - TableView
     
     
@@ -247,28 +281,43 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return infoArray.count
+        
+        if !filteredInfoArray.isEmpty{
+            return filteredInfoArray.count
+        }else{
+            return infoArray.count
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat { return 90 }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! HistoryCell
-        let historyData = infoArray[indexPath.row]
+        cell.setSelected(false, animated: true)
+        let historyData: HistoryData
+        if !filteredInfoArray.isEmpty{
+            historyData = filteredInfoArray[indexPath.row]
+        }else{
+            historyData = infoArray[indexPath.row]
+        }
+        
         cell.createCellWith(data: historyData)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        for i in infoArray{
-            print(i.ID)
-        }
+        
         let cell = tableView.cellForRow(at: indexPath) as! HistoryCell
         cell.setSelected(false, animated: true)
         
-        let data = infoArray[indexPath.row]
+        let historyData: HistoryData
+        if !filteredInfoArray.isEmpty{
+            historyData = filteredInfoArray[indexPath.row]
+        }else{
+            historyData = infoArray[indexPath.row]
+        }
         
-        historyDelegate.historyTableView(tableView, didSelectRowAt: indexPath, with: data)
+        historyDelegate?.historyTableView(tableView, didSelectRowAt: indexPath, with: historyData)
     }
     
     

@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class StatsView: UIView {
+class StudentStatsView: UIView {
     
     //INDEX 0: this week, 1: this month, 2: this year
     var lateCounts = [0, 0, 0]{

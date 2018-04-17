@@ -15,7 +15,8 @@
 		BF076CB21F6B754A0082299D /* LogIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF076CB11F6B754A0082299D /* LogIn.swift */; };
 		BF1E19641FA409330076F044 /* FirebaseDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1E19631FA409330076F044 /* FirebaseDataClass.swift */; };
 		BF2C0F7B201AF8AA00CAA604 /* HistoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C0F7A201AF8AA00CAA604 /* HistoryTableView.swift */; };
-		BF2C0F7D201AF8BA00CAA604 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C0F7C201AF8BA00CAA604 /* StatsView.swift */; };
+		BF2C0F7D201AF8BA00CAA604 /* StudentStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */; };
+		BF3264DE208656E5000A35E4 /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3264DD208656E5000A35E4 /* StatsViewController.swift */; };
 		BF51324E20488704000AFD0D /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF51324D20488704000AFD0D /* NotificationView.swift */; };
 		BF56E0822044820F0080C2FB /* HistoryStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF56E0812044820F0080C2FB /* HistoryStackView.swift */; };
 		BF83555320348573001F2578 /* ExpandedCellStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF83555220348573001F2578 /* ExpandedCellStudent.swift */; };
@@ -32,12 +33,14 @@
 		BFA506A61F4BE33800B8DE09 /* sidebar_testUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA506A51F4BE33800B8DE09 /* sidebar_testUITests.swift */; };
 		BFAEE41C2026AAC700637395 /* FirebaseRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAEE41B2026AAC700637395 /* FirebaseRequests.swift */; };
 		BFBC2E3D20499B7C003250EA /* AllItemsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBC2E3C20499B7C003250EA /* AllItemsController.swift */; };
-		BFBC2E3F204DBBA1003250EA /* SelectUserTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBC2E3E204DBBA1003250EA /* SelectUserTableView.swift */; };
 		BFBFD7911F5A16D300437639 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBFD7901F5A16D300437639 /* Request.swift */; };
 		BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */; };
 		BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */; };
 		BFDCE1D11FC691B000EA5EE0 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */; };
 		BFDCE1D31FC691B700EA5EE0 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1D21FC691B700EA5EE0 /* User.swift */; };
+		BFF3C5D32076C6E700B22532 /* Reload History Old Function in Resources */ = {isa = PBXBuildFile; fileRef = BFF3C5D22076C6E700B22532 /* Reload History Old Function */; };
+		BFF3C5D52076C89E00B22532 /* FirebaseDataClass+UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF3C5D42076C89E00B22532 /* FirebaseDataClass+UserData.swift */; };
+		BFF3C5D720791C8D00B22532 /* FirebaseDataClass+HistoryManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF3C5D620791C8C00B22532 /* FirebaseDataClass+HistoryManager.swift */; };
 		E2F58A72ADD7AE66D41ED5AA /* Pods_sidebar_testTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C66CCD972745F18E0F4B58D /* Pods_sidebar_testTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,7 +76,8 @@
 		BF076CB11F6B754A0082299D /* LogIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogIn.swift; sourceTree = "<group>"; };
 		BF1E19631FA409330076F044 /* FirebaseDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDataClass.swift; sourceTree = "<group>"; };
 		BF2C0F7A201AF8AA00CAA604 /* HistoryTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableView.swift; sourceTree = "<group>"; };
-		BF2C0F7C201AF8BA00CAA604 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
+		BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentStatsView.swift; sourceTree = "<group>"; };
+		BF3264DD208656E5000A35E4 /* StatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
 		BF51324D20488704000AFD0D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BF56E0812044820F0080C2FB /* HistoryStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStackView.swift; sourceTree = "<group>"; };
 		BF83555220348573001F2578 /* ExpandedCellStudent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCellStudent.swift; sourceTree = "<group>"; };
@@ -96,12 +100,14 @@
 		BFA506A71F4BE33800B8DE09 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BFAEE41B2026AAC700637395 /* FirebaseRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRequests.swift; sourceTree = "<group>"; };
 		BFBC2E3C20499B7C003250EA /* AllItemsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllItemsController.swift; sourceTree = "<group>"; };
-		BFBC2E3E204DBBA1003250EA /* SelectUserTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectUserTableView.swift; sourceTree = "<group>"; };
 		BFBFD7901F5A16D300437639 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryData.swift; sourceTree = "<group>"; };
 		BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
 		BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
 		BFDCE1D21FC691B700EA5EE0 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		BFF3C5D22076C6E700B22532 /* Reload History Old Function */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Reload History Old Function"; sourceTree = "<group>"; };
+		BFF3C5D42076C89E00B22532 /* FirebaseDataClass+UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirebaseDataClass+UserData.swift"; sourceTree = "<group>"; };
+		BFF3C5D620791C8C00B22532 /* FirebaseDataClass+HistoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FirebaseDataClass+HistoryManager.swift"; sourceTree = "<group>"; };
 		D69AD1696ED49A5AA5F0D992 /* Pods-sidebar testTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-sidebar testTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-sidebar testTests/Pods-sidebar testTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -149,7 +155,7 @@
 				BF85C4182050706800B30B89 /* History Table View */,
 				BF513248204886B0000AFD0D /* TeacherStackView */,
 				BF85C4192050708700B30B89 /* User Table View */,
-				BF2C0F7C201AF8BA00CAA604 /* StatsView.swift */,
+				BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -260,10 +266,13 @@
 			isa = PBXGroup;
 			children = (
 				BF1E19631FA409330076F044 /* FirebaseDataClass.swift */,
+				BFF3C5D620791C8C00B22532 /* FirebaseDataClass+HistoryManager.swift */,
+				BFF3C5D42076C89E00B22532 /* FirebaseDataClass+UserData.swift */,
 				BF835556203A86A0001F2578 /* GoogleDataClass.swift */,
 				BFAEE41B2026AAC700637395 /* FirebaseRequests.swift */,
 				BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */,
 				BFDCE1D21FC691B700EA5EE0 /* User.swift */,
+				BFF3C5D22076C6E700B22532 /* Reload History Old Function */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -276,8 +285,8 @@
 				BF83555220348573001F2578 /* ExpandedCellStudent.swift */,
 				BFBFD7901F5A16D300437639 /* Request.swift */,
 				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
-				BFBC2E3E204DBBA1003250EA /* SelectUserTableView.swift */,
 				BFBC2E3C20499B7C003250EA /* AllItemsController.swift */,
+				BF3264DD208656E5000A35E4 /* StatsViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -416,6 +425,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BFA506901F4BE33700B8DE09 /* LaunchScreen.storyboard in Resources */,
+				BFF3C5D32076C6E700B22532 /* Reload History Old Function in Resources */,
 				BF076CB01F6B72ED0082299D /* GoogleService-Info.plist in Resources */,
 				BFA5068D1F4BE33700B8DE09 /* Assets.xcassets in Resources */,
 			);
@@ -610,11 +620,11 @@
 				BFDCE1D11FC691B000EA5EE0 /* UserCell.swift in Sources */,
 				BFDCE1D31FC691B700EA5EE0 /* User.swift in Sources */,
 				BFA506881F4BE33700B8DE09 /* Home.swift in Sources */,
-				BFBC2E3F204DBBA1003250EA /* SelectUserTableView.swift in Sources */,
-				BF2C0F7D201AF8BA00CAA604 /* StatsView.swift in Sources */,
+				BF2C0F7D201AF8BA00CAA604 /* StudentStatsView.swift in Sources */,
 				BF835557203A86A0001F2578 /* GoogleDataClass.swift in Sources */,
 				BFBFD7911F5A16D300437639 /* Request.swift in Sources */,
 				BFBC2E3D20499B7C003250EA /* AllItemsController.swift in Sources */,
+				BF3264DE208656E5000A35E4 /* StatsViewController.swift in Sources */,
 				BF9D15411F50BC2100ED4681 /* MainNavigationViewController.swift in Sources */,
 				BF2C0F7B201AF8AA00CAA604 /* HistoryTableView.swift in Sources */,
 				BF51324E20488704000AFD0D /* NotificationView.swift in Sources */,
@@ -622,10 +632,12 @@
 				BF9D15451F511CD500ED4681 /* ContainerViewController.swift in Sources */,
 				BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */,
 				BF9D15431F50BD9600ED4681 /* SideBar.swift in Sources */,
+				BFF3C5D720791C8D00B22532 /* FirebaseDataClass+HistoryManager.swift in Sources */,
 				BF83555320348573001F2578 /* ExpandedCellStudent.swift in Sources */,
 				BF56E0822044820F0080C2FB /* HistoryStackView.swift in Sources */,
 				BF01EAD11F74C30D00D9769A /* ExpandedCellTeacher.swift in Sources */,
 				BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */,
+				BFF3C5D52076C89E00B22532 /* FirebaseDataClass+UserData.swift in Sources */,
 				BFAEE41C2026AAC700637395 /* FirebaseRequests.swift in Sources */,
 				BFA506861F4BE33700B8DE09 /* AppDelegate.swift in Sources */,
 				BF8355552039D18E001F2578 /* UserTableView.swift in Sources */,

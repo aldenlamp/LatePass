@@ -82,22 +82,20 @@ struct FirebaseRequests{
                     }else{
                         
                         completion("", "", "", true)
-                        firebaseData.reloadHistoryData()
+//                        firebaseData.reloadHistoryData()
                     }
                 }).resume()
             }else{
                 print("FIRSTERROR: \(String(describing: error))")
             }
         })
-        
-        
     }
     
     
     
     static func acceptPass(withStatus accepted: Bool, data: HistoryData, completion: @escaping (_ title: String, _ message: String, _ button: String, _ worked: Bool) -> Void){
         
-        let rqID = data.ID!
+        let rqID = data.ID
         
         FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
             if error == nil{
@@ -132,7 +130,7 @@ struct FirebaseRequests{
                         //                        self?.dismiss(animated: true, completion: nil)
                         
                         completion("", "", "", true)
-                        firebaseData.reloadHistoryData()
+//                        firebaseData.reloadHistoryData()
                     }
                 }).resume()
             }else{

@@ -10,26 +10,36 @@ import Foundation
 import UIKit
 
 
-class HistoryData{
-    var ID: String!
-    var destination: String?
-    var origin: String!
-    var student: String!
-    var timeStarted: Int!
-    var timeCompleted: Int?
-    var reason: String!
-    var status: acceptedStatus!
-    var thisCellType: cellTypes!
-    var thisTimeFrame: timeFrames!
-    
-    var image: UIImage {
+class HistoryData: Hashable{
+    var hashValue: Int{
         get{
-            if status == nil || thisTimeFrame == nil{
-             return #imageLiteral(resourceName: "rejected-red")
-            }  
-            switch status! {
+            return ID.hashValue
+        }
+    }
+    
+    static func == (lhs: HistoryData, rhs: HistoryData) -> Bool {
+        return lhs.hashValue == rhs.hashValue
+    }
+    
+    var ID: String
+//    var destination: String?
+//    var origin: String
+//    var student: String
+    var destination: User?
+    var origin: User
+    var student: User
+    var timeStarted: Int
+    var timeCompleted: Int?
+    var reason: String
+    var status: acceptedStatus
+    var thisCellType: cellTypes!
+    var thisTimeFrame: timeFrames
+    
+    public var image: UIImage {
+        get{
+            switch status{
             case .accepted:
-                switch thisTimeFrame! {
+                switch thisTimeFrame {
                 case .thisWeek:
                     return #imageLiteral(resourceName: "approved-lightBlue")
                 case .thisMonth:
@@ -45,7 +55,7 @@ class HistoryData{
         }
     }
     
-    func initData(ID: String, origin: String, destination: String?, student: String, timeStarted: Int, timeCompleted: Int?, reason: String, status: acceptedStatus, cellType: cellTypes){
+    public init(ID: String, origin: User, destination: User?, student: User, timeStarted: Int, timeCompleted: Int?, reason: String, status: acceptedStatus, cellType: cellTypes){
         
         func isThis(timeFrame: String, timeInterval time: Int) -> Bool{
             let formatter = DateFormatter()
@@ -81,17 +91,17 @@ class HistoryData{
         }else{
             thisTimeFrame = .thisYear
         }
-        self.ID = ID
         
+        self.ID = ID
     }    
     
     func toStringReadable() -> String{
         switch thisCellType! {
-        case .studentHistory:   return "\(origin!) to \(String(describing: destination!))"
-        case .toHistory:        return "\(String(describing: student!)) will be late"
-        case .fromHistory:      return "\(String(describing: student!)) left late"
-        case .request:          return "\(String(describing: student!)) requests a latepass"
-        case .studentRequest:   return "\(String(describing: student!)) left late"
+        case .studentHistory:   return "\(origin) to \(String(describing: destination!))"
+        case .toHistory:        return "\(student) will be late"
+        case .fromHistory:      return "\(student) left late"
+        case .request:          return "\(student) requests a latepass"
+        case .studentRequest:   return "\(student) left late"
         }
     }
     
