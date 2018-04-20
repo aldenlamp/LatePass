@@ -40,10 +40,10 @@ class ContainerViewController: UIViewController {
         activeNavigationController.didMove(toParentViewController: self)
         
 //        let mainVC = Home()//UIStoryboard(name: "Main", bundle: Bundle.main).instantiateViewController(withIdentifier: "first")
-        activeNavigationController.homeVC = Home()
+//        activeNavigationController.homeVC = Home()
     
-    
-        activeNavigationController.setViewControllers([activeNavigationController.homeVC], animated: false)
+
+        activeNavigationController.setViewControllers([Home()], animated: false)
         
         containerOverlay = UIButton(frame: self.view.frame)
         containerOverlay.backgroundColor = UIColor.black
@@ -70,6 +70,8 @@ class ContainerViewController: UIViewController {
         })
         
         NotificationCenter.default.addObserver(forName: ReturnToLoginNotificationName, object: nil, queue: nil) { (notification) in
+//            self.activeNavigationController.homeVC = nil
+            firebaseData = nil
             self.activeNavigationController.switchViewTo(LogIn())
             self.allowSlide = false
             self.activeNavigationController.navigationBar.isHidden = true
@@ -78,10 +80,12 @@ class ContainerViewController: UIViewController {
             }
             //DISABLE TOGGLE MENUE AND NAV BAR
         }
-        NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: "allowSideBarExtension"), object: nil, queue: nil) { (notification) in
+        
+        //After log out then logging back in this is called
+        NotificationCenter.default.addObserver(forName: Notification.Name(rawValue: "userLoggedIn"), object: nil, queue: nil) { (notification) in
             self.allowSlide = true
             self.activeNavigationController.navigationBar.isHidden = false
-//            self.activeNavigationController.viewControllers = [Home()]
+//            self.activeNavigationController.setNewHomeView()
             self.activeNavigationController.switchViewToHome()
         }
         

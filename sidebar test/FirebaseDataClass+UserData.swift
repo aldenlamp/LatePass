@@ -24,6 +24,7 @@ extension FirebaseDataClass{
     
     func finishedPullingAll(){
         if allStudentsLoaded && allTeachersLoaded{
+            print("All users finished loading")
             NotificationCenter.default.post(name: userDataLoadedNotification, object: nil)
             getHistoryItems()
 //            getRequestItems()
@@ -65,23 +66,47 @@ extension FirebaseDataClass{
                 userCell.userStringID = i
                 
                 
-                self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: { (snapshot) in
+                self?.ref.child("users").child(i).child("name").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
                     userCell.userName = snapshot.value! as! String
-                    pulledAProperty()
+//                    pulledAProperty()
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            if itemType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                            self?.finishedPullingAll()
+                        }
+                    }
                 })
                 
-                self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: { (snapshot) in
+                self?.ref.child("users").child(i).child("email").observeSingleEvent(of: .value, with: {[weak self] (snapshot) in
                     userCell.userEmail = snapshot.value! as! String
-                    pulledAProperty()
+//                    pulledAProperty()
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            if itemType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                            self?.finishedPullingAll()
+                        }
+                    }
                 })
                 
-                self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: {(snapshot) in
+                self?.ref.child("users").child(i).child("photoURL").observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
                     if let image = try? UIImage(data: Data(contentsOf: URL(string: (snapshot.value! as! String))!)){
                         userCell.userImage = image!
                     }else{
                         userCell.userImage = #imageLiteral(resourceName: "BlankUser")
                     }
-                    pulledAProperty()
+//                    pulledAProperty()
+                    finishCount += 1
+                    if finishCount == studentKeys.count * 3{
+                        realStudents = true
+                        if imaginaryStudents == true{
+                            if itemType == "students"{ allStudentsLoaded = true }else{ allTeachersLoaded = true }
+                            self?.finishedPullingAll()
+                        }
+                    }
                 })
                 
                 if itemType == "students"{ self?.allStudents.append(userCell) }else{ self?.allTeachers.append(userCell) }

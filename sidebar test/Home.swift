@@ -47,11 +47,10 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         }
         
         setUpNavigation()
-        
     }
     
     deinit{
-//        print("Home View Controller did Deinit")
+        print("Home View Controller did Deinit")
 //        UserDefaults.standard.set(nil, forKey: "userType")
     }
     

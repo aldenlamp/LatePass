@@ -97,11 +97,11 @@ class HistoryData: Hashable{
     
     func toStringReadable() -> String{
         switch thisCellType! {
-        case .studentHistory:   return "\(origin) to \(String(describing: destination!))"
-        case .toHistory:        return "\(student) will be late"
-        case .fromHistory:      return "\(student) left late"
-        case .request:          return "\(student) requests a latepass"
-        case .studentRequest:   return "\(student) left late"
+        case .studentHistory:   return "\(origin.userName) to \(destination!.userName)"
+        case .toHistory:        return "\(student.userName) will be late"
+        case .fromHistory:      return "\(student.userName) left late"
+        case .request:          return "\(student.userName) requests a latepass"
+        case .studentRequest:   return "\(student.userName) left late"
         }
     }
     

@@ -31,10 +31,6 @@ class FirebaseDataClass{
     //Firebase Ref
     let ref = FIRDatabase.database().reference()
     
-    //Individual History Items Lists
-//    var historyItems = [HistoryData]()
-//    var requestItems = [HistoryData]()
-    
     //All History Items
     var allItems = [HistoryData]()
     
@@ -56,12 +52,24 @@ class FirebaseDataClass{
         }
     }
     
-    //For the teacher stat table view
+    //For the stat table views
     var toItems: [HistoryData] {
         get{
             var arr = [HistoryData]()
             for i in allItems{
                 if i.thisCellType == cellTypes.toHistory{
+                    arr.append(i)
+                }
+            }
+            return arr
+        }
+    }
+    
+    var studentItems: [HistoryData]{
+        get{
+            var arr = [HistoryData]()
+            for i in arr{
+                if i.thisCellType == cellTypes.studentHistory{
                     arr.append(i)
                 }
             }
@@ -151,6 +159,7 @@ class FirebaseDataClass{
             self?.currentUser = User(email: email, type: tier, name: name, image: image, stringID: self?.userID!)
             
             //Delegate call to userDidLoad
+            print("Current User data Did load")
             self?.firebaseDataDelegate.userDataDidLoad()
             NotificationCenter.default.post(Notification(name: userDataDidLoadNotif))
             

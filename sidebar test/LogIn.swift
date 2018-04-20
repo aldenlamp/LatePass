@@ -19,6 +19,7 @@ class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
         
+//        (self.navigationController as! MainNavigationViewController).oneMoreRecognizer()
         
 //        setUpGoogle()
         setUpView()
@@ -26,7 +27,7 @@ class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
         
         //Called after Login has been completed
         observer = NotificationCenter.default.addObserver(forName: logInCompleteNotification, object: nil, queue: nil) { (notification) in
-            NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "allowSideBarExtension")))
+            NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "userLoggedIn")))
             NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "setUpUserAttributesSideBar")))
         }
     }

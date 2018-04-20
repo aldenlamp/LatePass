@@ -12,8 +12,11 @@ class MainNavigationViewController: UINavigationController {
     
     fileprivate var homeSelectedObserver: NSObjectProtocol?
     fileprivate var allTableViewSelectedObserver: NSObjectProtocol?
+    fileprivate var statViewControllerSelectedObserver: NSObjectProtocol?
+    fileprivate var logInObserver: NSObjectProtocol?
     
-    public var homeVC: Home!
+//    public var homeVC: Home!
+    
     private let plusButton = UIButton()
     
     var plusButtonIsHidden: Bool = false {
@@ -70,6 +73,24 @@ class MainNavigationViewController: UINavigationController {
         return plusButton
     }()
     
+    var rightInfoButton: UIButton = {
+        let plusButton = UIButton()
+        plusButton.translatesAutoresizingMaskIntoConstraints = false
+        plusButton.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        plusButton.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        
+        let plusImageView = UIImageView()
+        plusButton.addSubview(plusImageView)
+        plusImageView.translatesAutoresizingMaskIntoConstraints = false
+        plusImageView.image = #imageLiteral(resourceName: "icons8-info").withRenderingMode(.alwaysOriginal)
+        plusImageView.heightAnchor.constraint(equalToConstant: 25).isActive = true
+        plusImageView.widthAnchor.constraint(equalToConstant: 25).isActive = true
+        plusImageView.centerYAnchor.constraint(equalTo: plusButton.centerYAnchor, constant: 0).isActive = true
+        plusImageView.centerXAnchor.constraint(equalTo: plusButton.centerXAnchor, constant: 0).isActive = true
+        
+        return plusButton
+    }()
+    
     public func setUpNavigation(){
         self.navigationBar.backgroundColor = UIColor.white
         self.navigationBar.layer.borderColor = UIColor.white.cgColor
@@ -98,19 +119,40 @@ class MainNavigationViewController: UINavigationController {
             self?.switchViewTo(AllItemsController())
         })
         
+        statViewControllerSelectedObserver = notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.statViewController.rawValue), object: nil, queue: nil, using: { [weak self] (notification) in
+            self?.switchViewTo(StatsViewController())
+        })
+        
         notificationCenter.addObserver(forName: WifiDisconectedNotification, object: nil, queue: nil, using:  {(notification) in
             self.viewControllers.last?.alert(title: "No Wifi", message: "Please connect to WiFi", buttonTitle: "Okay")
         })
+        
     }
     
+    //This is for adding the recognizer for changing the home after the origional time it has been logged in
+//    func oneMoreRecognizer(){
+//        logInObserver = NotificationCenter.default.addObserver(forName: logInCompleteNotification, object: nil, queue: nil) { [weak self] (notification) in
+//            self?.homeVC = Home()
+////            self?.setViewControllers([self?.homeVC], animated: true)
+//        }
+//    }
+    
     func switchViewTo(_ viewController: UIViewController){
-        if let vc = viewControllers.first as? Home{
-            homeVC = vc
-        }
+//        if let vc = viewControllers.first as? Home{
+//            homeVC = vc
+//        }
         setViewControllers([viewController], animated: false)
     }
     
-    func switchViewToHome(){ setViewControllers([self.homeVC], animated: false) }
+    func switchViewToHome(){
+//        setViewControllers([self.homeVC], animated: false)
+        setViewControllers([Home()], animated: false)
+    }
+    
+//    func setNewHomeView(){
+//        self.homeVC = Home()
+//        switchViewToHome()
+//    }
     
     func removeObservers(){
         let notificationCenter = NotificationCenter.default
@@ -121,6 +163,14 @@ class MainNavigationViewController: UINavigationController {
         
         if allTableViewSelectedObserver != nil{
             notificationCenter.removeObserver(allTableViewSelectedObserver!)
+        }
+        
+        if statViewControllerSelectedObserver != nil{
+            notificationCenter.removeObserver(statViewControllerSelectedObserver!)
+        }
+        
+        if logInObserver != nil{
+            notificationCenter.removeObserver(logInObserver!)
         }
     }
 }

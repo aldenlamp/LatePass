@@ -17,6 +17,8 @@
 		BF2C0F7B201AF8AA00CAA604 /* HistoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C0F7A201AF8AA00CAA604 /* HistoryTableView.swift */; };
 		BF2C0F7D201AF8BA00CAA604 /* StudentStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */; };
 		BF3264DE208656E5000A35E4 /* StatsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3264DD208656E5000A35E4 /* StatsViewController.swift */; };
+		BF3264E220869D58000A35E4 /* StatUserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3264E120869D58000A35E4 /* StatUserCell.swift */; };
+		BF3264E420869EBD000A35E4 /* StatsViewController+UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */; };
 		BF51324E20488704000AFD0D /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF51324D20488704000AFD0D /* NotificationView.swift */; };
 		BF56E0822044820F0080C2FB /* HistoryStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF56E0812044820F0080C2FB /* HistoryStackView.swift */; };
 		BF83555320348573001F2578 /* ExpandedCellStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF83555220348573001F2578 /* ExpandedCellStudent.swift */; };
@@ -78,6 +80,8 @@
 		BF2C0F7A201AF8AA00CAA604 /* HistoryTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryTableView.swift; sourceTree = "<group>"; };
 		BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudentStatsView.swift; sourceTree = "<group>"; };
 		BF3264DD208656E5000A35E4 /* StatsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsViewController.swift; sourceTree = "<group>"; };
+		BF3264E120869D58000A35E4 /* StatUserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatUserCell.swift; sourceTree = "<group>"; };
+		BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatsViewController+UITableView.swift"; sourceTree = "<group>"; };
 		BF51324D20488704000AFD0D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BF56E0812044820F0080C2FB /* HistoryStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStackView.swift; sourceTree = "<group>"; };
 		BF83555220348573001F2578 /* ExpandedCellStudent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCellStudent.swift; sourceTree = "<group>"; };
@@ -156,8 +160,18 @@
 				BF513248204886B0000AFD0D /* TeacherStackView */,
 				BF85C4192050708700B30B89 /* User Table View */,
 				BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */,
+				BF3264E120869D58000A35E4 /* StatUserCell.swift */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		BF3264E72086A394000A35E4 /* StatViewController */ = {
+			isa = PBXGroup;
+			children = (
+				BF3264DD208656E5000A35E4 /* StatsViewController.swift */,
+				BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */,
+			);
+			name = StatViewController;
 			sourceTree = "<group>";
 		};
 		BF513248204886B0000AFD0D /* TeacherStackView */ = {
@@ -286,7 +300,7 @@
 				BFBFD7901F5A16D300437639 /* Request.swift */,
 				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
 				BFBC2E3C20499B7C003250EA /* AllItemsController.swift */,
-				BF3264DD208656E5000A35E4 /* StatsViewController.swift */,
+				BF3264E72086A394000A35E4 /* StatViewController */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -622,6 +636,8 @@
 				BFA506881F4BE33700B8DE09 /* Home.swift in Sources */,
 				BF2C0F7D201AF8BA00CAA604 /* StudentStatsView.swift in Sources */,
 				BF835557203A86A0001F2578 /* GoogleDataClass.swift in Sources */,
+				BF3264E420869EBD000A35E4 /* StatsViewController+UITableView.swift in Sources */,
+				BF3264E220869D58000A35E4 /* StatUserCell.swift in Sources */,
 				BFBFD7911F5A16D300437639 /* Request.swift in Sources */,
 				BFBC2E3D20499B7C003250EA /* AllItemsController.swift in Sources */,
 				BF3264DE208656E5000A35E4 /* StatsViewController.swift in Sources */,

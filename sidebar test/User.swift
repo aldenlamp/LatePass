@@ -38,7 +38,12 @@ class User: Hashable{
     private static var allUserIds = [Int]()
     
     deinit {
-        User.allUserIds.remove(at: User.allUserIds.index(of: self.userIDHash)!)
+        if let index = User.allUserIds.index(of: self.userIDHash){
+            User.allUserIds.remove(at: index)
+        }else{
+            print("\nUSER NOT IN ALLUSERIDS ARRAY name: \(self.userName), id: \(String(describing: self.userStringID))\n")
+        }
+        
     }
     
     init(type: userType, name: String, email: String){

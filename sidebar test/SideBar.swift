@@ -14,6 +14,7 @@ enum NavigationNotifications: String {
     case toggleMenu = "toggleMenuNotifictaion"
     case home = "Home"
     case allItemController = "All History Items"
+    case statViewController = "Analysis"
 }
 
 class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
@@ -139,9 +140,9 @@ class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
     private func getUpdatesForSelection(){
         NotificationCenter.default.addObserver(forName: userDataDidLoadNotif, object: nil, queue: nil) { [weak self] (notification) in
             if firebaseData.currentUser.userType == .student{
-                self?.selectionArr = [(NavigationNotifications.home, #imageLiteral(resourceName: "approved-purple")), (NavigationNotifications.allItemController, #imageLiteral(resourceName: "approved-blue"))]
+                self?.selectionArr = [(NavigationNotifications.home, #imageLiteral(resourceName: "approved-purple")), (NavigationNotifications.allItemController, #imageLiteral(resourceName: "approved-blue")), (NavigationNotifications.statViewController, #imageLiteral(resourceName: "approved-lightBlue"))]
             }else{
-                self?.selectionArr = [(NavigationNotifications.home, #imageLiteral(resourceName: "approved-purple")), (NavigationNotifications.allItemController, #imageLiteral(resourceName: "approved-blue"))]
+                self?.selectionArr = [(NavigationNotifications.home, #imageLiteral(resourceName: "approved-purple")), (NavigationNotifications.allItemController, #imageLiteral(resourceName: "approved-blue")), (NavigationNotifications.statViewController, #imageLiteral(resourceName: "approved-lightBlue"))]
             }
             self?.selectionTableView.reloadData()
         }
