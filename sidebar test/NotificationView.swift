@@ -15,9 +15,8 @@ protocol NotificationDelegate: class{
 
 class NotificationView: UIView{
     
-    var delegate: NotificationDelegate?
+    weak var delegate: NotificationDelegate?
     
-    //TODO: - This is temporary
     var noNotifications = UILabel()
     
     let iconImage = UIImageView()
@@ -32,6 +31,10 @@ class NotificationView: UIView{
     var responseView = UIStackView()
     
     var currentHistoryData: HistoryData?
+    
+    deinit {
+        print("hello")
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -77,7 +80,7 @@ class NotificationView: UIView{
     }
     
     @objc func didDismiss(){
-        delegate?.didDissmissView()        
+        delegate?.didDissmissView()
     }
     
     //MARK: - Setting Up Views

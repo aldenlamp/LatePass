@@ -15,13 +15,31 @@ protocol SelectTeacherDelegate: class {
 }
 
 
-class SelectTeachers: UIViewController, UserTableViewDelegate{
+class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDelegate{
     
     //This is if a student is selecting, is he selecting the first teacher or the second teahcer
     //LONG STORY SHORT: different thatn selectStudents
+    //And very much necessary
     var isFirstSelecion = false
     var selectStudents = false
     weak var delegate: SelectTeacherDelegate!
+    
+    //This is the user tableView
+    let tableView: UserTableView = UserTableView()
+    
+    //The data that we will be using
+    var users: [[User]]!
+    
+    var numberOfTables: Int{
+        get{
+            return users.count
+        }
+    }
+    
+    //the segmented controller
+    let customSelector = CustomSelectorView()
+//    let segmentedController = UISegmentedControl()
+    
     
     
     override func viewDidLoad() {
@@ -30,15 +48,17 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         
         print(firebaseData.allTeachers)
         
-        setUpCancelButton()
+        setUpBarButtons()
         setUpTitle()
         setUpSearchBar()
+        setUpCustomSelector()
         setUpTableView()
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SelectTeachers.dismissKeyboard))
         tap.delegate = self
         view.addGestureRecognizer(tap)
         
+        //TODO: - Create a list of data that is to be managed from google classroom
         
         
     }
@@ -52,9 +72,6 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
 //        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: teacherDataLoaded, object: nil)
 //                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
 //                NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
-
-        
-        
     }
     
 
@@ -69,17 +86,39 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
     
     //MARK: - Cancel Button
     
-    func setUpCancelButton(){
+    func setUpBarButtons(){
         let button = UIButton()
         button.image(for: .normal)
         button.setImage(#imageLiteral(resourceName: "icons8-delete_sign_filled"), for: .normal)
         button.frame = CGRect(x: 28, y: 41, width: 21, height: 21)
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         self.view.addSubview(button)
+        
+        
+        //TODO: - Only allow for teachers
+        if isFirstSelecion && selectStudents{
+            let rbutton = UIButton()
+            rbutton.image(for: .normal)
+            rbutton.setImage(#imageLiteral(resourceName: "icons8-checkmark_filled"), for: .normal)
+            rbutton.frame = CGRect(x: self.view.frame.width - 49, y: 41, width: 21, height: 21)
+            rbutton.addTarget(self, action: #selector(finish), for: .touchUpInside)
+            self.view.addSubview(rbutton)
+        }
     }
     
     @objc private func cancel(){
-        delegate.didSelectFirst(users: tableView.selectedArray.reversed())
+        tableView.selectedArray = [User]()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func finish(){
+        //TODO: - Make a delegate functions to return the list of teachers
+        if self.tableView.selectedArray.isEmpty{
+            alert(title: "No Students Selected", message: "Please select one or more students", buttonTitle: "Done")
+            return
+        }
+        
+        delegate.didSelectFirst(users: tableView.selectedArray)
         self.dismiss(animated: true, completion: nil)
     }
 
@@ -180,23 +219,72 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         searchView.heightAnchor.constraint(equalToConstant: 42).isActive = true
     }
     
-    
-    
-    
     @objc func textFieldDidChange(_ textField: UITextField){
         tableView.textDidChange(to: textField.text!.lowercased())
     }
     
+    //MARK: - Segmented Controller
+    
+    func setUpCustomSelector(){
+        
+        if !selectStudents{
+            customSelector.sections = firebaseData.currentUser.userType == .student ? ["Google Classroom Teachers", "All Teachers"] : ["Teachers"]
+        }else{
+            customSelector.sections = firebaseData.googleData.courseNames
+        }
+        
+        customSelector.translatesAutoresizingMaskIntoConstraints = false
+        customSelector.delegate = self
+        
+        self.view.addSubview(customSelector)
+        customSelector.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        customSelector.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        customSelector.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        customSelector.topAnchor.constraint(equalTo: self.searchView.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func selectionSwitched(to index: Int) {
+        
+        print(firebaseData.googleData.teachers)
+//        print(firebaseData.googleData.students)
+        let users: [User]
+        if firebaseData.currentUser.userType == .student{
+            //users = firebaseData.allTeachers
+            users = firebaseData.googleData.teachers[index]
+        }else{
+            // users = selectStudents ? firebaseData.allStudents : firebaseData.allTeachers
+            
+            if selectStudents{
+                users = firebaseData.googleData.students[index]
+            }else{
+                users = firebaseData.allTeachers
+            }
+        }
+        tableView.userList = users
+        tableView.update()
+    }
+    
+    
+    
     //MARK: - TableView
-    let tableView: UserTableView = UserTableView()
     
     func setUpTableView(){
         tableView.delegate = self
         let users: [User]
+        
+        
         if firebaseData.currentUser.userType == .student{
-            users = firebaseData.allTeachers
+//            users = firebaseData.allTeachers
+            users = firebaseData.googleData.teachers[customSelector.currentSection]
         }else{
-            users = selectStudents ? firebaseData.allStudents : firebaseData.allTeachers
+//            users = selectStudents ? firebaseData.allStudents : firebaseData.allTeachers
+            
+            if selectStudents{
+                users = firebaseData.googleData.students[customSelector.currentSection]
+            }else{
+                users = firebaseData.allTeachers
+//                users = firebaseData.GCAllTeachers
+            }
         }
         
         tableView.setUpTableView(withUsers: users, multipleSelect: selectStudents)
@@ -204,7 +292,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         self.view.addSubview(tableView)
         
         tableView.translatesAutoresizingMaskIntoConstraints  = false
-        tableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 0).isActive = true
+        tableView.topAnchor.constraint(equalTo: customSelector.bottomAnchor, constant: 0).isActive = true
         tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
         tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive  = true
         tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
@@ -214,6 +302,12 @@ class SelectTeachers: UIViewController, UserTableViewDelegate{
         searchTextField.text = ""
         searchTextField.endEditing(true)
         
+//        if self.selectStudents{
+//            dismiss(animated: true, completion: nil)
+//            delegate.didSelectDestination(user: selectedUser)
+//        }else{
+//            print("\n\n\n\n\n\n\n\nERRIRROROOROROR in selecting student vs teacher\n\n\n\n\n\n\n\n")
+//        }
         if isFirstSelecion {
             delegate.didSelectFirst(users: [selectedUser])
         }else{

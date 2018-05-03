@@ -37,19 +37,19 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
         toTeacher = nil
         didEdit = false
         
-//        selectOne.selectStudents = firebaseData.currentUser.userType != .student
-//        selectOne.isFirstSelecion = firebaseData.currentUser.userType == .student
-//
-        if firebaseData.currentUser.userType != .student{
-            selectOne.selectStudents = true
-            selectOne.isFirstSelecion = false
-        }else{
-            selectOne.isFirstSelecion = true
-            selectOne.selectStudents = false
-        }
+        selectOne.selectStudents = firebaseData.currentUser.userType != .student
+        selectOne.isFirstSelecion = true//firebaseData.currentUser.userType == .student
+
+//        if firebaseData.currentUser.userType != .student{
+//            selectOne.selectStudents = true
+//            selectOne.isFirstSelecion = false
+//        }else{
+//            selectOne.isFirstSelecion = true
+//            selectOne.selectStudents = false
+//        }
         
-        selectTest.isFirstSelecion = false
-        selectTest.selectStudents = false
+//        selectTest.isFirstSelecion = false
+//        selectTest.selectStudents = false
         
         selectOne.delegate = self
         selectTwo.delegate = self

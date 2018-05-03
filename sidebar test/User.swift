@@ -9,7 +9,9 @@
 import Foundation
 import UIKit
 
-class User: Hashable{
+class User: Hashable, CustomStringConvertible{
+    
+    public var description: String { return "\(userName)" }
     
     var hashValue: Int {
         return userEmail.hashValue
@@ -26,11 +28,13 @@ class User: Hashable{
     
     var userType: userType
     var userName: String
+    
     private var userIDHash: Int{
         willSet{
             User.allUserIds.append(newValue)
         }
     }
+    
     var userEmail: String
     var userImage: UIImage
     var userStringID: String?
@@ -41,7 +45,7 @@ class User: Hashable{
         if let index = User.allUserIds.index(of: self.userIDHash){
             User.allUserIds.remove(at: index)
         }else{
-            print("\nUSER NOT IN ALLUSERIDS ARRAY name: \(self.userName), id: \(String(describing: self.userStringID))\n")
+//            print("\nUSER NOT IN ALLUSERIDS ARRAY name: \(self.userName), id: \(String(describing: self.userStringID))\n")
         }
         
     }

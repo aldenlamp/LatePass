@@ -35,17 +35,46 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(red: 0.973, green: 0.973, blue: 0.984, alpha: 1.00)
         
-        firebaseData = FirebaseDataClass()
-        
-        firebaseData.firebaseDataDelegate = self
-        historyTableView.historyDelegate = self
-        
-        initStatViewWith(userType: firebaseData.savedUserType)
-
-        if firebaseData.userID != nil{
-            firebaseData.pullingAllData()
+        if firebaseData == nil{
+            firebaseData = FirebaseDataClass()
+            firebaseData.firebaseDataDelegate = self
+            
+            
+            if firebaseData.userID != nil{
+                firebaseData.pullingAllData()
+            }
+            
+            initStatViewWith(userType: firebaseData.savedUserType)
+        }else{
+            
+            firebaseData.firebaseDataDelegate = self
+            
+            initStatViewWith(userType: firebaseData.currentUser.userType)
+            
+            var lateCounts = [0, 0, 0]
+            for i in firebaseData.allItems{
+                if (i.thisCellType == .fromHistory || i.thisCellType == .studentHistory) && i.status != .rejected{
+                    switch i.thisTimeFrame{
+                    case .thisWeek: lateCounts[0] += 1;
+                    case .thisMonth: lateCounts[1] += 1
+                    case .thisYear: lateCounts[2] += 1
+                    }
+                }
+            }
+            
+            if withStats { statView.lateCounts = lateCounts }
+            
+            
+            historyTableView.animateActivityIndicator = false
+            historyTableView.infoArray = firebaseData.filteredItems
+            historyStackView.addToStack(data: firebaseData.filteredItems)
+//            historyStackView.createStack(arr: firebaseData.filteredItems)
+            
         }
         
+        historyTableView.historyDelegate = self
+        
+//        print(firebaseData.savedUserType.rawValue)
         setUpNavigation()
     }
     
@@ -57,10 +86,7 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     
     //MARK: - reloading Data
     
-    
-    //TODO: - Reload History tableView when pass is accepted or rejecteed Using Notifications
     internal func historyArrayDidLoad() {
-        
         
         var lateCounts = [0, 0, 0]
         for i in firebaseData.allItems{
@@ -77,23 +103,11 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         
         
         historyTableView.animateActivityIndicator = false
-//        if !firebaseData.filteredItems.isEmpty{
-//            historyTableView.infoArray = firebaseData.filteredItems
-//        }else{
-//            historyTableView.infoArray = firebaseData.filteredItems
-//        }
         historyTableView.infoArray = firebaseData.filteredItems
-        historyStackView.createStack(arr: firebaseData.filteredItems)
+//        print("\n\nAllowed highlight: \(historyTableView.highlightObject(data: historyTableView.infoArray[0]))\n\n")
         
-//        for i in firebaseData.filteredItems{
-//            print(i.ID)
-//            print(i.status)
-//        }
-        
-//        historyTableView.infoArray = firebaseData.allItems
-        
-//        historyTableView.infoArray = firebaseData.sortHistoryData(withTypes: [.request, .toHistory])
-//        historyTableView.tableViewIsHidden = false
+//        historyStackView.createStack(arr: firebaseData.filteredItems)
+        historyStackView.addToStack(data: firebaseData.filteredItems)
         
         print("\n\nhistory data loaded\n\n")
     }
@@ -152,7 +166,8 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     //MARK: - HistoryStackView
     
     func setUpStackView(){
-        historyStackView.createStack(arr: firebaseData.filteredItems)
+//        historyStackView.createStack(arr: firebaseData.filteredItems)
+        historyStackView.addToStack(data: firebaseData.filteredItems)
     }
     
     func setUpNotificationView(){
@@ -169,6 +184,14 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         if !worked{
             self.alert(title: title, message: message, buttonTitle: button)
         }
+    }
+    
+    func newDataShown(data: HistoryData?) {
+        guard let highlighData = data else {
+            historyTableView.clearHighlights()
+            return
+        }
+        print("\n\nHighlight of data: \(highlighData)\t\t\(historyTableView.highlightObject(data: highlighData))")
     }
     
     //MARK: - TableView

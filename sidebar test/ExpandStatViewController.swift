@@ -1,118 +1,31 @@
 //
-//  StatsViewController.swift
+//  ExpandStatViewController.swift
 //  sidebar test
 //
-//  Created by alden lamp on 4/17/18.
+//  Created by alden lamp on 4/20/18.
 //  Copyright © 2018 alden lamp. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
-
-class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate{
+class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITextFieldDelegate{
     
-    //This is for filtering the different student/teacher Sorted Lists
-    var searchText = "" {
-        didSet{
-            statTableView.reloadData()
-        }
-    }
+    let historyTableView = HistoryTableView()
     
-    //For dismissing the keyboard
-    var gestureRecognizer = UITapGestureRecognizer()
-    
-    //Hold the data for a teachers view: Search by student
-    internal var teacherUserTable: [User: [User : [HistoryData]]] = [User: [User : [HistoryData]]]()
-    internal var teacherCountTable: [User: Int] = [User: Int]()
-    internal var teacherSortedUsers: [User]{
-        get{
-            var arr = Array(teacherCountTable.keys)
-            for _ in 0..<arr.count{
-                for i in 1..<arr.count{
-                    if teacherCountTable[arr[i - 1]]! < teacherCountTable[arr[i]]!{
-                        let temp = arr[i-1]
-                        arr[i-1] = arr[i]
-                        arr[i] = temp
-                    }
-                }
-            }
-            
-            var filteredArray = [User]()
-            for i in arr{
-                if searchText == "" || i.userName.lowercased().contains(searchText){
-                    filteredArray.append(i)
-                }
-            }
-            if firebaseData.currentUser.userType != .student { self.searchResult.text = String(filteredArray.count) }
-            return filteredArray
-        }
-    }
-    
-    //This holds the data for a student view: Search by teacher
-    internal var studentUserTable: [User : [HistoryData]] = [User : [HistoryData]]()
-    internal var studentSortedUsers: [User] {
-        get{
-            var arr = Array(studentUserTable.keys)
-            for _ in 0..<arr.count{
-                for i in 1..<arr.count{
-                    if studentUserTable[arr[i - 1]]!.count < studentUserTable[arr[i]]!.count{
-                        let temp = arr[i-1]
-                        arr[i-1] = arr[i]
-                        arr[i] = temp
-                    }
-                }
-            }
-            
-            var filteredArray = [User]()
-            for i in arr{
-                if searchText == "" || i.userName.lowercased().contains(searchText){
-                    filteredArray.append(i)
-                }
-            }
-            if firebaseData.currentUser.userType == .student { self.searchResult.text = String(filteredArray.count) }
-            return filteredArray
-        }
-    }
-    
-    //TableView for displaying the users
-    internal let statTableView = UITableView()
-    var selectedIndex = -1
-    
-    //This is for when a teacher expands a student to see from which teachesr
-    internal let expandTableView = UITableView()
+    var historyData: [HistoryData]!
+    var titleString: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor.white
+
         setUpNavigation()
-        sortData()
+        setUpTitle()
         setUpSearchBar()
-        setUpMainTableView()
-     
+        setUpTableView()
         
-        var str = ""
-        
-        for i in studentSortedUsers{
-            str += "\(i.userName) "
-        }
-        print("Student List: \(str)")
-        
-        var str2 = ""
-        
-        for i in teacherSortedUsers{
-            str2 += "\(i.userName) "
-        }
-        
-        print("Teacher Sorted List: \(str2)")
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        for i in statTableView.visibleCells{
-            i.isSelected = false
-        }
     }
     
     //MARK: - Navigation
@@ -123,7 +36,7 @@ class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldD
         let label = UILabel()
         label.textColor = UIColor.textColor
         label.font = UIFont(name: "Avenir-Black", size: 20)
-        label.text = "Analysis"
+        label.text = "All History"
         label.textAlignment = .center
         
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -145,56 +58,35 @@ class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldD
             return
         }
         navigationItem.titleView = titleLabelView
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: navController.leftMenuButton)
-        navController.rightInfoButton.addTarget(self, action: #selector(displayInfoController), for: .touchUpInside)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navController.rightInfoButton)
-    }
-    
-    
-    @objc func displayInfoController(){
-        self.view.endEditing(true)
-        if firebaseData.currentUser.userType == .student{
-            alert(title: "Analysis View", message: "This is a list of all the teachers you have been late to", buttonTitle: "Done")
-        }else{
-            alert(title: "Analysis View", message: "This is a list of all the people who have been late to your class including how many times and from which teachers", buttonTitle: "Done")
-        }
-    }
-
-    
-    //MARK: - Sorting Data
-    func sortData(){
-        if firebaseData.currentUser.userType == .student{
-            for i in firebaseData.studentItems{
-                if let _ = studentUserTable[i.destination!]{
-                    studentUserTable[i.destination!]?.append(i)
-                }else{
-                    studentUserTable[i.destination!] = [i]
-                }
-            }
-        }else{
-            for i in firebaseData.toItems{
-                if let count = teacherCountTable[i.student] {
-                    teacherCountTable[i.student] = count + 1
-                }else{
-                    teacherCountTable[i.student] = 1
-                }
-                
-                if let studentStatus = teacherUserTable[i.student]{
-                    if let _ = studentStatus[i.origin]{
-                        teacherUserTable[i.student]![i.origin]?.append(i)
-                    }else{
-                        teacherUserTable[i.student]![i.origin] = [i]
-                    }
-                }else{
-                    teacherUserTable[i.student] = [i.origin : [i]]
-                }
-                
-            }
-        }
+        //TODO: - Make a left bar button to go back
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: navController.leftMenuButton)
         
     }
     
-    //MARK: - Search Bar
+    
+    //MARK: - Title
+    
+    let titleLabel : UILabel = {
+        let label = UILabel()
+        label.font = UIFont(name: "Avenir-Light", size: 22)
+        label.textColor = UIColor.textColor
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textAlignment = .center
+        label.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+
+    func setUpTitle(){
+        titleLabel.text = firebaseData.currentUser.userName//"All History"
+        self.view.addSubview(titleLabel)
+        titleLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 95).isActive = true
+        titleLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+        titleLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 30).isActive = true
+        titleLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -30).isActive = true
+        titleLabel.text = titleString
+    }
+    
     
     let searchTextField : UITextField = {
         let textField = UITextField()
@@ -262,7 +154,7 @@ class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldD
         searchResult.heightAnchor.constraint(equalToConstant: 30).isActive = true
         searchResult.centerYAnchor.constraint(equalTo: searchView.centerYAnchor, constant: 0).isActive = true
         searchResult.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        searchResult.text = "\(firebaseData.currentUser.userType == .student ? studentUserTable.count : teacherUserTable.count)"
+        searchResult.text = "\(historyData.count)"
         
         searchView.addSubview(searchTextField)
         searchTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -271,20 +163,22 @@ class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldD
         searchTextField.rightAnchor.constraint(equalTo: searchResult.rightAnchor, constant: -8).isActive = true
         
         let attributes = [NSAttributedStringKey.foregroundColor: UIColor(hex: "8290AB", alpha: 1), NSAttributedStringKey.font : UIFont(name: "Avenir-Medium", size: 15)!]
-        searchTextField.attributedPlaceholder = NSAttributedString(string: "Search For \(firebaseData.currentUser.userType == .student ? "teacher" : "student")", attributes: attributes)
+        searchTextField.attributedPlaceholder = NSAttributedString(string: "Search For Passes", attributes: attributes)
         searchTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         searchTextField.delegate = self
         
         //It looks weird to have nothing above it
         self.view.addSubview(searchView)
         //        searchView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15).isActive = true
-        searchView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
+        searchView.topAnchor.constraint(equalTo: self.titleLabel.bottomAnchor, constant: 40).isActive = true
         searchView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         searchView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         searchView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        gestureRecognizer.addTarget(self, action: #selector(dismissKeyboard))
-        self.navigationController?.navigationBar.addGestureRecognizer(gestureRecognizer)
+    }
+    
+    
+    @objc func textFieldDidChange(_ textField: UITextField){
+        historyTableView.filterString = textField.text!.lowercased()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -292,16 +186,34 @@ class StatsViewController: UIViewController, StatTableViewDelegate, UITextFieldD
         return false
     }
     
-    @objc func dismissKeyboard(){
-        self.view.endEditing(true)
+    //MARK: - History Table View Functions
+    
+    private func setUpTableView(){
+        self.view.addSubview(historyTableView)
+        historyTableView.translatesAutoresizingMaskIntoConstraints = false
+        historyTableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        historyTableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        historyTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+        historyTableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 0).isActive = true
+        
+        historyTableView.infoArray = historyData
+        historyTableView.historyDelegate = self
     }
     
     
-    @objc func textFieldDidChange(_ textField: UITextField){
-        self.searchText = (textField.text ?? "").lowercased()
+    func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
+        let vc = ExpandedCellTeacher()
+        vc.historyData = historyData
+        print("ExpandedCellID: \(historyData.ID)")
+        
+        vc.titleLabel.text = historyData.toStringReadable()
+        vc.dateLabel.text = historyData.getDateString()
+        self.present(vc, animated: true, completion: nil)
     }
     
-    
+    func searchDidFinish(withCount count: Int) {
+        searchResult.text = "\(count)"
+    }
     
     
 }

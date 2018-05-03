@@ -21,6 +21,10 @@ class HistoryData: Hashable{
         return lhs.hashValue == rhs.hashValue
     }
     
+    static func == (lhs: HistoryData, rhs: String) -> Bool {
+        return lhs.ID == rhs
+    }
+    
     var ID: String
 //    var destination: String?
 //    var origin: String
@@ -125,6 +129,10 @@ class HistoryData: Hashable{
         formatter.dateFormat = ":mm a"
         
         return "\(hour)\(formatter.string(from: date))"
+    }
+    
+    func isWithinTime() -> Bool{
+        return Int(Date().timeIntervalSince1970) - self.timeStarted < (45 * 60)
     }
     
 }

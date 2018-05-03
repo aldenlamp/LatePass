@@ -102,7 +102,6 @@ class UserTableView: UIView, UITableViewDelegate, UITableViewDataSource {
         let selectedUser = isSearching ? filteredList[indexPath.row] : userList[indexPath.row]
         
         if multipleSelect{
-            //TODO: - Sort between filtered and not filtered
             if selectedArray.contains(selectedUser){
                 //move Away from the top and remove from selected
                 
@@ -112,8 +111,6 @@ class UserTableView: UIView, UITableViewDelegate, UITableViewDataSource {
                 
                 //Moving the cell
                 if indexPath.row != selectedArray.count{//User.numberOfSelected{
-                    //TODO: - Test using : userList.remove(at: userList.index(of: selectedUser)!) : Instead of using the custom UserIndex
-                    
                     let removedUser = userList.remove(at: userList.index(of: selectedUser)!)
                     if !isSearching{ tableView.deleteRows(at: [indexPath], with: .automatic) }
                     userList.insert(removedUser, at: selectedArray.count)
@@ -127,8 +124,6 @@ class UserTableView: UIView, UITableViewDelegate, UITableViewDataSource {
                 selectedArray.append(selectedUser)
                 
                 if indexPath.row != 0{
-                    
-                    //TODO: - Test using : userList.remove(at: userList.index(of: selectedUser)!) : Instead of using the custom UserIndex
                     let removedUser = userList.remove(at: userList.index(of: selectedUser)!)
                     if (!isSearching){ tableView.deleteRows(at: [indexPath], with: .automatic) }
                     userList.insert(removedUser, at: 0)

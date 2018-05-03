@@ -9,13 +9,7 @@
 import Foundation
 import UIKit
 
-extension StatsViewController: UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource{
-    
-    //TODO: - Move this to a better place
-    @objc func textFieldDidChange(_ textField: UITextField){
-//        historyTableView.filterString = textField.text!.lowercased()
-    }
-    
+extension StatsViewController: UITableViewDelegate, UITableViewDataSource{
     
     func setUpMainTableView(){
         statTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -28,10 +22,10 @@ extension StatsViewController: UITextFieldDelegate, UITableViewDelegate, UITable
         statTableView.separatorColor = UIColor.clear
         statTableView.register(StatUserCell.self, forCellReuseIdentifier: "Cell")
         
+        
         statTableView.delegate = self
         statTableView.dataSource = self
     }
-    
     
     //MARK: - TableView Functions
     
@@ -41,19 +35,18 @@ extension StatsViewController: UITextFieldDelegate, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if firebaseData.currentUser.userType == .student{
-            print(studentUserTable.count)
-            return studentUserTable.count
+            return studentSortedUsers.count
         }else{
-            print(teacherUserTable.count)
-            return teacherUserTable.count
+            return teacherSortedUsers.count
         }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        
-        //TODO: - Make sure this measuremnt works
-        //TODO: - implement expanding cell
-        return 60
+        if selectedIndex == indexPath.row{
+            return CGFloat((tableView.cellForRow(at: indexPath) as! StatUserCell).height)
+        }else{
+            return 60
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,7 +57,14 @@ extension StatsViewController: UITextFieldDelegate, UITableViewDelegate, UITable
             cell.cellFromUser(user: user, withCount: studentUserTable[user]!.count, withBackgroundAlpha: 0)
         }else{
             let user = teacherSortedUsers[indexPath.row]
-            cell.cellFromUser(user: user, withCount: teacherCountTable[user]!, withBackgroundAlpha: 0)
+            if selectedIndex == indexPath.row{
+                
+                cell.cellFromUser(user: user, withCount: teacherCountTable[user]!, withBackgroundAlpha: 0, isOpen: true, data: teacherUserTable[user])
+                cell.statTableView.delegate = self
+            }else{
+                cell.cellFromUser(user: user, withCount: teacherCountTable[user]!, withBackgroundAlpha: 0)
+            }
+            
         }
         cell.addSeparator()
         
@@ -72,9 +72,46 @@ extension StatsViewController: UITextFieldDelegate, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //TODO: - Either go to a new view controller with the history data or expand downard
+        self.view.endEditing(true)
+        if firebaseData.currentUser.userType == .student {
+            goToView(from: studentUserTable[studentSortedUsers[indexPath.row]]!, teacherUser: studentSortedUsers[indexPath.row])
+        }else{
+            let cell = (tableView.cellForRow(at: indexPath) as! StatUserCell)
+            if selectedIndex == indexPath.row{
+                selectedIndex = -1
+            }else{
+                selectedIndex = indexPath.row
+                let user = teacherSortedUsers[indexPath.row]
+                cell.setNumOfRows(data: teacherUserTable[user]!)
+                cell.statTableView.delegate = self
+            }
+            cell.isSelected = false
+            
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        }
     }
     
+    func didSelectRow(at index: Int, with user: User) {
+        goToView(from: teacherUserTable[teacherSortedUsers[selectedIndex]]![user]!, studentUser: teacherSortedUsers[selectedIndex],teacherUser: user)
+    }
+    
+    
+    func goToView(from data: [HistoryData], studentUser: User? = nil, teacherUser: User){
+        
+        let str: String
+        if studentUser == nil{
+            str = "Passes To \(teacherUser.userName)"
+        }else{
+            str = "Passes From \(teacherUser.userName) for \(studentUser!.userName)"
+        }
+        
+        let vc = ExpandStatViewController()
+        vc.historyData = data
+        vc.titleString = str
+        show(vc, sender: nil)
+    }
+
     
     
 }

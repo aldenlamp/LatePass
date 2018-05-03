@@ -87,7 +87,7 @@ extension FirebaseDataClass{
         
 //        if !isPullingRequest && !isPullingHistory{
             //TODO: - Maybe use a notification make sure the HOmeViewController tableView Reloads
-            firebaseDataDelegate.historyArrayDidLoad()
+            firebaseDataDelegate?.historyArrayDidLoad()
 //        }
         
     }

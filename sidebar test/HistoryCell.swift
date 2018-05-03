@@ -15,8 +15,22 @@ class HistoryCell: UITableViewCell{
     var titleLabel = UILabel()
     var thisTimeFrame: timeFrames!
     
+    var isHigh = false
     
-
+    var shouldHighlight: Bool = false{
+        willSet{
+            if newValue {
+                contentView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+                isHigh = true
+            }else{
+                contentView.backgroundColor = UIColor.white
+                if isHigh{
+                    print("WTFFF\n\n\(titleLabel.text!)")
+                }
+            }
+        }
+    }
+    
     
     public func createCellWith(data: HistoryData){
         dateLabel.text = data.getDateString()
@@ -43,54 +57,6 @@ class HistoryCell: UITableViewCell{
         textView.heightAnchor.constraint(equalToConstant: 51).isActive = true
         textView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
     }
-    
-    
-//    private func setUpCell(titleLabel: String, status: acceptedStatus, unixDate: Int, thisTimeFrame: timeFrames){
-//        dateLabel.text = getDateString()
-//        timeLabel.text = getTimeString()
-//        self.titleLabel.text = titleLabel
-//        timeLabel.adjustsFontSizeToFitWidth = true
-//
-//        switch status {
-//        case .accepted:
-//
-//            switch thisTimeFrame{
-//            case .thisWeek:
-//                iconImage.image = #imageLiteral(resourceName: "approved-lightBlue")
-//                break
-//            case .thisMonth:
-//                iconImage.image = #imageLiteral(resourceName: "approved-purple")
-//                break
-//            case .thisYear:
-//                iconImage.image = #imageLiteral(resourceName: "approved-blue")
-//                break
-//            }
-//        case .pending:
-//            iconImage.image = #imageLiteral(resourceName: "pending-lightBlue")
-//            break
-//        case .rejected:
-//            iconImage.image = #imageLiteral(resourceName: "rejected-red")
-//            break
-//        }
-//
-//        self.contentView.addSubview(iconImage)
-//        iconImage.translatesAutoresizingMaskIntoConstraints = false
-//
-//        iconImage.widthAnchor.constraint(equalToConstant: 45).isActive = true
-//        iconImage.heightAnchor.constraint(equalToConstant: 45).isActive = true
-//
-//        iconImage.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 22.5).isActive = true
-//        //        iconImage.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor, constant: -22.5).isActive = true
-//        iconImage.leftAnchor.constraint(equalTo: self.contentView.leftAnchor, constant: 30).isActive = true
-//
-//        let textView = generateLabelView()
-//        self.contentView.addSubview(textView)
-//
-//        NSLayoutConstraint(item: textView, attribute: .left, relatedBy: .equal, toItem: iconImage, attribute: .right, multiplier: 1, constant: 35).isActive = true
-//        textView.topAnchor.constraint(equalTo: self.contentView.topAnchor, constant: 20).isActive = true
-//        textView.heightAnchor.constraint(equalToConstant: 51).isActive = true
-//        textView.rightAnchor.constraint(equalTo: self.contentView.rightAnchor, constant: -20).isActive = true
-//    }
     
     //MARK: - Setting up view
     

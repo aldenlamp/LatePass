@@ -23,7 +23,6 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
         
     }
     
-    
     //MARK: - Navigation Functions
     
     var titleLabelView: UIView = {
@@ -64,24 +63,25 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
     }
     
     //MARK: - Title
-    
-    let titleLabel : UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "Avenir-Light", size: 22)
-        label.textColor = UIColor.textColor
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .center
-        label.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        label.widthAnchor.constraint(equalToConstant: 190).isActive = true
-        return label
-    }()
-    
-    func setUpTitle(){
-        titleLabel.text = firebaseData.currentUser.userName//"All History"
-        self.view.addSubview(titleLabel)
-        titleLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 73).isActive = true
-        titleLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
-    }
+
+    //Currently not using title but imma keep it here in case I change my mind
+//    let titleLabel : UILabel = {
+//        let label = UILabel()
+//        label.font = UIFont(name: "Avenir-Light", size: 22)
+//        label.textColor = UIColor.textColor
+//        label.translatesAutoresizingMaskIntoConstraints = false
+//        label.textAlignment = .center
+//        label.heightAnchor.constraint(equalToConstant: 30).isActive = true
+//        label.widthAnchor.constraint(equalToConstant: 190).isActive = true
+//        return label
+//    }()
+//
+//    func setUpTitle(){
+//        titleLabel.text = firebaseData.currentUser.userName//"All History"
+//        self.view.addSubview(titleLabel)
+//        titleLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 73).isActive = true
+//        titleLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+//    }
     
     //MARK: - Search Bar
     
@@ -167,7 +167,7 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
         //It looks weird to have nothing above it
         self.view.addSubview(searchView)
 //        searchView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15).isActive = true
-        searchView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 65).isActive = true
+        searchView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
         searchView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         searchView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         searchView.heightAnchor.constraint(equalToConstant: 50).isActive = true

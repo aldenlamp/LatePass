@@ -22,6 +22,10 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     private let activityIndicator = UIActivityIndicatorView()
     private let simpleLabel = UILabel()
     
+    //For scrolling through the recent items
+    private var highlightedIndex = -1
+    private var didReload = false
+    
     weak var historyDelegate: HistoryTableViewDelegate?
     
     //In order to search the historyItems
@@ -35,11 +39,13 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
     
     var infoArray = [HistoryData]() {
         didSet{
+            didReload = true
             filterItems()
             simpleLabel.isHidden = !infoArray.isEmpty
             historyTableView.reloadData()
             tableViewIsHidden = infoArray.isEmpty
             stopActivityIndicator()
+            clearHighlights()
         }
     }
     
@@ -225,15 +231,8 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
             resultCount = infoArray.count
         }else{
             for i in infoArray{
-                if i.origin.userName.lowercased().contains(filterString) ||  i.student.userName.lowercased().contains(filterString){
-                    filteredInfoArray.append(i)
-                    resultCount += 1
-                }
-                
-                guard let dest = i.destination else{
-                    continue
-                }
-                if (dest.userName.lowercased().contains(filterString)){
+                if i.origin.userName.lowercased().contains(filterString) ||  i.student.userName.lowercased().contains(filterString) ||  i.reason.lowercased().contains(filterString) || (i.destination != nil && (i.destination?.userName.lowercased().contains(filterString))!){
+                    
                     filteredInfoArray.append(i)
                     resultCount += 1
                 }
@@ -278,6 +277,39 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
         historyTableView.register(HistoryCell.self, forCellReuseIdentifier: "Cell")
     }
     
+    func highlightObject(data: HistoryData) -> Bool{
+        
+        guard let index = infoArray.index(of: data) else{
+            return false
+        }
+        let indexPath = IndexPath(row: Int(index), section: 0)
+        
+        guard let cell = historyTableView.cellForRow(at: indexPath) as? HistoryCell else{
+            return false
+        }
+        
+        if !didReload{
+            clearHighlights()
+        }
+        
+        didReload = false
+        
+        cell.shouldHighlight = true
+        highlightedIndex = Int(index)
+        return true
+    }
+    
+    func clearHighlights(){
+        if highlightedIndex == -1{ return }
+        
+        let indexPath = IndexPath(row: highlightedIndex, section: 0)
+        
+        guard let cell = historyTableView.cellForRow(at: indexPath) as? HistoryCell else{ return }
+        
+        cell.shouldHighlight = false
+        highlightedIndex = -1
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int { return 1 }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -302,6 +334,18 @@ class HistoryTableView: UIView, UITableViewDelegate, UITableViewDataSource{
         }
         
         cell.createCellWith(data: historyData)
+        
+        cell.selectionStyle = .none
+        cell.isHighlighted = false
+        
+//
+//
+        if indexPath.row == highlightedIndex{
+            cell.shouldHighlight = true
+        }else{
+            cell.shouldHighlight = false
+        }
+//
         return cell
     }
     

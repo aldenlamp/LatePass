@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.titleLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "HistoryTableView.tableView(_:cellForRowAt:):HistoryTableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "indexPath.row">
+            </PersistentString>
+            <PersistentString
+               value = "cell.selectionStyle">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "HistoryCell.shouldHighlight.willset:HistoryCell.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.dateLabel.text">
+            </PersistentString>
+            <PersistentString
+               value = "self.titleLabel.text">
+            </PersistentString>
+            <PersistentString
+               value = "self.timeLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>

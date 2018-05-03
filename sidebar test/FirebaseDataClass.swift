@@ -26,7 +26,7 @@ class FirebaseDataClass{
     var isPullingRequest = false
     
     //Delegate
-    weak var firebaseDataDelegate: FirebaseProtocol!
+    weak var firebaseDataDelegate: FirebaseProtocol?
     
     //Firebase Ref
     let ref = FIRDatabase.database().reference()
@@ -68,8 +68,8 @@ class FirebaseDataClass{
     var studentItems: [HistoryData]{
         get{
             var arr = [HistoryData]()
-            for i in arr{
-                if i.thisCellType == cellTypes.studentHistory{
+            for i in allItems{
+                if i.thisCellType == cellTypes.studentHistory && i.status != .pending{
                     arr.append(i)
                 }
             }
@@ -81,15 +81,40 @@ class FirebaseDataClass{
     var allStudents = [User]()
     var allTeachers = [User]()
     
+    //All the users in the database including google classroom
+    var GCAllStudents: [User]{
+        var arr = [User]()
+        for i in allStudents{
+            arr.append(i)
+        }
+        for i in googleData.allStudents{
+            arr.append(i)
+        }
+        return arr
+    }
+    
+    var GCAllTeachers: [User]{
+        var arr = [User]()
+        for i in allTeachers{
+            arr.append(i)
+        }
+        for i in googleData.allTeachers{
+            arr.append(i)
+        }
+        return arr
+    }
+    
     //Google Data
     //TODO: - Implement a better data management
-//    var googleData = GoogleDataClass()
+    var googleData: GoogleDataClass!
     
     //Pulling from Standard User Defaults
     //TODO: - Fully check standard user defaults pull
     var savedUserType: userType!
     
     init() {
+        
+        googleData = GoogleDataClass()
         
         guard let currUserID = FIRAuth.auth()?.currentUser?.uid else{
             print("user not logged in")
@@ -117,6 +142,7 @@ class FirebaseDataClass{
         print("Firebase database did deinit")
         //TODO: - Fix for setting it with the User ID
         UserDefaults.standard.set(nil, forKey: "userType")
+        googleData = nil
     }
     
     func pullingAllData(){
@@ -150,7 +176,9 @@ class FirebaseDataClass{
                 UserDefaults.standard.set(tier.rawValue, forKey: "userType")
             }else if tier != self?.savedUserType{
                 print("\n\n\nERRRORRR INCORRECT USER TYPE\n\n\n")
+                self?.savedUserType = tier
             }
+            
             
             let photoID = data["photoURL"] as! String
             var image = UIImage()
@@ -160,7 +188,7 @@ class FirebaseDataClass{
             
             //Delegate call to userDidLoad
             print("Current User data Did load")
-            self?.firebaseDataDelegate.userDataDidLoad()
+            self?.firebaseDataDelegate?.userDataDidLoad()
             NotificationCenter.default.post(Notification(name: userDataDidLoadNotif))
             
             //Pulling all the users in the database....

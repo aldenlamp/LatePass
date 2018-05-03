@@ -16,23 +16,10 @@ struct FirebaseRequests{
         let reasoning = reason
 //
         var student = firebaseData.currentUser.userType == .student ? firebaseData.userID! : selectedPeople[0].userStringID!
-//            //            self.alert(title: "No Student", message: "Please enter a user as the student", buttonTitle: "Okay")
-//            completion("No Student", "Please enter a user as the student", "Okay", false)
-//            return
-//        }
-//
-        let origin = firebaseData.currentUser.userType == .student ? selectedPeople[0].userStringID! : firebaseData.userID!
-//            //            self.alert(title: "No Origin", message: "Please enter a user as the origin", buttonTitle: "Okay")
-//            completion("No Origin", "Please enter a user as the origin", "Okay", false)
-//            return
-//        }
-//
-        let dest = toTeacher.userStringID!
-//            //            self.alert(title: "No Destination", message: "Please enter a user as the destination", buttonTitle: "Okay")
-//            completion("No Destination", "Please enter a user as the destination", "Okay", false)
-//            return
-//        }
         
+        let origin = firebaseData.currentUser.userType == .student ? selectedPeople[0].userStringID! : firebaseData.userID!
+
+        let dest = toTeacher.userStringID!
         
         
         if firebaseData.currentUser.userType != .student{
