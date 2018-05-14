@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITextFieldDelegate{
+class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITextFieldDelegate, ExpandedViewControllerDelegate{
     
     let historyTableView = HistoryTableView()
     
@@ -21,6 +21,8 @@ class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITe
         
         self.view.backgroundColor = UIColor.white
 
+        expandVC.delegate = self
+        
         setUpNavigation()
         setUpTitle()
         setUpSearchBar()
@@ -58,8 +60,32 @@ class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITe
             return
         }
         navigationItem.titleView = titleLabelView
+        
+        let backView = UIView()
+        backView.backgroundColor = UIColor.white
+        backView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label = UILabel()
+        label.text = "Back"
+        label.font = UIFont(name: "Avenir-Book", size: 21)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.textColor = UIColor.textColor
+        
+        backView.addSubview(label)
+        label.widthAnchor.constraint(equalTo: backView.widthAnchor, multiplier: 1).isActive = true
+        label.heightAnchor.constraint(equalTo: backView.heightAnchor, multiplier: 1).isActive = true
+        label.centerYAnchor.constraint(equalTo: backView.centerYAnchor, constant: 0).isActive = true
+        label.centerXAnchor.constraint(equalTo: backView.centerXAnchor, constant: 0).isActive = true
+        
+        
+        
+        
+        let backBut = UIBarButtonItem(customView: backView)
+        
         //TODO: - Make a left bar button to go back
-//        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: navController.leftMenuButton)
+//        navigationItem.setLeftBarButton(backBut, animated: false)
+        
+//        navigationController?.navigationBar.backItem?.backBarButtonItem = backBut
         
     }
     
@@ -188,6 +214,8 @@ class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITe
     
     //MARK: - History Table View Functions
     
+    let expandVC = ExpandedCellTeacher()
+    
     private func setUpTableView(){
         self.view.addSubview(historyTableView)
         historyTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -200,15 +228,25 @@ class ExpandStatViewController: UIViewController, HistoryTableViewDelegate, UITe
         historyTableView.historyDelegate = self
     }
     
+    var isExpanded = false
     
     func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
-        let vc = ExpandedCellTeacher()
-        vc.historyData = historyData
+        
+        expandVC.update(from: historyData)
         print("ExpandedCellID: \(historyData.ID)")
         
-        vc.titleLabel.text = historyData.toStringReadable()
-        vc.dateLabel.text = historyData.getDateString()
-        self.present(vc, animated: true, completion: nil)
+//        vc.titleLabel.text = historyData.toStringReadable()
+//        vc.dateLabel.text = historyData.getDateString()
+        
+        if !isExpanded{
+            self.present(expandVC, animated: true, completion: nil)
+            isExpanded = true
+        }
+        
+    }
+    
+    func willDismiss() {
+         isExpanded = false
     }
     
     func searchDidFinish(withCount count: Int) {

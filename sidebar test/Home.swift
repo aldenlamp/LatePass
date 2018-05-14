@@ -24,7 +24,7 @@ let userDataDidLoadNotif = NSNotification.Name(rawValue: "userDataDidLoad")
 var testImage: UIImage?
  let activityIndicator = UIActivityIndicatorView()
 
-class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, HistoryStackViewDelegate{
+class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, HistoryStackViewDelegate, ExpandedViewControllerDelegate{
     
     let historyTableView = HistoryTableView()
     let statView = StudentStatsView()
@@ -34,6 +34,8 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor(red: 0.973, green: 0.973, blue: 0.984, alpha: 1.00)
+        
+        expandVC.delegate = self
         
         if firebaseData == nil{
             firebaseData = FirebaseDataClass()
@@ -45,6 +47,9 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
             }
             
             initStatViewWith(userType: firebaseData.savedUserType)
+            
+//            self.addLoadingView(with: "Loading Data")
+            
         }else{
             
             firebaseData.firebaseDataDelegate = self
@@ -87,6 +92,8 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     //MARK: - reloading Data
     
     internal func historyArrayDidLoad() {
+        
+//        self.removeLoadingView()
         
         var lateCounts = [0, 0, 0]
         for i in firebaseData.allItems{
@@ -196,6 +203,8 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
     
     //MARK: - TableView
     
+    let expandVC = ExpandedCellTeacher()
+    
     private func setUpTableView(withStats stats: Bool){
        
         
@@ -217,18 +226,24 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         
     }
     
+    var isExpanded = false
+    
     internal func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
         
 //        let data = firebaseData.allItems[indexPath.row]
         // Creating the new cell with attributes
-        let vc = ExpandedCellTeacher()
-        vc.historyData = historyData//data
+        
+        expandVC.update(from: historyData)
         print("ExpandedCellID: \(historyData.ID)")
         
-        
-        vc.titleLabel.text = historyData.toStringReadable()
-        vc.dateLabel.text = historyData.getDateString()
-        self.present(vc, animated: true, completion: nil)
+        if !isExpanded{
+            self.present(expandVC, animated: true, completion: nil)
+            isExpanded = true
+        }
+    }
+    
+    func willDismiss() {
+        isExpanded = false
     }
     
     func searchDidFinish(withCount count: Int) {
@@ -292,6 +307,7 @@ extension UIColor{
         alert.addAction(alertAction)
         self.present(alert, animated: true, completion: nil)
     }
+    
     
     
  }

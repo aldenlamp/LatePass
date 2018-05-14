@@ -101,7 +101,7 @@ class HistoryData: Hashable{
     
     func toStringReadable() -> String{
         switch thisCellType! {
-        case .studentHistory:   return "\(origin.userName) to \(destination!.userName)"
+        case .studentHistory:   return "\(origin.userName) to \(destination?.userName ?? "..." )"
         case .toHistory:        return "\(student.userName) will be late"
         case .fromHistory:      return "\(student.userName) left late"
         case .request:          return "\(student.userName) requests a latepass"
@@ -116,8 +116,17 @@ class HistoryData: Hashable{
         return formatter.string(from: date)
     }
     
-    func getTimeString() -> String{
-        let date = Date(timeIntervalSince1970: TimeInterval(timeStarted))
+    func getTimeString(fromStarted started: Bool = true) -> String{
+        let date: Date
+        if !started{
+            guard let tc = timeCompleted else{
+                return "..."
+            }
+            date = Date(timeIntervalSince1970: TimeInterval(tc))
+        }else{
+            date = Date(timeIntervalSince1970: TimeInterval(timeStarted))
+        }
+        
         let formatter = DateFormatter()
         formatter.dateFormat = "HH"
         var hour = Int(formatter.string(from: date))!

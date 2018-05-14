@@ -33,6 +33,15 @@ class FirebaseDataClass{
     
     //All History Items
     var allItems = [HistoryData]()
+    var getAllItems: [HistoryData]{
+        var arr = [HistoryData]()
+        for i in allItems{
+            if !(i.status == .rejected && i.destination == firebaseData.currentUser){
+                arr.append(i)
+            }
+        }
+        return arr
+    }
     
     //All History Items specific for the user homepage
     private final let studentFilterSettings: [cellTypes] = [cellTypes.studentHistory, cellTypes.studentRequest]
@@ -42,7 +51,7 @@ class FirebaseDataClass{
             var arr = [HistoryData]()
             for i in allItems{
                 for j in currentUser.userType == .student ? studentFilterSettings : teacherFilterSettings{
-                    if i.thisCellType == j{
+                    if i.thisCellType == j && !(i.status == .rejected && i.destination == firebaseData.currentUser){
                         arr.append(i)
                         break
                     }
@@ -57,7 +66,7 @@ class FirebaseDataClass{
         get{
             var arr = [HistoryData]()
             for i in allItems{
-                if i.thisCellType == cellTypes.toHistory{
+                if i.thisCellType == cellTypes.toHistory && i.status == .accepted{
                     arr.append(i)
                 }
             }
@@ -69,7 +78,7 @@ class FirebaseDataClass{
         get{
             var arr = [HistoryData]()
             for i in allItems{
-                if i.thisCellType == cellTypes.studentHistory && i.status != .pending{
+                if i.thisCellType == cellTypes.studentHistory && i.status == .accepted{
                     arr.append(i)
                 }
             }

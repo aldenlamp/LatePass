@@ -425,15 +425,18 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
     
     @objc func makeRequest(){
         if isEditable{
-            if selectedPeople != nil && toTeacher != nil{
+            if selectedPeople != nil && (toTeacher != nil || firebaseData.currentUser.userType != .student){
+                self.addLoadingView(with: "Creating a LatePass")
                 FirebaseRequests.makeRequest(from: selectedPeople!, toTeacher: toTeacher ?? User(email: nil), reason:  self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!, completion: { [weak self] (title, message, buttonTitle, worked) in
-                    
-                    if (!worked){
-                        self?.alert(title: title, message: message, buttonTitle: buttonTitle)
-                    }else{
-                        self?.dismiss(animated: true, completion: nil)
+                    DispatchQueue.main.async {
+                        self?.removeLoadingView(){
+                            if (!worked){
+                                self?.alert(title: title, message: message, buttonTitle: buttonTitle)
+                            }else{
+                                self?.dismiss(animated: true, completion: nil)
+                            }
+                        }
                     }
-                    
                 })
             }
         }

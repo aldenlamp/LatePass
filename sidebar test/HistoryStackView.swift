@@ -119,14 +119,12 @@ class Stack{
         for i in nonoArr{
             newNonoArr.append(i.ID)
         }
-        print("Nono Arr: \(newNonoArr)\t\(nonoArr)")
         UserDefaults.standard.set(newNonoArr, forKey: "HistoryNonoArr")
         
         var newArr = [String]()
         for i in stackArr{
             newArr.append(i.ID)
         }
-        print("New Arr: \(newArr)")
         UserDefaults.standard.set(newArr, forKey: "HistoryStackData")
     }
     

@@ -9,24 +9,66 @@
 import UIKit
 import Firebase
 
-class ExpandedCellTeacher: UIViewController {
+protocol ExpandedViewControllerDelegate: class {
+    func willDismiss()
+}
+
+class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeacherDelegate {
     
-    var historyData: HistoryData!
+    
+    
+    private var historyData: HistoryData!
+    
+    private var viewDidInit = false
+    
+    weak public var delegate: ExpandedViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.white
+    }
+    
+    func update(from data: HistoryData){
         
-        setUpCancelButton()
-        setUpTitleLabels()
-        setUpInfoDisplay()
-        if historyData.thisCellType == .request && firebaseData.currentUser.userType == .teacher{
+        historyData = data
+        
+        if !viewDidInit{
+            setUpCancelButton()
+            setUpTitleLabels()
+            setUpInfoDisplay()
             setUpSelectionView()
-        }else{
             setUpCenterView()
+            viewDidInit = true
         }
-       
         
+        dateLabel.text = data.getDateString()
+        titleLabel.text = data.toStringReadable()
+        
+        if data.thisCellType == .request && firebaseData.currentUser.userType == .teacher{
+            centerSectionView.isHidden = true
+            centerSelectionView.isHidden = false
+        }else{
+            centerSelectionView.isHidden = true
+            centerSectionView.isHidden = false
+        }
+        updateCenterViews(with: data)
+        
+        reasonView.setViews(title: "Reason", info: data.reason == "" ? "..." : data.reason)
+        timeApproved.setViews(title: "Time Accepted", info: data.getTimeString(fromStarted: false))
+        timeRequested.setViews(title: "Time Requested", info: data.getTimeString())
+        
+        if firebaseData.currentUser.userType != .student{
+            originDestination.setViews(title: data.thisCellType == cellTypes.toHistory ? "Origin" : "Destination", info: data.thisCellType == cellTypes.toHistory ? data.origin.userName : data.destination?.userName ?? "...")
+            originDestination.isHidden = false
+        }else{
+            if data.destination == nil{
+                originDestination.setViews(title: "Destination", info: "", isSelecting: true)
+                originDestination.isHidden = false
+            }else{
+                originDestination.isHidden = true
+            }
+            
+        }
         
     }
     
@@ -50,7 +92,6 @@ class ExpandedCellTeacher: UIViewController {
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .center
         titleLabel.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        //        titleLabel.text = "May 23, 2017"
         return titleLabel
     }()
     
@@ -91,6 +132,9 @@ class ExpandedCellTeacher: UIViewController {
     }
     
     @objc private func cancel(){
+        if let del = delegate{
+            del.willDismiss()
+        }
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -99,137 +143,86 @@ class ExpandedCellTeacher: UIViewController {
     //MARK: - Info Display
     
     
-    var timeRequested = UIView()
-    var timeApproved = UIView()
-    var reasonView = UIView()
+    var originDestination = ExpandedCellInfo()
+    var timeRequested = ExpandedCellInfo()
+    var timeApproved = ExpandedCellInfo()
+    var reasonView = ExpandedCellInfo()
     
     func setUpInfoDisplay(){
-        timeRequested = getTimeView(fromAccepted: false)
-        timeApproved = getTimeView(fromAccepted: true)
-        reasonView = getReasonView()
+        let width = self.view.frame.width
         
-        reasonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -50).isActive = true
-        timeApproved.bottomAnchor.constraint(equalTo: reasonView.topAnchor, constant: 0).isActive = true
-        timeRequested.bottomAnchor.constraint(equalTo: timeApproved.topAnchor, constant: 0).isActive = true
-    }
-    
-    
-    func getTimeView(fromAccepted style: Bool) -> UIView{
-        let timeView = UIView()
-        self.view.addSubview(timeView)
-        timeView.translatesAutoresizingMaskIntoConstraints = false
-        timeView.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        timeView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
-        timeView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
-        
-        let timeIdentifier = UILabel()
-        timeIdentifier.text = style ? "Time Approved" : "Time Requested"
-        timeIdentifier.font = UIFont(name: "Avenir-Medium", size: 15)
-        timeIdentifier.textColor = UIColor.textColor
-        timeIdentifier.textAlignment = .left
-        
-        timeView.addSubview(timeIdentifier)
-        timeIdentifier.translatesAutoresizingMaskIntoConstraints = false
-        timeIdentifier.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        timeIdentifier.centerYAnchor.constraint(equalTo: timeView.centerYAnchor, constant: 0).isActive = true
-        timeIdentifier.leftAnchor.constraint(equalTo: timeView.leftAnchor, constant: 0).isActive = true
-        
-        let time = UILabel()
-        time.text = getTimeString(fromAccepted: style)
-        time.textColor = UIColor.textColor
-        time.font = UIFont(name: "Avenir-Medium", size: 16)
-        time.textAlignment = .right
-        time.adjustsFontSizeToFitWidth = true
-        
-        timeView.addSubview(time)
-        time.translatesAutoresizingMaskIntoConstraints = false
-        time.heightAnchor.constraint(equalToConstant: 60).isActive = true
-        time.rightAnchor.constraint(equalTo: timeView.rightAnchor, constant: 0).isActive = true
-        time.leftAnchor.constraint(equalTo: timeView.leftAnchor, constant: 115).isActive = true
-        time.centerYAnchor.constraint(equalTo: timeView.centerYAnchor, constant: 0).isActive = true
-        
-        let sep = UIView()
-        sep.backgroundColor = UIColor(hex: "E3E3E3", alpha: 1)
-        
-        timeView.addSubview(sep)
-        sep.translatesAutoresizingMaskIntoConstraints = false
-        sep.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        sep.rightAnchor.constraint(equalTo: timeView.rightAnchor, constant: 0).isActive = true
-        sep.leftAnchor.constraint(equalTo: timeView.leftAnchor, constant: 0).isActive = true
-        sep.bottomAnchor.constraint(equalTo: timeView.bottomAnchor, constant: 0).isActive = true
-        
-        return timeView
-    }
-    
-    func getReasonView() -> UIView{
-        
-        let reasonView = UIView()
-        
+        reasonView = ExpandedCellInfo(superWidth: width, isReason: true)
         self.view.addSubview(reasonView)
-        reasonView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let reasonIdentifier = UILabel()
-        reasonIdentifier.text = "Reason"
-        reasonIdentifier.font = UIFont(name: "Avenir-Medium", size: 15)
-        reasonIdentifier.textColor = UIColor.textColor
-        reasonIdentifier.textAlignment = .left
-        
-        reasonView.addSubview(reasonIdentifier)
-        reasonIdentifier.translatesAutoresizingMaskIntoConstraints = false
-        reasonIdentifier.topAnchor.constraint(equalTo: reasonView.topAnchor, constant: 15).isActive = true
-        reasonIdentifier.leftAnchor.constraint(equalTo: reasonView.leftAnchor, constant: 0).isActive = true
-        
-        let reason = UILabel()
-        reason.text = historyData.reason == "" ? "..." : historyData.reason
-        //        reason.text = "THIS IS A REALLY LONG MESSAGE IN ORDDER TO TEST THINGS"
-        reason.textColor = UIColor.textColor
-        reason.font = UIFont(name: "Avenir-Medium", size: 16)
-        reason.textAlignment = .right
-        reason.numberOfLines = 3
-        
-        let maxSize = CGSize(width: self.view.frame.width - (90), height: CGFloat.greatestFiniteMagnitude)
-        let requiredSize = reason.sizeThatFits(maxSize)
-        
-        reasonView.addSubview(reason)
-        reason.translatesAutoresizingMaskIntoConstraints = false
-        reason.topAnchor.constraint(equalTo: reasonView.topAnchor, constant: 15).isActive = true
-        reason.rightAnchor.constraint(equalTo: reasonView.rightAnchor, constant: 0).isActive = true
-        reason.widthAnchor.constraint(equalToConstant: (self.view.frame.width - (90) - 100)).isActive = true
-        
-        
-        reasonView.heightAnchor.constraint(equalToConstant: requiredSize.height + 50).isActive = true
         reasonView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
         reasonView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
-        return reasonView
+        reasonView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -35).isActive = true
+        
+        timeApproved = ExpandedCellInfo(superWidth: width)
+        self.view.addSubview(timeApproved)
+        timeApproved.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
+        timeApproved.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
+        timeApproved.bottomAnchor.constraint(equalTo: reasonView.topAnchor, constant: 0).isActive = true
+        
+        timeRequested = ExpandedCellInfo(superWidth: width)
+        self.view.addSubview(timeRequested)
+        timeRequested.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
+        timeRequested.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
+        timeRequested.bottomAnchor.constraint(equalTo: timeApproved.topAnchor, constant: 0).isActive = true
+        
+        originDestination = ExpandedCellInfo(superWidth: width)
+        originDestination.delegate = self
+        self.view.addSubview(originDestination)
+        originDestination.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
+        originDestination.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 45).isActive = true
+        originDestination.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: 0).isActive = true
     }
     
-    func getTimeString(fromAccepted style: Bool) -> String{
-        if style && historyData.timeCompleted == nil{
-            return "..."
-        }
-        let date = Date(timeIntervalSince1970: TimeInterval((style ? historyData.timeCompleted : historyData.timeStarted)!))
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH"
-        var hour = Int(formatter.string(from: date))!
-        if (hour > 12){
-            hour -= 12
-        }
-        formatter.amSymbol = "am"
-        formatter.pmSymbol = "pm"
-        formatter.dateFormat = ":mm a"
+    let selectedVC = SelectTeachers()
+    func shouldShowSelectTeacher() {
+        selectedVC.delegate = self
+        selectedVC.singleConfirmation = true
+        selectedVC.isFirstSelecion = false
+        present(selectedVC, animated: true, completion: nil)
+    }
+    
+    
+    func didSelectDestination(user: User) {
         
-        return "\(hour)\(formatter.string(from: date))"
+        guard let userString = user.userStringID else{
+            selectedVC.dismiss(animated: true, completion: nil)
+            alert(title: "Not and Existing User", message: "The user you selected is not currently in our database. A new feature will shortly be added to automatically email them instead", buttonTitle: "Done")
+            return
+        }
+        
+        
+        FirebaseRequests.addDestination(to: historyData.ID, withUser: userString) { [weak self] (title, message, buttonTitle, worked) in
+            if worked{
+                self?.historyData.destination = user
+                if let data = self?.historyData{
+                    self?.update(from: data)
+                }
+            }else{
+                self?.alert(title: title, message: message, buttonTitle: buttonTitle)
+            }
+        }
+        
+        
+    }
+    
+    func didSelectFirst(users: [User]) {
     }
     
     //MARK: - Center View
     
+    let centerSectionView = UIView()
+    let centerTitleLabel = UILabel()
+    let centerImageView = UIImageView()
+    
     func setUpCenterView(){
-        
-        let centerSectionView = UIView()
         self.view.addSubview(centerSectionView)
         centerSectionView.translatesAutoresizingMaskIntoConstraints = false
         centerSectionView.topAnchor.constraint(equalTo: breakView.bottomAnchor, constant: 10).isActive = true
-        centerSectionView.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: -10).isActive = true
+        centerSectionView.bottomAnchor.constraint(equalTo: firebaseData.currentUser.userType == .student ? timeRequested.topAnchor : originDestination.topAnchor, constant: -10).isActive = true
         
         let centerView = UIView()
         centerSectionView.addSubview(centerView)
@@ -250,62 +243,59 @@ class ExpandedCellTeacher: UIViewController {
         containerView.centerYAnchor.constraint(equalTo: centerView.centerYAnchor, constant: 0).isActive = true
         containerView.centerXAnchor.constraint(equalTo: centerView.centerXAnchor, constant: 0).isActive = true
         
-        let imageView = UIImageView()
-        imageView.image = #imageLiteral(resourceName: "pending-lightBlue")
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(imageView)
-        imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0).isActive = true
-        imageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0).isActive = true
-        imageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
-        imageView.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        centerImageView.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(centerImageView)
+        centerImageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0).isActive = true
+        centerImageView.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 0).isActive = true
+        centerImageView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
+        centerImageView.widthAnchor.constraint(equalToConstant: 45).isActive = true
         
-        let labelView = UILabel()
-        labelView.translatesAutoresizingMaskIntoConstraints = false
+        centerTitleLabel.font = UIFont(name: "Avenir-Book", size: 22)
+        centerTitleLabel.textColor = UIColor.textColor
+        centerTitleLabel.textAlignment = .right
         
-        imageView.image = historyData.image
-        
-        switch historyData.status {
-        case .accepted:
-            labelView.text = "Approved"
-        case .pending:
-            labelView.text = "Pending"
-        case .rejected:
-            labelView.text = "Rejected"
-        }
-        
-        labelView.font = UIFont(name: "Avenir-Book", size: 22)
-        labelView.textColor = UIColor.textColor
-        labelView.textAlignment = .right
-        
-        containerView.addSubview(labelView)
-        labelView.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
-        labelView.leftAnchor.constraint(equalTo: imageView.rightAnchor, constant: 10).isActive = true
-        labelView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 0).isActive = true
-        labelView.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        centerTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        containerView.addSubview(centerTitleLabel)
+        centerTitleLabel.rightAnchor.constraint(equalTo: containerView.rightAnchor, constant: 0).isActive = true
+        centerTitleLabel.leftAnchor.constraint(equalTo: centerImageView.rightAnchor, constant: 10).isActive = true
+        centerTitleLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor, constant: 0).isActive = true
+        centerTitleLabel.heightAnchor.constraint(equalToConstant: 45).isActive = true
     }
     
-    
-    
+    private func updateCenterViews(with data: HistoryData){
+        switch data.status {
+        case .accepted:
+            centerTitleLabel.text = "Approved"
+        case .pending:
+            centerTitleLabel.text = "Pending"
+        case .rejected:
+            centerTitleLabel.text = "Rejected"
+        }
+        
+        centerImageView.image = data.image
+    }
     
     //MARK: - Selection View
+    
+    
+    let centerSelectionView = UIView()
+    
     func setUpSelectionView(){
+        self.view.addSubview(centerSelectionView)
         
-        let centerSectionView = UIView()
-        self.view.addSubview(centerSectionView)
-        
-        centerSectionView.translatesAutoresizingMaskIntoConstraints = false
-        centerSectionView.topAnchor.constraint(equalTo: breakView.bottomAnchor, constant: 10).isActive = true
-        centerSectionView.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: -10).isActive = true
-        centerSectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
-        centerSectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
+        centerSelectionView.translatesAutoresizingMaskIntoConstraints = false
+        centerSelectionView.topAnchor.constraint(equalTo: breakView.bottomAnchor, constant: 10).isActive = true
+        centerSelectionView.bottomAnchor.constraint(equalTo: timeRequested.topAnchor, constant: -10).isActive = true
+        centerSelectionView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
+        centerSelectionView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         
         let centerView = UIView()
-        centerSectionView.addSubview(centerView)
+        centerSelectionView.addSubview(centerView)
         centerView.translatesAutoresizingMaskIntoConstraints = false
         centerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
         centerView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -35).isActive = true
         centerView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 35).isActive = true
-        centerView.centerYAnchor.constraint(equalTo: centerSectionView.centerYAnchor, constant: 0).isActive = true
+        centerView.centerYAnchor.constraint(equalTo: centerSelectionView.centerYAnchor, constant: 0).isActive = true
         
         let acceptView = UIButton()
         centerView.addSubview(acceptView)
@@ -388,58 +378,32 @@ class ExpandedCellTeacher: UIViewController {
     func respondToRequest(withAccept accepted: Bool){
 //        print("pass is \(accepted ? "accepted" : "rejected")")
         
-        FirebaseRequests.acceptPass(withStatus: accepted, data: historyData) { (title, message, buttonTitle, worked) in
+        FirebaseRequests.acceptPass(withStatus: accepted, data: historyData) { [weak self] (title, message, buttonTitle, worked) in
             print("\(title)\t\(message)\t\(buttonTitle)\t\(worked)")
             if worked{
-                self.dismiss(animated: true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
             }else{
-                self.alert(title: title, message: message, buttonTitle: buttonTitle)
+                self?.alert(title: title, message: message, buttonTitle: buttonTitle)
             }
         }
-        
-        
-//        
-//        let rqID = historyData.ID
-//        
-//        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { [weak self] (token, error) in
-//            if error == nil{
-//                
-//                let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/approve"
-//                var request = URLRequest(url: URL(string: requestURL)!)
-//                request.httpMethod = "POST"
-//                request.addValue("application/json", forHTTPHeaderField: "Content-type")
-//                request.addValue(token!, forHTTPHeaderField: "Authorization")
-//                
-//                request.httpBody = "{\"request\":\"\(rqID)\",\"approval\":\(accepted)}".data(using: String.Encoding.utf8)
-//                
-//                print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
-//                
-//                URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, _) in
-//                    
-//                    let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
-//                    print("\nData: \(responseMessage) \n\n")
-//                    
-//                    if responseMessage != ""{
-//                        self?.alert(title: "Request Error: \(responseMessage)", message: "A LatePass Could not Be Created", buttonTitle: "Okay")
-//                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
-//                        if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
-//                    }else{
-//                        
-//                        //TODO: - create a notification for updating the tableView in new tableView View
-////                        (self?.navigationController!.viewControllers[0] as! Home).historyTableView.reloadData()
-//                        self?.dismiss(animated: true, completion: nil)
-//                    }
-//                }).resume()
-//            }else{
-//                print("FIRSTERROR: \(String(describing: error))")
-//            }
-//        })
     }
-    
-    
     
 }
 
+
+extension UIView{
+    func addSep(){
+        let sep = UIView()
+        sep.backgroundColor = UIColor(hex: "E3E3E3", alpha: 1)
+        
+        self.addSubview(sep)
+        sep.translatesAutoresizingMaskIntoConstraints = false
+        sep.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        sep.rightAnchor.constraint(equalTo: rightAnchor, constant: 0).isActive = true
+        sep.leftAnchor.constraint(equalTo: leftAnchor, constant: 0).isActive = true
+        sep.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0).isActive = true
+    }
+}
 
 
 

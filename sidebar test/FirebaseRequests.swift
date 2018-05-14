@@ -19,7 +19,7 @@ struct FirebaseRequests{
         
         let origin = firebaseData.currentUser.userType == .student ? selectedPeople[0].userStringID! : firebaseData.userID!
 
-        let dest = toTeacher.userStringID!
+        let dest = toTeacher.userStringID ?? ""
         
         
         if firebaseData.currentUser.userType != .student{
@@ -123,6 +123,54 @@ struct FirebaseRequests{
             }else{
                 print("FIRSTERROR: \(String(describing: error))")
             }
+        })
+    }
+    
+    static func addDestination(to key: String, withUser user: String, completion: @escaping (_ title: String, _ message: String, _ button: String, _ worked: Bool) -> Void){
+        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
+            if error != nil{
+                print("FIRSTERROR: \(String(describing: error))")
+                return
+            }
+            
+            let requestURL = "http://localhost:5000/late-pass-lab/us-central1/app/complete"
+            var request = URLRequest(url: URL(string: requestURL)!)
+            request.httpMethod = "POST"
+            request.addValue("application/json", forHTTPHeaderField: "Content-type")
+            request.addValue(token!, forHTTPHeaderField: "Authorization")
+            
+            request.httpBody = "{\"request\":\"\(key)\",\"destination\":\"\(user)\"}".data(using: String.Encoding.utf8)
+            
+            print(String(data: request.httpBody!, encoding: String.Encoding.utf8)!)
+            
+            URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+                
+                if let error = error{
+                    print(error.localizedDescription)
+                }
+                
+                let responseMessage: String = String(data: data!, encoding: String.Encoding.utf8)!
+                print("\nData: \(responseMessage) \n\n")
+                
+                if responseMessage != ""{
+                    
+                    if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse.statusCode)\n") }
+                    if let httpResponse = response as? HTTPURLResponse { print("response: \(httpResponse)\n\n") }
+                    
+                    completion("Request Error: \(responseMessage)", "A LatePass Could not Be confirmed", "Okay", false)
+                    
+                }else{
+                    //TODO: - create a notification for updating the tableView in new tableView View
+                    //                        (self?.navigationController!.viewControllers[0] as! Home).historyTableView.reloadData()
+                    //                        self?.dismiss(animated: true, completion: nil)
+                    
+                    completion("", "", "", true)
+                    //                        firebaseData.reloadHistoryData()
+                }
+            }).resume()
+            
+            
+            
         })
     }
 }

@@ -8,13 +8,15 @@
 
 import UIKit
 
-class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFieldDelegate {
+class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFieldDelegate, ExpandedViewControllerDelegate {
     
     let historyTableView = HistoryTableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
+        
+        expandVC.delegate = self
         
         setUpNavigation()
 //        setUpTitle()
@@ -151,7 +153,7 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
         searchResult.heightAnchor.constraint(equalToConstant: 30).isActive = true
         searchResult.centerYAnchor.constraint(equalTo: searchView.centerYAnchor, constant: 0).isActive = true
         searchResult.widthAnchor.constraint(equalToConstant: 50).isActive = true
-        searchResult.text = "\(firebaseData.allItems.count)"
+        searchResult.text = "\(firebaseData.getAllItems.count)"
         
         searchView.addSubview(searchTextField)
         searchTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
@@ -185,6 +187,8 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
     
     //MARK: - History Table View Functions
     
+    let expandVC = ExpandedCellTeacher()
+    
     private func setUpTableView(){
         self.view.addSubview(historyTableView)
         historyTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -193,7 +197,7 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
         historyTableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
         historyTableView.topAnchor.constraint(equalTo: searchView.bottomAnchor, constant: 0).isActive = true
         
-        historyTableView.infoArray = firebaseData.allItems
+        historyTableView.infoArray = firebaseData.getAllItems
         historyTableView.historyDelegate = self
         
 //      ??? Why did i have this
@@ -204,15 +208,24 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
 //        }
     }
     
+    var isExpanded = false
     
     func historyTableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with historyData: HistoryData) {
-        let vc = ExpandedCellTeacher()
-        vc.historyData = historyData
+        
+        expandVC.update(from: historyData)
         print("ExpandedCellID: \(historyData.ID)")
         
-        vc.titleLabel.text = historyData.toStringReadable()
-        vc.dateLabel.text = historyData.getDateString()
-        self.present(vc, animated: true, completion: nil)
+//        vc.titleLabel.text = historyData.toStringReadable()
+//        vc.dateLabel.text = historyData.getDateString()
+        
+        if !isExpanded{
+            self.present(expandVC, animated: true, completion: nil)
+            isExpanded = true
+        }
+    }
+    
+    func willDismiss() {
+        isExpanded = false
     }
     
     func searchDidFinish(withCount count: Int) {

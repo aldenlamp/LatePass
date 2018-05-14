@@ -23,9 +23,9 @@
 		BF3264E420869EBD000A35E4 /* StatsViewController+UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */; };
 		BF51324E20488704000AFD0D /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF51324D20488704000AFD0D /* NotificationView.swift */; };
 		BF56E0822044820F0080C2FB /* HistoryStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF56E0812044820F0080C2FB /* HistoryStackView.swift */; };
-		BF83555320348573001F2578 /* ExpandedCellStudent.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF83555220348573001F2578 /* ExpandedCellStudent.swift */; };
 		BF8355552039D18E001F2578 /* UserTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8355542039D18E001F2578 /* UserTableView.swift */; };
 		BF835557203A86A0001F2578 /* GoogleDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF835556203A86A0001F2578 /* GoogleDataClass.swift */; };
+		BF8BBB5520A24DC200721E31 /* ExpandedCellInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8BBB5420A24DC200721E31 /* ExpandedCellInfo.swift */; };
 		BF9D15411F50BC2100ED4681 /* MainNavigationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D15401F50BC2100ED4681 /* MainNavigationViewController.swift */; };
 		BF9D15431F50BD9600ED4681 /* SideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D15421F50BD9600ED4681 /* SideBar.swift */; };
 		BF9D15451F511CD500ED4681 /* ContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D15441F511CD500ED4681 /* ContainerViewController.swift */; };
@@ -39,6 +39,7 @@
 		BFAEE41C2026AAC700637395 /* FirebaseRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFAEE41B2026AAC700637395 /* FirebaseRequests.swift */; };
 		BFBC2E3D20499B7C003250EA /* AllItemsController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBC2E3C20499B7C003250EA /* AllItemsController.swift */; };
 		BFBFD7911F5A16D300437639 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBFD7901F5A16D300437639 /* Request.swift */; };
+		BFCAB737209C99E3009188AF /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFCAB736209C99E3009188AF /* LoadingView.swift */; };
 		BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */; };
 		BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */; };
 		BFDCE1D11FC691B000EA5EE0 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */; };
@@ -89,9 +90,9 @@
 		BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatsViewController+UITableView.swift"; sourceTree = "<group>"; };
 		BF51324D20488704000AFD0D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BF56E0812044820F0080C2FB /* HistoryStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStackView.swift; sourceTree = "<group>"; };
-		BF83555220348573001F2578 /* ExpandedCellStudent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCellStudent.swift; sourceTree = "<group>"; };
 		BF8355542039D18E001F2578 /* UserTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableView.swift; sourceTree = "<group>"; };
 		BF835556203A86A0001F2578 /* GoogleDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDataClass.swift; sourceTree = "<group>"; };
+		BF8BBB5420A24DC200721E31 /* ExpandedCellInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCellInfo.swift; sourceTree = "<group>"; };
 		BF9D15401F50BC2100ED4681 /* MainNavigationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainNavigationViewController.swift; sourceTree = "<group>"; };
 		BF9D15421F50BD9600ED4681 /* SideBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBar.swift; sourceTree = "<group>"; };
 		BF9D15441F511CD500ED4681 /* ContainerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContainerViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +112,7 @@
 		BFAEE41B2026AAC700637395 /* FirebaseRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRequests.swift; sourceTree = "<group>"; };
 		BFBC2E3C20499B7C003250EA /* AllItemsController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllItemsController.swift; sourceTree = "<group>"; };
 		BFBFD7901F5A16D300437639 /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		BFCAB736209C99E3009188AF /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
 		BFDCE1CC1FC62F4C00EA5EE0 /* HistoryData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryData.swift; sourceTree = "<group>"; };
 		BFDCE1CE1FC6919900EA5EE0 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
 		BFDCE1D01FC691B000EA5EE0 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
@@ -176,6 +178,8 @@
 				BF85C4192050708700B30B89 /* User Table View */,
 				BF1819D3208AA8F500DEA0DF /* StatView */,
 				BF2C0F7C201AF8BA00CAA604 /* StudentStatsView.swift */,
+				BFCAB736209C99E3009188AF /* LoadingView.swift */,
+				BF8BBB5420A24DC200721E31 /* ExpandedCellInfo.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -313,7 +317,6 @@
 			children = (
 				BFA506871F4BE33700B8DE09 /* Home.swift */,
 				BF01EAD01F74C30D00D9769A /* ExpandedCellTeacher.swift */,
-				BF83555220348573001F2578 /* ExpandedCellStudent.swift */,
 				BFBFD7901F5A16D300437639 /* Request.swift */,
 				BF01EAD41F780DD800D9769A /* SelectTeachers.swift */,
 				BFBC2E3C20499B7C003250EA /* AllItemsController.swift */,
@@ -652,10 +655,12 @@
 				BFDCE1D31FC691B700EA5EE0 /* User.swift in Sources */,
 				BFA506881F4BE33700B8DE09 /* Home.swift in Sources */,
 				BF2C0F7D201AF8BA00CAA604 /* StudentStatsView.swift in Sources */,
+				BFCAB737209C99E3009188AF /* LoadingView.swift in Sources */,
 				BF835557203A86A0001F2578 /* GoogleDataClass.swift in Sources */,
 				BF3264E420869EBD000A35E4 /* StatsViewController+UITableView.swift in Sources */,
 				BF3264E220869D58000A35E4 /* StatUserCell.swift in Sources */,
 				BFBFD7911F5A16D300437639 /* Request.swift in Sources */,
+				BF8BBB5520A24DC200721E31 /* ExpandedCellInfo.swift in Sources */,
 				BFBC2E3D20499B7C003250EA /* AllItemsController.swift in Sources */,
 				BFA841F020917AE000BDEDD4 /* CustomSelectorView.swift in Sources */,
 				BF3264DE208656E5000A35E4 /* StatsViewController.swift in Sources */,
@@ -668,7 +673,6 @@
 				BFDCE1CF1FC6919900EA5EE0 /* HistoryCell.swift in Sources */,
 				BF9D15431F50BD9600ED4681 /* SideBar.swift in Sources */,
 				BFF3C5D720791C8D00B22532 /* FirebaseDataClass+HistoryManager.swift in Sources */,
-				BF83555320348573001F2578 /* ExpandedCellStudent.swift in Sources */,
 				BF56E0822044820F0080C2FB /* HistoryStackView.swift in Sources */,
 				BF01EAD11F74C30D00D9769A /* ExpandedCellTeacher.swift in Sources */,
 				BFDCE1CD1FC62F4C00EA5EE0 /* HistoryData.swift in Sources */,

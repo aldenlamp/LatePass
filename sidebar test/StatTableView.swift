@@ -88,7 +88,7 @@ class StatTableView: UIViewController, UITableViewDelegate, UITableViewDataSourc
     }
  
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //TODO: - handle the tableView touch
+        tableView.cellForRow(at: indexPath)!.setSelected(false, animated: true)
         delegate.didSelectRow(at: indexPath.row, with: sortedUserList[indexPath.row])
     }
     

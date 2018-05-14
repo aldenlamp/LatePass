@@ -162,7 +162,7 @@ extension FirebaseDataClass{
                             }
                             
                             let originID = (historyValues["origin"] as! String).replacingOccurrences(of: "%2E", with: ".")
-                            let destinationID = (historyValues["destination"] as! String).replacingOccurrences(of: "%2E", with: ".")
+                            let destinationID = (historyValues["destination"] as? String ?? "").replacingOccurrences(of: "%2E", with: ".")
                             let studentID = (historyValues["student"] as! String).replacingOccurrences(of: "%2E", with: ".")
                             
                             let studentString: String
@@ -183,13 +183,15 @@ extension FirebaseDataClass{
                                 }
                                 return
                             }
+
+                            let destination: User? = self?.allTeachers.userFrom(ID: destinationID)
                             
-                            guard let destination = self?.allTeachers.userFrom(ID: destinationID) else{
-                                for _ in 0...5{
-                                    print("DESTINATION USER NAME FAILED")
-                                }
-                                return
-                            }
+//                            guard let destination = self?.allTeachers.userFrom(ID: destinationID) else{
+//                                for _ in 0...5{
+//                                    print("DESTINATION USER NAME FAILED")
+//                                }
+//                                return
+//                            }
                             
                             //Getting the name from the userID to put into the cell
 //                            studentString = student.userName

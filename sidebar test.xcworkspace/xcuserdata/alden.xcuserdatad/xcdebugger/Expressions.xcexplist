@@ -3,14 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "cell.titleLabel.text">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "HistoryTableView.tableView(_:cellForRowAt:):HistoryTableView.swift">
          <PersistentStrings>
             <PersistentString
@@ -18,6 +10,37 @@
             </PersistentString>
             <PersistentString
                value = "cell.selectionStyle">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExpandedCellTeacher.update(from:):ExpandedCellTeacher.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "data.reason">
+            </PersistentString>
+            <PersistentString
+               value = "timeRequested.title.text">
+            </PersistentString>
+            <PersistentString
+               value = "data.thisCellType">
+            </PersistentString>
+            <PersistentString
+               value = "data.origin.userName">
+            </PersistentString>
+            <PersistentString
+               value = "data.destination.userName">
+            </PersistentString>
+            <PersistentString
+               value = "data.getTimeString()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.titleLabel.text">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -22,6 +22,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
     //And very much necessary
     var isFirstSelecion = false
     var selectStudents = false
+    var singleConfirmation = false
     weak var delegate: SelectTeacherDelegate!
     
     //This is the user tableView
@@ -246,7 +247,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
     func selectionSwitched(to index: Int) {
         
         print(firebaseData.googleData.teachers)
-//        print(firebaseData.googleData.students)
+        
         let users: [User]
         if firebaseData.currentUser.userType == .student{
             //users = firebaseData.allTeachers
@@ -302,18 +303,35 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         searchTextField.text = ""
         searchTextField.endEditing(true)
         
-//        if self.selectStudents{
-//            dismiss(animated: true, completion: nil)
-//            delegate.didSelectDestination(user: selectedUser)
-//        }else{
-//            print("\n\n\n\n\n\n\n\nERRIRROROOROROR in selecting student vs teacher\n\n\n\n\n\n\n\n")
-//        }
+
+        
+        
         if isFirstSelecion {
             delegate.didSelectFirst(users: [selectedUser])
+            dismiss(animated: true, completion: nil)
+        }else if singleConfirmation{
+            
+            
+            let alert = UIAlertController(title: "Destination", message: "Are you sure \(selectedUser.userName) is your destination?", preferredStyle: .alert)
+            let doneAction = UIAlertAction(title: "Yes", style: .default) { [weak self] (handler) in
+                self?.delegate.didSelectDestination(user: selectedUser)
+                alert.dismiss(animated: true, completion: nil)
+                self?.dismiss(animated: true, completion: nil)
+            }
+            
+            let cancelAction = UIAlertAction(title: "No", style: .default) { (handler) in
+                alert.dismiss(animated: true, completion: nil)
+            }
+            
+            alert.addAction(cancelAction)
+            alert.addAction(doneAction)
+            self.present(alert, animated: true, completion: nil)
+            
         }else{
             delegate.didSelectDestination(user: selectedUser)
+            dismiss(animated: true, completion: nil)
         }
-        dismiss(animated: true, completion: nil)
+        
     }
     
     
