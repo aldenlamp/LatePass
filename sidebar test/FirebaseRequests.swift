@@ -14,12 +14,23 @@ struct FirebaseRequests{
     static func makeRequest(from selectedPeople: [User], toTeacher: User, reason: String, completion: @escaping (_ title: String, _ message: String, _ buttonTitle: String, _ worked: Bool) -> Void){
         //        let reasoning = self.reasoning.text == "Reason for late pass" ? "" : self.reasoning.text!
         let reasoning = reason
-//
-        var student = firebaseData.currentUser.userType == .student ? firebaseData.userID! : selectedPeople[0].userStringID!
-        
-        let origin = firebaseData.currentUser.userType == .student ? selectedPeople[0].userStringID! : firebaseData.userID!
 
-        let dest = toTeacher.userStringID ?? ""
+        
+        var student: String
+        if firebaseData.currentUser.userType == .student{
+            student = firebaseData.userID
+        }else{
+            student = selectedPeople[0].isPotential ? selectedPeople[0].userEmail.replacingOccurrences(of: ".", with: "%2E") : selectedPeople[0].userStringID!
+        }
+        
+        let origin: String
+        if firebaseData.currentUser.userType == .student{
+            origin = selectedPeople[0].isPotential ? selectedPeople[0].userEmail.replacingOccurrences(of: ".", with: "%2E") : selectedPeople[0].userStringID!
+        }else{
+            origin = firebaseData.userID!
+        }
+        
+        let dest = !toTeacher.isPotential ? toTeacher.userStringID ?? "" : toTeacher.userEmail.replacingOccurrences(of: ".", with: "%2E")
         
         
         if firebaseData.currentUser.userType != .student{
@@ -133,7 +144,7 @@ struct FirebaseRequests{
                 return
             }
             
-            let requestURL = "http://localhost:5000/late-pass-lab/us-central1/app/complete"
+            let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/complete"
             var request = URLRequest(url: URL(string: requestURL)!)
             request.httpMethod = "POST"
             request.addValue("application/json", forHTTPHeaderField: "Content-type")

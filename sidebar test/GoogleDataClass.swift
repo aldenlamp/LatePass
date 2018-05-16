@@ -96,6 +96,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
         if GIDSignIn.sharedInstance().currentUser?.authentication.fetcherAuthorizer() != nil{
             if !GoogleDataClass.isPullingData{
                 print("HelloWOlrd")
+                print(GIDSignIn.sharedInstance().currentUser.authentication.refreshToken)
                 self.service.authorizer = GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()
                 self.fetchCourses()
                GoogleDataClass.isPullingData = true
@@ -177,7 +178,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                 teachers.teachers!.forEach(){
                     self?.allClassroomTeachers.append($0)
                     var added = false
-                    if let index = firebaseData.allTeachers.index(of: User(email: $0.profile!.emailAddress!)){
+                    if let index = firebaseData.allTeachers.index(of: User(email: $0.profile!.emailAddress!, isPotential: false)){
                         self?.simpleTeachers.append(firebaseData.allTeachers[index])
                         added = true
                     }else{
@@ -224,7 +225,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                     self?.allClassroomStudents.append($0)
 //                    print("StudentUSER: \($0.userId!) \tEMAIL: \($0.profile!.emailAddress!) \tNAME:\($0.profile!.name!.fullName!)")
                     var added = false
-                    if let index = firebaseData.allStudents.index(of: User(email: $0.profile!.emailAddress!)){
+                    if let index = firebaseData.allStudents.index(of: User(email: $0.profile!.emailAddress!, isPotential: false)){
                         firStudents.append(firebaseData.allStudents[index])
                         added = true
                     }else{

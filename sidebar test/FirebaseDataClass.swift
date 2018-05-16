@@ -193,7 +193,7 @@ class FirebaseDataClass{
             var image = UIImage()
             try? image = UIImage(data: Data(contentsOf: URL(string: photoID)!))!
             
-            self?.currentUser = User(email: email, type: tier, name: name, image: image, stringID: self?.userID!)
+            self?.currentUser = User(email: email, type: tier, name: name, image: image, stringID: self?.userID!, isPotential: false)
             
             //Delegate call to userDidLoad
             print("Current User data Did load")

@@ -81,6 +81,7 @@ extension UIViewController{
         UIViewController.loadingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
         UIViewController.loadingView.widthAnchor.constraint(equalToConstant: (self.view.frame.width * 2)/3).isActive = true
         UIViewController.loadingView.changeMessage(message: message)
+        print("testing")
     }
     
     func removeLoadingView(completion: @escaping () -> ()){
@@ -108,7 +109,8 @@ extension UIViewController{
             }) { (randomBool) in
                 UIViewController.loadingView.alpha = 1
                 UIViewController.loadingView.removeFromSuperview()
-                UIViewController.loadingView.removeConstraints(UIViewController.loadingView.constraints)
+//                UIViewController.loadingView.removeConstraints(UIViewController.loadingView.constraints)
+                print("test")
                 completion()
             }
             

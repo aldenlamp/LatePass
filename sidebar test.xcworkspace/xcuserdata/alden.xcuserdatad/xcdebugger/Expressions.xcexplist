@@ -3,6 +3,20 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "closure #1 in GoogleDataClass.init():GoogleDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "GIDSignIn.sharedInstance().currentUser.authentication.refreshToken">
+            </PersistentString>
+            <PersistentString
+               value = "GIDSignIn.sharedInstance().currentUser.authentication.fetcherAuthorizer()!">
+            </PersistentString>
+            <PersistentString
+               value = "">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "HistoryTableView.tableView(_:cellForRowAt:):HistoryTableView.swift">
          <PersistentStrings>
             <PersistentString
@@ -20,10 +34,13 @@
                value = "data.reason">
             </PersistentString>
             <PersistentString
-               value = "timeRequested.title.text">
+               value = "data.getTimeString()">
             </PersistentString>
             <PersistentString
                value = "data.thisCellType">
+            </PersistentString>
+            <PersistentString
+               value = "timeRequested.title.text">
             </PersistentString>
             <PersistentString
                value = "data.origin.userName">
@@ -31,16 +48,13 @@
             <PersistentString
                value = "data.destination.userName">
             </PersistentString>
-            <PersistentString
-               value = "data.getTimeString()">
-            </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
+         contextName = "closure #2 in UIViewController.removeLoadingView(completion:):LoadingView.swift">
          <PersistentStrings>
             <PersistentString
-               value = "cell.titleLabel.text">
+               value = "UIViewController.loadingView.constraints">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -55,6 +69,36 @@
             </PersistentString>
             <PersistentString
                value = "self.timeLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.titleLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExpandedCellTeacher.didSelectDestination(user:):ExpandedCellTeacher.swift">
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.sign(_:didSignInFor:withError:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "authentication.idToken">
+            </PersistentString>
+            <PersistentString
+               value = "authentication.accessToken">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UIViewController.addLoadingView(with:):LoadingView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UIViewController.loadingView.constraints">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

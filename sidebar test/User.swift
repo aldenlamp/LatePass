@@ -25,9 +25,9 @@ class User: Hashable, CustomStringConvertible{
         return lhs.userStringID == rhs || lhs.userEmail == rhs
     }
     
-    
     var userType: userType
     var userName: String
+    var isPotential = false
     
     private var userIDHash: Int{
         willSet{
@@ -56,9 +56,10 @@ class User: Hashable, CustomStringConvertible{
         self.userEmail = email
         self.userImage = #imageLiteral(resourceName: "BlankUser")
         self.userIDHash = email.hashValue
+        self.isPotential = true
     }
     
-    init(email: String?, type: userType = .student, name: String = "", image: UIImage = #imageLiteral(resourceName: "BlankUser"), stringID: String? = nil){
+    init(email: String?, type: userType = .student, name: String = "", image: UIImage = #imageLiteral(resourceName: "BlankUser"), stringID: String? = nil, isPotential: Bool){
         self.userEmail = "email"
         if let email = email{
             self.userEmail = email

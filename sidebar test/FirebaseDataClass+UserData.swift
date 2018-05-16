@@ -61,7 +61,7 @@ extension FirebaseDataClass{
             
             for i in studentKeys{
                 
-                let userCell = User(email: nil)
+                let userCell = User(email: nil, isPotential: false)
                 userCell.userType = .student
                 userCell.userStringID = i
                 
