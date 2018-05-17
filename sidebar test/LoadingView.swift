@@ -63,6 +63,7 @@ extension UIViewController{
     
     static var loadingView = LoadingView()
     static var currentBackgroundColor = UIColor.white
+    static var loadingViewConstraints = [NSLayoutConstraint]()
     
     func addLoadingView(with message: String){
         self.view.isUserInteractionEnabled = false
@@ -77,45 +78,51 @@ extension UIViewController{
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.886, green: 0.886, blue: 0.902, alpha: 1.00)
         
         self.view.addSubview(UIViewController.loadingView)
-        UIViewController.loadingView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
-        UIViewController.loadingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0).isActive = true
-        UIViewController.loadingView.widthAnchor.constraint(equalToConstant: (self.view.frame.width * 2)/3).isActive = true
+        
+        UIViewController.loadingViewConstraints.append(UIViewController.loadingView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0))
+        UIViewController.loadingViewConstraints.append(UIViewController.loadingView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 0))
+        UIViewController.loadingViewConstraints.append(UIViewController.loadingView.widthAnchor.constraint(equalToConstant: (self.view.frame.width * 2)/3))
+        UIViewController.loadingViewConstraints.append(UIViewController.loadingView.heightAnchor.constraint(equalToConstant: 150))
         UIViewController.loadingView.changeMessage(message: message)
+        UIViewController.loadingViewConstraints.forEach() { $0.isActive = true }
         print("testing")
     }
     
     func removeLoadingView(completion: @escaping () -> ()){
         
-        var contains = false
-        for i in self.view.subviews{
-            if i == UIViewController.loadingView{
-                contains = true
-                break
-            }
-        }
-        
-        if contains{
-            
-            UIView.animate(withDuration: 0.5, animations: {
-                UIViewController.loadingView.alpha = 0
-                self.view.backgroundColor = UIViewController.currentBackgroundColor
-                for i in self.view.subviews{
-                    if i != UIViewController.loadingView{
-                        i.alpha = 1
-                    }
+        DispatchQueue.main.async {
+            var contains = false
+            for i in self.view.subviews{
+                if i == UIViewController.loadingView{
+                    contains = true
+                    break
                 }
-                self.navigationController?.navigationBar.barTintColor = UIColor.white
-                
-            }) { (randomBool) in
-                UIViewController.loadingView.alpha = 1
-                UIViewController.loadingView.removeFromSuperview()
-//                UIViewController.loadingView.removeConstraints(UIViewController.loadingView.constraints)
-                print("test")
-                completion()
             }
             
-            self.view.isUserInteractionEnabled = true
-            self.navigationController?.navigationBar.isUserInteractionEnabled = true
+            if contains{
+                
+                UIView.animate(withDuration: 0.5, animations: {
+                    UIViewController.loadingView.alpha = 0
+                    self.view.backgroundColor = UIViewController.currentBackgroundColor
+                    for i in self.view.subviews{
+                        if i != UIViewController.loadingView{
+                            i.alpha = 1
+                        }
+                    }
+                    self.navigationController?.navigationBar.barTintColor = UIColor.white
+                    
+                }) { (randomBool) in
+                    UIViewController.loadingView.alpha = 1
+                    UIViewController.loadingView.removeFromSuperview()
+                    UIViewController.loadingView.removeConstraints(UIViewController.loadingViewConstraints)
+                    //                UIViewController.loadingView.removeConstraints(UIViewController.loadingView.constraints)
+                    print("test")
+                    completion()
+                }
+                
+                self.view.isUserInteractionEnabled = true
+                self.navigationController?.navigationBar.isUserInteractionEnabled = true
+            }
         }
     }
 }

@@ -194,15 +194,27 @@ class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeach
             return
         }
         
+        if user == historyData.origin{
+            selectedVC.dismiss(animated: true, completion: nil)
+            alert(title: "Bad Destination", message: "A destination cannot be the same as the origin")
+            return
+        }
         
+        self.addLoadingView(with: "Adding Destination")
         FirebaseRequests.addDestination(to: historyData.ID, withUser: userString) { [weak self] (title, message, buttonTitle, worked) in
-            if worked{
-                self?.historyData.destination = user
-                if let data = self?.historyData{
-                    self?.update(from: data)
+            
+            self?.removeLoadingView{
+                
+                if worked{
+                    if let data = self?.historyData{
+                        let newData = HistoryData(ID: data.ID, origin: data.origin, destination: user, student: data.student, timeStarted: data.timeStarted, timeCompleted: data.timeCompleted, reason: data.reason, status: data.status, cellType: data.thisCellType)
+                        self?.update(from: newData)
+                    }
+                    //                    self?.historyData.destination = user
+                    
+                }else{
+                    self?.alert(title: title, message: message, buttonTitle: buttonTitle)
                 }
-            }else{
-                self?.alert(title: title, message: message, buttonTitle: buttonTitle)
             }
         }
         
@@ -378,12 +390,15 @@ class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeach
     func respondToRequest(withAccept accepted: Bool){
 //        print("pass is \(accepted ? "accepted" : "rejected")")
         
+        self.addLoadingView(with: "\(accepted ? "Accepting" : "Rejecting") Pass")
         FirebaseRequests.acceptPass(withStatus: accepted, data: historyData) { [weak self] (title, message, buttonTitle, worked) in
             print("\(title)\t\(message)\t\(buttonTitle)\t\(worked)")
-            if worked{
-                self?.dismiss(animated: true, completion: nil)
-            }else{
-                self?.alert(title: title, message: message, buttonTitle: buttonTitle)
+            self?.removeLoadingView {
+                if worked{
+                    self?.dismiss(animated: true, completion: nil)
+                }else{
+                    self?.alert(title: title, message: message, buttonTitle: buttonTitle)
+                }
             }
         }
     }

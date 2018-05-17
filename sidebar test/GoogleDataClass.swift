@@ -19,6 +19,9 @@ protocol GoogleClassroomDelegate: class{
 class GoogleDataClass: NSObject{//, GIDSignInDelegate{
     //Just as a note, I changed the podCode from requiring SIGNIN function to optional (GIDSignInDelegate)
     
+    //This is determining if we should allow passes to be made from teacher and students who are not in the database
+    final var ALLOW_NONDATABASE_USERS = false
+    
     var courses = [GTLRClassroom_Course]()
     
     var courseNames: [String]{
@@ -39,13 +42,12 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
     
     var simpleTeachers = [User]()
     
-    private var internalTeacher = [[User]]()
-    private var internalStudent = [[User]]()
+    private var internalTeacher = [[User]()]
+    private var internalStudent = [[User]()]
     
     var teachers: [[User]]{// = [[User]]()
         get{ return internalTeacher }
         set{
-//            print("\nnewValue: \(newValue)")
             internalTeacher = [[User]]()
             for i in newValue{
                 print("\nTeachersList: \(i.sorted(by:{$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1]}))")
@@ -138,8 +140,10 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
         
         guard let courses = result.courses, !courses.isEmpty else {
             print("No Courses")
-            teachers.append(firebaseData.allTeachers)
-            students.append(firebaseData.allStudents)
+            teachers = [firebaseData.allTeachers]
+//            teachers.append(firebaseData.allTeachers)
+//            students.append(firebaseData.allStudents)
+            students = [firebaseData.allStudents]
             return
         }
         self.coursesExist = true
@@ -182,14 +186,17 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                         self?.simpleTeachers.append(firebaseData.allTeachers[index])
                         added = true
                     }else{
-                        self?.simpleTeachers.append(User(type: .student, name: "\($0.profile!.name!.fullName!)", email: "\($0.profile!.emailAddress!)"))
-                        added = true
+                        if (self?.ALLOW_NONDATABASE_USERS)!{
+                            self?.simpleTeachers.append(User(type: .student, name: "\($0.profile!.name!.fullName!)", email: "\($0.profile!.emailAddress!)"))
+                            added = true
+                        }
                     }
                     print("TeacherUSER: \($0.userId!) \tEMAIL: \($0.profile!.emailAddress!) \tNAME:\($0.profile!.name!.fullName!)\(added ? "\t\twas Added" : "")")
                 }
 //                self?.simpleTeachers.append(firTeachers)
                 count += 1
                 if count == self?.courses.count{
+                    self?.teachers = [[User]]()
                     self?.teachers.append((self?.simpleTeachers)!)
                     self?.teachers.append(firebaseData.GCAllTeachers)
                     self?.teachersLoaded = true
@@ -205,6 +212,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
         for course in courses{
             let query = GTLRClassroomQuery_CoursesStudentsList.query(withCourseId: course.identifier!)
             service.executeQuery(query, completionHandler: { [weak self] (ticket, result, error) in
+                var isFirst = true
                 if let error = error{
                     print("Error: \(error)")
                     self?.students.append([User]())
@@ -229,10 +237,16 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                         firStudents.append(firebaseData.allStudents[index])
                         added = true
                     }else{
-                        firStudents.append(User(type: .student, name: "\($0.profile!.name!.fullName!)", email: "\($0.profile!.emailAddress!)"))
-                        added = true
+                        if (self?.ALLOW_NONDATABASE_USERS)!{
+                            firStudents.append(User(type: .student, name: "\($0.profile!.name!.fullName!)", email: "\($0.profile!.emailAddress!)"))
+                            added = true
+                        }
                     }
                     print("StudentUSER: \($0.userId!) \tEMAIL: \($0.profile!.emailAddress!) \tNAME:\($0.profile!.name!.fullName!)\(added ? "\t\twas Added" : "")")
+                }
+                if isFirst{
+                    self?.students = [[User]]()
+                    isFirst = false
                 }
                 self?.students.append(firStudents)
                 count += 1
@@ -248,6 +262,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
     private func usersLoaded(){
         if teachersLoaded && studentsLoaded{
             GoogleDataClass.isPullingData = false
+            NotificationCenter.default.post(Notification(name: GCUsersLoaded))
         }
     }
     

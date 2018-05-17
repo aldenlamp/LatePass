@@ -54,12 +54,13 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         setUpSearchBar()
         setUpCustomSelector()
         setUpTableView()
+        setUpNoUsersLabel()
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SelectTeachers.dismissKeyboard))
         tap.delegate = self
         view.addGestureRecognizer(tap)
         
-        //TODO: - Create a list of data that is to be managed from google classroom
+        
         
         
     }
@@ -70,6 +71,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         
         //This will be the mechanism for reloading the tableView if it has not loaded yet
         NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: userDataLoadedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(reloadGCData), name: GCUsersLoaded, object: nil)
 //        NotificationCenter.default.addObserver(self, selector: #selector(testingReloadTableview), name: teacherDataLoaded, object: nil)
 //                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
 //                NotificationCenter.default.removeObserver(self, name: NSNotification.Name(rawValue: "testingReloadTableView"), object: nil)
@@ -83,6 +85,10 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         }
     }
 
+    @objc func reloadGCData(){
+        selectionSwitched(to: customSelector.currentSection)
+    }
+    
     @objc func dismissKeyboard() { view.endEditing(true) }
     
     //MARK: - Cancel Button
@@ -246,8 +252,6 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
     
     func selectionSwitched(to index: Int) {
         
-        print(firebaseData.googleData.teachers)
-        
         let users: [User]
         if firebaseData.currentUser.userType == .student{
             //users = firebaseData.allTeachers
@@ -263,11 +267,20 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         }
         tableView.userList = users
         tableView.update()
+        if users.isEmpty && firebaseData.googleData.studentsLoaded && firebaseData.googleData.teachersLoaded{
+            tableView.isHidden = true
+            noUsersLabel.isHidden = false
+        }else{
+            tableView.isHidden = false
+            noUsersLabel.isHidden = true
+        }
     }
     
     
     
     //MARK: - TableView
+    
+    let noUsersLabel = UILabel()
     
     func setUpTableView(){
         tableView.delegate = self
@@ -288,6 +301,14 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
             }
         }
         
+        if users.isEmpty && firebaseData.googleData.studentsLoaded && firebaseData.googleData.teachersLoaded{
+            tableView.isHidden = true
+            noUsersLabel.isHidden = false
+        }else{
+            tableView.isHidden = false
+            noUsersLabel.isHidden = true
+        }
+        
         tableView.setUpTableView(withUsers: users, multipleSelect: selectStudents)
         
         self.view.addSubview(tableView)
@@ -297,6 +318,22 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
         tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive  = true
         tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: 0).isActive = true
+    }
+    
+    func setUpNoUsersLabel(){
+        noUsersLabel.text = "There are not Users in this list"
+        noUsersLabel.font = UIFont(name: "Avenir-Medium", size: 21)
+        noUsersLabel.textColor = UIColor.textColor
+        noUsersLabel.textAlignment = .center
+        noUsersLabel.adjustsFontSizeToFitWidth = true
+        noUsersLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        self.view.addSubview(noUsersLabel)
+        noUsersLabel.topAnchor.constraint(equalTo: customSelector.bottomAnchor, constant: 30).isActive = true
+        noUsersLabel.heightAnchor.constraint(equalToConstant: 40).isActive = true
+        noUsersLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+        noUsersLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        noUsersLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
     }
     
     func singleUserSelected(selectedUser: User) {

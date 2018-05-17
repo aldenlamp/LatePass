@@ -34,7 +34,7 @@
                value = "data.reason">
             </PersistentString>
             <PersistentString
-               value = "data.getTimeString()">
+               value = "data.destination.userName">
             </PersistentString>
             <PersistentString
                value = "data.thisCellType">
@@ -43,10 +43,10 @@
                value = "timeRequested.title.text">
             </PersistentString>
             <PersistentString
-               value = "data.origin.userName">
+               value = "data.getTimeString()">
             </PersistentString>
             <PersistentString
-               value = "data.destination.userName">
+               value = "data.origin.userName">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -91,6 +91,14 @@
             </PersistentString>
             <PersistentString
                value = "authentication.accessToken">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "SelectTeachers.setUpTableView():SelectTeachers.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firebaseData.googleData.teachers">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

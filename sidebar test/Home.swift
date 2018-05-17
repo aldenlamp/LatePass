@@ -21,6 +21,8 @@ var firebaseData: FirebaseDataClass!
 let userDataLoadedNotification = NSNotification.Name(rawValue: "ReloadUserData")
 let WifiDisconectedNotification = NSNotification.Name(rawValue: "WifiDisconectedNotification")
 let userDataDidLoadNotif = NSNotification.Name(rawValue: "userDataDidLoad")
+let GCUsersLoaded = NSNotification.Name(rawValue: "GCUsersLoaded")
+
 var testImage: UIImage?
  let activityIndicator = UIActivityIndicatorView()
 
