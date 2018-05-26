@@ -94,7 +94,9 @@ class FirebaseDataClass{
     var GCAllStudents: [User]{
         var arr = [User]()
         for i in allStudents{
-            arr.append(i)
+            if !googleData.allStudents.contains(i){
+                arr.append(i)
+            }
         }
         for i in googleData.allStudents{
             arr.append(i)
@@ -105,7 +107,9 @@ class FirebaseDataClass{
     var GCAllTeachers: [User]{
         var arr = [User]()
         for i in allTeachers{
-            arr.append(i)
+            if !googleData.allTeachers.contains(i){
+                arr.append(i)
+            }
         }
         for i in googleData.allTeachers{
             arr.append(i)

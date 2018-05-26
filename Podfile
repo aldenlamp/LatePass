@@ -15,7 +15,7 @@ target 'sidebar test' do
   pod 'GoogleSignIn'
   pod 'GoogleAPIClientForREST/Classroom', '~> 1.2.1'
   pod 'Google'
-  pod 'GoogleClassroom'
+#  pod 'GoogleClassroom'
 
 
   target 'sidebar testTests' do

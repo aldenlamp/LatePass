@@ -15,6 +15,8 @@ import Google
 class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
 
     var observer : NSObjectProtocol!
+    var failedObserver : NSObjectProtocol!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.white
@@ -30,11 +32,26 @@ class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
             NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "userLoggedIn")))
             NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "setUpUserAttributesSideBar")))
         }
+        
+        failedObserver = NotificationCenter.default.addObserver(forName: logInFailedNotif, object: nil, queue: nil, using: { [weak self] (notif) in
+            print("Log in failed")
+            self?.alert(title: "Log In Failed", message: "Could not log in under this account. Make sure you are using you Millburn.org email account", buttonTitle: "Okay")
+            
+            do{
+                try FIRAuth.auth()?.signOut()
+                GIDSignIn.sharedInstance().signOut()
+            }catch{
+                assert(true, "loging out failed")
+            }
+            
+        })
+        
     }
     
     
     deinit{
         NotificationCenter.default.removeObserver(observer)
+        NotificationCenter.default.removeObserver(failedObserver)
     }
     
     func setUpAuth(){

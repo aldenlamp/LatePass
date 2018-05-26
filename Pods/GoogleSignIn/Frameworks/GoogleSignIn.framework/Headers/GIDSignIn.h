@@ -38,7 +38,6 @@ typedef NS_ENUM(NSInteger, GIDSignInErrorCode) {
 // A protocol implemented by the delegate of |GIDSignIn| to receive a refresh token or an error.
 @protocol GIDSignInDelegate <NSObject>
 
-@optional
 // The sign-in flow has finished and was successful if |error| is |nil|.
 - (void)signIn:(GIDSignIn *)signIn
     didSignInForUser:(GIDGoogleUser *)user

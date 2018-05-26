@@ -165,9 +165,9 @@ extension FirebaseDataClass{
                             let destinationID = (historyValues["destination"] as? String ?? "").replacingOccurrences(of: "%2E", with: ".")
                             let studentID = (historyValues["student"] as! String).replacingOccurrences(of: "%2E", with: ".")
                             
-                            let studentString: String
-                            let originString: String
-                            let destinationString: String
+//                            let studentString: String
+//                            let originString: String
+//                            let destinationString: String
                             
                             
                             guard let student = self?.allStudents.userFrom(ID: studentID) else{

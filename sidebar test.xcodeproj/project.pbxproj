@@ -90,6 +90,7 @@
 		BF3264E320869EBC000A35E4 /* StatsViewController+UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StatsViewController+UITableView.swift"; sourceTree = "<group>"; };
 		BF51324D20488704000AFD0D /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BF56E0812044820F0080C2FB /* HistoryStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStackView.swift; sourceTree = "<group>"; };
+		BF73FD2920B08FD200D2F747 /* sidebar test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "sidebar test.entitlements"; sourceTree = "<group>"; };
 		BF8355542039D18E001F2578 /* UserTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTableView.swift; sourceTree = "<group>"; };
 		BF835556203A86A0001F2578 /* GoogleDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleDataClass.swift; sourceTree = "<group>"; };
 		BF8BBB5420A24DC200721E31 /* ExpandedCellInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCellInfo.swift; sourceTree = "<group>"; };
@@ -269,6 +270,7 @@
 		BFA506841F4BE33700B8DE09 /* sidebar test */ = {
 			isa = PBXGroup;
 			children = (
+				BF73FD2920B08FD200D2F747 /* sidebar test.entitlements */,
 				BF9D153F1F50BABC00ED4681 /* Navigation */,
 				BFDCE1D41FC691D000EA5EE0 /* View Controllers */,
 				BF1BE8191FD83906003A0786 /* Views */,
@@ -418,6 +420,14 @@
 						DevelopmentTeam = 9XWYL3K4YT;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					BFA506951F4BE33700B8DE09 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -838,10 +848,11 @@
 			baseConfigurationReference = 784ED2F38408CBA01C857EF5 /* Pods-sidebar test.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "sidebar test/sidebar test.entitlements";
 				DEVELOPMENT_TEAM = 9XWYL3K4YT;
 				INFOPLIST_FILE = "sidebar test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Isotonic.LatePassUpdate;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Isotonic.sidebar-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
@@ -854,10 +865,11 @@
 			baseConfigurationReference = AD2A011E9C1D854DAA05B8DB /* Pods-sidebar test.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "sidebar test/sidebar test.entitlements";
 				DEVELOPMENT_TEAM = 9XWYL3K4YT;
 				INFOPLIST_FILE = "sidebar test/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.Isotonic.LatePassUpdate;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.Isotonic.sidebar-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 4.0;
