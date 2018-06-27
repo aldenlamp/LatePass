@@ -138,10 +138,14 @@ class FirebaseDataClass{
         userID = currUserID
         print(userID!)
         
+        //TODO: - UNDO THIS INSTANTLY
+        
+//        self.savedUserType = .teacher
+        
         //TODO: - Rewrite this system with user ID as key
         let savedUserResult = UserDefaults.standard.value(forKey: "userType")
         if let savedUserTypeResult = savedUserResult as? String{
-            
+//
             print("\(savedUserTypeResult)\n\n\n")
             savedUserType = userTypeForString[savedUserTypeResult]
             //firebaseDataDelegate.intiViewWith(userType: savedUserTypeResult)
@@ -184,11 +188,14 @@ class FirebaseDataClass{
             default: tier = .student
             }
             
+            print(tier.rawValue)
+            
             //TODO: - Fix the standard User Defaults function for this
             if self?.savedUserType == nil{
                 UserDefaults.standard.set(tier.rawValue, forKey: "userType")
             }else if tier != self?.savedUserType{
                 print("\n\n\nERRRORRR INCORRECT USER TYPE\n\n\n")
+                UserDefaults.standard.set(tier.rawValue, forKey: "userType")
                 self?.savedUserType = tier
             }
             

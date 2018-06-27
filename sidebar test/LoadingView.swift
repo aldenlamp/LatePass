@@ -115,6 +115,7 @@ extension UIViewController{
                     UIViewController.loadingView.alpha = 1
                     UIViewController.loadingView.removeFromSuperview()
                     UIViewController.loadingView.removeConstraints(UIViewController.loadingViewConstraints)
+                    UIViewController.loadingViewConstraints.removeAll()
                     //                UIViewController.loadingView.removeConstraints(UIViewController.loadingView.constraints)
                     print("test")
                     completion()

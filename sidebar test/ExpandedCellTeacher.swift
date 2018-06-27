@@ -188,11 +188,13 @@ class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeach
     
     func didSelectDestination(user: User) {
         
-        guard let userString = user.userStringID else{
-            selectedVC.dismiss(animated: true, completion: nil)
-            alert(title: "Not and Existing User", message: "The user you selected is not currently in our database. A new feature will shortly be added to automatically email them instead", buttonTitle: "Done")
-            return
-        }
+        let userString = user.isPotential ? user.userEmail.replacingOccurrences(of: ".", with: "%2E") : user.userStringID
+//
+//            else{
+//            selectedVC.dismiss(animated: true, completion: nil)
+//            alert(title: "Not an Existing User", message: "The user you selected is not currently in our database. A new feature will shortly be added to automatically email them instead", buttonTitle: "Done")
+//            return
+//        }
         
         if user == historyData.origin{
             selectedVC.dismiss(animated: true, completion: nil)
@@ -201,7 +203,7 @@ class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeach
         }
         
         self.addLoadingView(with: "Adding Destination")
-        FirebaseRequests.addDestination(to: historyData.ID, withUser: userString) { [weak self] (title, message, buttonTitle, worked) in
+        FirebaseRequests.addDestination(to: historyData.ID, withUser: userString!) { [weak self] (title, message, buttonTitle, worked) in
             
             self?.removeLoadingView{
                 

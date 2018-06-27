@@ -140,10 +140,11 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
         
         guard let courses = result.courses, !courses.isEmpty else {
             print("No Courses")
-            teachers = [firebaseData.allTeachers]
+            teachers = [[User](), firebaseData.allTeachers]
 //            teachers.append(firebaseData.allTeachers)
 //            students.append(firebaseData.allStudents)
-            students = [firebaseData.allStudents]
+            students = [[User](), firebaseData.allStudents]
+            GoogleDataClass.isPullingData = false
             return
         }
         self.coursesExist = true
@@ -228,6 +229,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                 }
                 
                 var firStudents = [User]()
+                
                 
                 students.students!.forEach() {
                     self?.allClassroomStudents.append($0)

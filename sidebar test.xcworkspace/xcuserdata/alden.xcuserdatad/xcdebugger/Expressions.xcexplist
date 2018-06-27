@@ -34,19 +34,19 @@
                value = "data.reason">
             </PersistentString>
             <PersistentString
-               value = "data.destination.userName">
+               value = "data.origin.userName">
             </PersistentString>
             <PersistentString
                value = "data.thisCellType">
+            </PersistentString>
+            <PersistentString
+               value = "data.destination.userName">
             </PersistentString>
             <PersistentString
                value = "timeRequested.title.text">
             </PersistentString>
             <PersistentString
                value = "data.getTimeString()">
-            </PersistentString>
-            <PersistentString
-               value = "data.origin.userName">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -77,6 +77,14 @@
          <PersistentStrings>
             <PersistentString
                value = "cell.titleLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FirebaseDataClass.getCurrentUser():FirebaseDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "data[&quot;tier&quot;] as! Int">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

@@ -115,6 +115,7 @@ class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
     
     
     @objc func logOut(){
+        print(GoogleDataClass.isPullingData)
         if !GoogleDataClass.isPullingData{
             do{
                 try FIRAuth.auth()?.signOut()
