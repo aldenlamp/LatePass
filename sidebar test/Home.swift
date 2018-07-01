@@ -29,6 +29,8 @@ var testImage: UIImage?
 
 class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, HistoryStackViewDelegate, ExpandedViewControllerDelegate{
     
+    var sv = UIScrollView()
+    
     let historyTableView = HistoryTableView()
     let statView = StudentStatsView()
     let historyStackView = HistoryStackView()
