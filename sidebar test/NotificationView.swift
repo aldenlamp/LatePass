@@ -30,6 +30,8 @@ class NotificationView: UIView{
     var dismissView = UIButton()
     var responseView = UIStackView()
     
+    var canPress = true
+    
     var currentHistoryData: HistoryData?
     
     deinit {
@@ -72,15 +74,25 @@ class NotificationView: UIView{
     //MARK: - User Response
     
     @objc func didAccept(){
-        delegate?.didRespondTo(historyData: currentHistoryData!, with: true)
+        if canPress{
+            delegate?.didRespondTo(historyData: currentHistoryData!, with: true)
+        }
+        canPress = false
     }
     
     @objc func didReject(){
-        delegate?.didRespondTo(historyData: currentHistoryData!, with: false)
+        if canPress{
+            delegate?.didRespondTo(historyData: currentHistoryData!, with: false)
+        }
+        canPress = false
+        
     }
     
     @objc func didDismiss(){
-        delegate?.didDissmissView()
+        if canPress{
+            delegate?.didDissmissView()
+        }
+        canPress = false
     }
     
     //MARK: - Setting Up Views

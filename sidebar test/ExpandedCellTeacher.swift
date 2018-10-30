@@ -397,6 +397,9 @@ class ExpandedCellTeacher: UIViewController, ExpandCellInfoDelegate, SelectTeach
             print("\(title)\t\(message)\t\(buttonTitle)\t\(worked)")
             self?.removeLoadingView {
                 if worked{
+                    if let del = self?.delegate{
+                        del.willDismiss()
+                    }
                     self?.dismiss(animated: true, completion: nil)
                 }else{
                     self?.alert(title: title, message: message, buttonTitle: buttonTitle)

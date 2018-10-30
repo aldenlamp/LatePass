@@ -54,15 +54,24 @@ class ContainerViewController: UIViewController {
         
         self.addLeftPanelViewController()
         
+        
+        
+        
         let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ContainerViewController.handlePanGesture(_:)))
         panGestureRecognizer.delegate = self
         activeNavigationController.view.addGestureRecognizer(panGestureRecognizer)
+        
         let panelPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ContainerViewController.handlePanGesture(_:)))
         panelPanGestureRecognizer.delegate = self
         leftPanelController.view.addGestureRecognizer(panelPanGestureRecognizer)
+        
         let tableViewPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(ContainerViewController.handlePanGesture(_:)))
         tableViewPanGestureRecognizer.delegate = self
         leftPanelController.view.addGestureRecognizer(tableViewPanGestureRecognizer)
+        
+        
+        
+        
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(forName: NSNotification.Name(rawValue: NavigationNotifications.toggleMenu.rawValue), object: nil, queue: nil, using: { (notification) in
@@ -96,7 +105,7 @@ class ContainerViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         
         if (callSetUpSideBar){
-            if FIRAuth.auth()?.currentUser == nil{
+            if Auth.auth().currentUser == nil{
                 NotificationCenter.default.post(Notification(name: ReturnToLoginNotificationName, object: self))
             }else{
                 NotificationCenter.default.post(Notification(name: Notification.Name(rawValue: "setUpUserAttributesSideBar")))

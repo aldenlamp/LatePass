@@ -169,7 +169,8 @@ class AllItemsController: UIViewController, HistoryTableViewDelegate, UITextFiel
         //It looks weird to have nothing above it
         self.view.addSubview(searchView)
 //        searchView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15).isActive = true
-        searchView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
+//        searchView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
+        searchView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor, constant: 0).isActive = true
         searchView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 0).isActive = true
         searchView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: 0).isActive = true
         searchView.heightAnchor.constraint(equalToConstant: 50).isActive = true

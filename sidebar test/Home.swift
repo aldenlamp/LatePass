@@ -46,11 +46,6 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
             firebaseData = FirebaseDataClass()
             firebaseData.firebaseDataDelegate = self
             
-            
-            if firebaseData.userID != nil{
-                firebaseData.pullingAllData()
-            }
-            
             initStatViewWith(userType: firebaseData.savedUserType)
             
 //            self.addLoadingView(with: "Loading Data")
@@ -170,7 +165,8 @@ class Home: UIViewController, FirebaseProtocol, HistoryTableViewDelegate, Histor
         statView.setUpStats()
         self.view.addSubview(statView)
         statView.translatesAutoresizingMaskIntoConstraints = false
-        statView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 84).isActive = true
+//        statView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 84).isActive = true
+        statView.topAnchor.constraint(equalTo: self.topLayoutGuide.bottomAnchor, constant: 10).isActive = true
         statView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
         statView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
     }
@@ -313,9 +309,26 @@ extension UIColor{
         self.present(alert, animated: true, completion: nil)
     }
     
-    
-    
  }
+
+extension Array where Element:User {
+    func excluding(user email: String) -> [User] {
+        var arr = [User]()
+        print(self)
+        print(self[0].userEmail)
+        for i in 0..<self.count{
+            if self[i].userEmail != email{
+                arr.append(self[i])
+            }
+        }
+//        for i in self{
+//            if i.userEmail != email{
+//                arr.append(i)
+//            }
+//        }
+        return arr
+    }
+}
 
 
 extension UIColor{

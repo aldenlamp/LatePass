@@ -51,10 +51,10 @@ class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
     private func updateViews(){
         let email: String
         let image: UIImage
-        if FIRAuth.auth()?.currentUser != nil{
+        if Auth.auth().currentUser != nil{
             do{
-                email = (FIRAuth.auth()?.currentUser?.email)!
-                try image = UIImage(data: Data(contentsOf: (FIRAuth.auth()?.currentUser?.photoURL)!))!
+                email = (Auth.auth().currentUser?.email)!
+                try image = UIImage(data: Data(contentsOf: (Auth.auth().currentUser?.photoURL)!))!
             }catch{
                 image = #imageLiteral(resourceName: "icons8-user_filled")
             }
@@ -83,7 +83,7 @@ class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         label.frame = CGRect(x: 0, y: 0, width: self.view.frame.width - 20, height: 23)
-        label.text = FIRAuth.auth()?.currentUser?.email ?? "NO WIFI"
+        label.text = Auth.auth().currentUser?.email ?? "NO WIFI"
         label.font = UIFont(name: "Avenir-Medium", size: 16)
         label.textColor = UIColor(hex: "55596B", alpha: 1)
         label.adjustsFontSizeToFitWidth = true
@@ -118,7 +118,7 @@ class SideBar: UIViewController, UITableViewDelegate, UITableViewDataSource{
         print(GoogleDataClass.isPullingData)
         if !GoogleDataClass.isPullingData{
             do{
-                try FIRAuth.auth()?.signOut()
+                try Auth.auth().signOut()
                 GIDSignIn.sharedInstance().signOut()
                 NotificationCenter.default.post(Notification(name: ReturnToLoginNotificationName))
             }catch{

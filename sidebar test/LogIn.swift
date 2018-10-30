@@ -38,7 +38,7 @@ class LogIn: UIViewController, GIDSignInUIDelegate{//}, GIDSignInDelegate {\
             self?.alert(title: "Log In Failed", message: "Could not log in under this account. Make sure you are using you Millburn.org email account", buttonTitle: "Okay")
             
             do{
-                try FIRAuth.auth()?.signOut()
+                try Auth.auth().signOut()
                 GIDSignIn.sharedInstance().signOut()
             }catch{
                 assert(true, "loging out failed")

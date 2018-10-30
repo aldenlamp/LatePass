@@ -61,6 +61,7 @@ class HistoryStackView: UIView, NotificationDelegate {
         }else{
             currentView.updateViewWith(historyData: data)
         }
+        currentView.canPress = true
         delegate?.newDataShown(data: data)
     }
     

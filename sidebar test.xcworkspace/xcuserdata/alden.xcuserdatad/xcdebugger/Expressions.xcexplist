@@ -3,6 +3,73 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "ExpandedCellTeacher.didSelectDestination(user:):ExpandedCellTeacher.swift">
+      </ContextState>
+      <ContextState
+         contextName = "Home.historyTableView(_:didSelectRowAt:with:):Home.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #4 in closure #1 in AppDelegate.sign(_:didSignInFor:withError:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "key">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FirebaseDataClass.getStudentList(itemType:potentialItem:):FirebaseDataClass+UserData.swift">
+      </ContextState>
+      <ContextState
+         contextName = "SelectTeachers.selectionSwitched(to:):SelectTeachers.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firebaseData.googleData.students">
+            </PersistentString>
+            <PersistentString
+               value = "firebaseData.googleData.teachers">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "Array&lt;A&gt;.excluding(user:):Home.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "i.userEmail">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GoogleDataClass.teachers.setter:GoogleDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firebaseData.currentUser.userEmail">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "ExpandedCellTeacher.update(from:):ExpandedCellTeacher.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "data.reason">
+            </PersistentString>
+            <PersistentString
+               value = "data.destination.userName">
+            </PersistentString>
+            <PersistentString
+               value = "data.thisCellType">
+            </PersistentString>
+            <PersistentString
+               value = "timeRequested.title.text">
+            </PersistentString>
+            <PersistentString
+               value = "data.origin.userName">
+            </PersistentString>
+            <PersistentString
+               value = "data.getTimeString()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in GoogleDataClass.init():GoogleDataClass.swift">
          <PersistentStrings>
             <PersistentString
@@ -28,25 +95,74 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "ExpandedCellTeacher.update(from:):ExpandedCellTeacher.swift">
+         contextName = "SelectTeachers.setUpTableView():SelectTeachers.swift">
          <PersistentStrings>
             <PersistentString
-               value = "data.reason">
+               value = "firebaseData.googleData.students">
             </PersistentString>
             <PersistentString
-               value = "data.origin.userName">
+               value = "firebaseData.googleData.teachers">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in GoogleDataClass.getStudents():GoogleDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firebaseData.GCAllStudents">
             </PersistentString>
             <PersistentString
-               value = "data.thisCellType">
+               value = "self?.students">
             </PersistentString>
             <PersistentString
-               value = "data.destination.userName">
+               value = "firebaseData.GCAllTeachers">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GoogleDataClass.students.setter:GoogleDataClass.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FirebaseDataClass.getCurrentUser():FirebaseDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self.userID">
             </PersistentString>
             <PersistentString
-               value = "timeRequested.title.text">
+               value = "data[&quot;tier&quot;] as! Int">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cell.titleLabel.text">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GoogleDataClass.allTeachers.getter:GoogleDataClass.swift">
+      </ContextState>
+      <ContextState
+         contextName = "GoogleDataClass.displayResultWithTicket(ticket:finishedWithObject:error:):GoogleDataClass.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "firebaseData.allStudents">
             </PersistentString>
             <PersistentString
-               value = "data.getTimeString()">
+               value = "firebaseData.allTeachers">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AppDelegate.sign(_:didSignInFor:withError:):AppDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "authentication.idToken">
+            </PersistentString>
+            <PersistentString
+               value = "authentication.accessToken">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -57,6 +173,17 @@
                value = "UIViewController.loadingView.constraints">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UIViewController.addLoadingView(with:):LoadingView.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "UIViewController.loadingView.constraints">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "GoogleDataClass.students.getter:GoogleDataClass.swift">
       </ContextState>
       <ContextState
          contextName = "HistoryCell.shouldHighlight.willset:HistoryCell.swift">
@@ -73,50 +200,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "HistoryTableView.highlightObject(data:):HistoryTableView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "cell.titleLabel.text">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in FirebaseDataClass.getCurrentUser():FirebaseDataClass.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "data[&quot;tier&quot;] as! Int">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "ExpandedCellTeacher.didSelectDestination(user:):ExpandedCellTeacher.swift">
-      </ContextState>
-      <ContextState
-         contextName = "AppDelegate.sign(_:didSignInFor:withError:):AppDelegate.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "authentication.idToken">
-            </PersistentString>
-            <PersistentString
-               value = "authentication.accessToken">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "SelectTeachers.setUpTableView():SelectTeachers.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "firebaseData.googleData.teachers">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "UIViewController.addLoadingView(with:):LoadingView.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "UIViewController.loadingView.constraints">
-            </PersistentString>
-         </PersistentStrings>
+         contextName = "GoogleDataClass.teachers.getter:GoogleDataClass.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

@@ -52,9 +52,14 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         setUpBarButtons()
         setUpTitle()
         setUpSearchBar()
-        setUpCustomSelector()
-        setUpTableView()
-        setUpNoUsersLabel()
+        if !GoogleDataClass.isPullingData{
+            setUpCustomSelector()
+            setUpTableView()
+            setUpNoUsersLabel()
+        }else{
+            addLoading()
+            shouldReformat = true
+        }
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(SelectTeachers.dismissKeyboard))
         tap.delegate = self
@@ -85,7 +90,64 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         }
     }
 
+    var shouldReformat = false
+    
+    var loadingView: UIView = {
+        let view = UIView()
+        let label = UILabel()
+        label.text = "Loading Users Table"
+        label.font = UIFont(name: "Avenir-Medium", size: 21)
+        label.textColor = UIColor.textColor
+        label.textAlignment = .center
+        label.adjustsFontSizeToFitWidth = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.activityIndicatorViewStyle = .whiteLarge
+        activityIndicator.color = UIColor.textColor
+        activityIndicator.isHidden = false
+        if activityIndicator.isAnimating == false{
+            activityIndicator.startAnimating()
+        }
+        activityIndicator.hidesWhenStopped = false
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(label)
+        label.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        label.rightAnchor.constraint(equalTo: view.rightAnchor, constant: 0).isActive = true
+        label.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 0).isActive = true
+        label.heightAnchor.constraint(equalToConstant: 35).isActive = true
+        
+        view.addSubview(activityIndicator)
+        activityIndicator.topAnchor.constraint(equalTo: label.bottomAnchor, constant: 20).isActive = true
+        activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
+        activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        return view
+    }()
+    
+    func addLoading(){
+        loadingView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(loadingView)
+        loadingView.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        loadingView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 0).isActive = true
+        loadingView.topAnchor.constraint(equalTo: self.searchView.bottomAnchor, constant: 30).isActive = true
+    }
+    
+    func removeLoading(){
+        self.loadingView.removeFromSuperview()
+    }
+    
     @objc func reloadGCData(){
+        if shouldReformat{
+            removeLoading()
+            setUpCustomSelector()
+            setUpTableView()
+            setUpNoUsersLabel()
+            self.shouldReformat = false
+            //TODO: - Do Stuff
+        }
         selectionSwitched(to: customSelector.currentSection)
     }
     
@@ -262,7 +324,7 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
             if selectStudents{
                 users = firebaseData.googleData.students[index]
             }else{
-                users = firebaseData.allTeachers
+                users = firebaseData.allTeachers.excluding(user: firebaseData.currentUser.userEmail)
             }
         }
         tableView.userList = users
@@ -289,14 +351,26 @@ class SelectTeachers: UIViewController, UserTableViewDelegate, CustomSelectorDel
         
         if firebaseData.currentUser.userType == .student{
 //            users = firebaseData.allTeachers
+            if firebaseData.googleData.teachers.count == 0{
+                self.shouldReformat = true
+                return
+            }
             users = firebaseData.googleData.teachers[customSelector.currentSection]
         }else{
 //            users = selectStudents ? firebaseData.allStudents : firebaseData.allTeachers
             
             if selectStudents{
+                if firebaseData.googleData.students.count == 0{
+                    self.shouldReformat = true
+                    return
+                }
                 users = firebaseData.googleData.students[customSelector.currentSection]
             }else{
-                users = firebaseData.allTeachers
+                if firebaseData.googleData.students.count == 0{
+                    self.shouldReformat = true
+                    return
+                }
+                users = firebaseData.allTeachers.excluding(user: firebaseData.currentUser.userEmail)
 //                users = firebaseData.GCAllTeachers
             }
         }

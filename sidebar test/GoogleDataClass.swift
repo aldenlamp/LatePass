@@ -42,25 +42,48 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
     
     var simpleTeachers = [User]()
     
-    private var internalTeacher = [[User]()]
-    private var internalStudent = [[User]()]
+    private var internalTeacher = [[User]]()
+    private var internalStudent = [[User]]()
     
     var teachers: [[User]]{// = [[User]]()
         get{ return internalTeacher }
         set{
             internalTeacher = [[User]]()
+            var arr = [[User]]()
             for i in newValue{
-                print("\nTeachersList: \(i.sorted(by:{$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1]}))")
-                internalTeacher.append(i.sorted(by:{$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1]}))
+                arr.append(i.sorted(by:{$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1]}))
             }
-            
+            for i in arr{
+                var asdf = [User]()
+                for j in i{
+                    if !asdf.contains(j) && j.userEmail != firebaseData.currentUser.userEmail{
+                        asdf.append(j)
+                    }
+                }
+                internalTeacher.append(asdf)
+            }
         }
     }
     var students: [[User]]{
         get{ return internalStudent }
         set{
             internalStudent = [[User]]()
-            for i in newValue{ internalStudent.append(i.sorted(by: {$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1] })) }
+            var arr = [[User]]()
+            print(newValue)
+            for i in newValue{ arr.append(i.sorted(by: {$0.userName.split(separator: " ")[1] < $1.userName.split(separator: " ")[1] })) }
+            print(internalStudent)
+            
+            for i in arr{
+                var asdf = [User]()
+                for j in i{
+                    if !asdf.contains(j) && j.userEmail != firebaseData.currentUser.userEmail{
+                        asdf.append(j)
+                    }
+                }
+                internalStudent.append(asdf)
+            }
+            
+            
         }
     }
     
@@ -143,7 +166,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
             teachers = [[User](), firebaseData.allTeachers]
 //            teachers.append(firebaseData.allTeachers)
 //            students.append(firebaseData.allStudents)
-            students = [[User](), firebaseData.allStudents]
+            students = [firebaseData.allStudents]
             GoogleDataClass.isPullingData = false
             return
         }
@@ -173,7 +196,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                     return
                 }
                 
-                guard let teachers = result as? GTLRClassroom_ListTeachersResponse else{
+                guard let teachers = result as? GTLRClassroom_ListTeachersResponse, teachers.teachers != nil else{
                     print("Error getting teachesr\n\n")
 //                    self?.simpleTeachers.append([User]())
 //                    self?.teachers = [[User]]()
@@ -190,6 +213,8 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                         if (self?.ALLOW_NONDATABASE_USERS)!{
                             self?.simpleTeachers.append(User(type: .student, name: "\($0.profile!.name!.fullName!)", email: "\($0.profile!.emailAddress!)"))
                             added = true
+                        }else{
+                            print("not allowed teacher: \($0.profile?.emailAddress)")
                         }
                     }
                     print("TeacherUSER: \($0.userId!) \tEMAIL: \($0.profile!.emailAddress!) \tNAME:\($0.profile!.name!.fullName!)\(added ? "\t\twas Added" : "")")
@@ -198,8 +223,7 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                 count += 1
                 if count == self?.courses.count{
                     self?.teachers = [[User]]()
-                    self?.teachers.append((self?.simpleTeachers)!)
-                    self?.teachers.append(firebaseData.GCAllTeachers)
+                    self?.teachers = [(self?.simpleTeachers)!, firebaseData.GCAllTeachers]
                     self?.teachersLoaded = true
                     self?.usersLoaded()
                 }
@@ -216,20 +240,32 @@ class GoogleDataClass: NSObject{//, GIDSignInDelegate{
                 var isFirst = true
                 if let error = error{
                     print("Error: \(error)")
-                    self?.students.append([User]())
+//                    self?.students.append([User]())
+                    self?.students = [[User](), firebaseData.allStudents]
 //                    self?.students = [[User]]()
                     return
                 }
                 
                 guard let students = result as? GTLRClassroom_ListStudentsResponse else{
                     print("Error getting students")
-                    self?.students.append([User]())
+//                    self?.students.append([User]())
+                    self?.students = [[User](), firebaseData.allStudents]
 //                    self?.students = [[User]]()
                     return
                 }
                 
                 var firStudents = [User]()
                 
+                guard let _ = students.students else{
+                    count += 1
+                    self?.students.append(firStudents)
+                    if count == self?.courses.count{
+                        self?.students.append(firebaseData.GCAllStudents)
+                        self?.studentsLoaded = true
+                        self?.usersLoaded()
+                    }
+                    return
+                }
                 
                 students.students!.forEach() {
                     self?.allClassroomStudents.append($0)

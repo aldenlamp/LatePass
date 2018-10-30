@@ -43,7 +43,7 @@ struct FirebaseRequests{
             print(student)
         }
         
-        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: {(token, error) in
+        Auth.auth().currentUser!.getTokenForcingRefresh(true, completion: {(token, error) in
             if error == nil{
                 
                 let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/request"
@@ -56,6 +56,8 @@ struct FirebaseRequests{
                 
                 
                 request.httpBody = "{\"destination\":\"\(dest)\",\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
+                
+                print(request.httpBody)
                 
 //                request.httpBody = "{\"origin\":\"\(origin)\",\"student\":\(firebaseData.currentUser.userType != .student ? "" : "\"")\(student)\(firebaseData.currentUser.userType != .student ? "" : "\""),\"reason\":\"\(reasoning)\"}".data(using: String.Encoding.utf8)
                 print(student)
@@ -95,7 +97,7 @@ struct FirebaseRequests{
         
         let rqID = data.ID
         
-        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
+        Auth.auth().currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
             if error == nil{
                 
                 let requestURL = "https://us-central1-late-pass-lab.cloudfunctions.net/app/approve"
@@ -138,7 +140,7 @@ struct FirebaseRequests{
     }
     
     static func addDestination(to key: String, withUser user: String, completion: @escaping (_ title: String, _ message: String, _ button: String, _ worked: Bool) -> Void){
-        FIRAuth.auth()!.currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
+        Auth.auth().currentUser!.getTokenForcingRefresh(true, completion: { (token, error) in
             if error != nil{
                 print("FIRSTERROR: \(String(describing: error))")
                 return

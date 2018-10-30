@@ -164,7 +164,7 @@ class Request: UIViewController, UITextFieldDelegate, UITextViewDelegate, Select
     let secondTextField = UITextField()
     
     func setUpPicker(){
-        firstView = createQuestion(placeholder: "Select \(firebaseData.currentUser.userType == .student ? "Teacher" : "Students")", question: firebaseData.currentUser.userType == .student ? "Where are you comming from?" : "Who will be late?", num : 0)
+        firstView = createQuestion(placeholder: "Select \(firebaseData.currentUser.userType == .student ? "Teacher" : "Students")", question: firebaseData.currentUser.userType == .student ? "Where are you coming from?" : "Who will be late?", num : 0)
         secondView = createQuestion(placeholder: "Select Teacher\(firebaseData.currentUser.userType == .student ? "" : " (OPTIONAL)")", question: "Who are \(firebaseData.currentUser.userType == .student ? "you" : "they") going to?", num: 1)
         
         firstView.translatesAutoresizingMaskIntoConstraints = false

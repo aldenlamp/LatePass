@@ -29,7 +29,7 @@ class FirebaseDataClass{
     weak var firebaseDataDelegate: FirebaseProtocol?
     
     //Firebase Ref
-    let ref = FIRDatabase.database().reference()
+    let ref = Database.database().reference()
     
     //All History Items
     var allItems = [HistoryData]()
@@ -127,9 +127,9 @@ class FirebaseDataClass{
     
     init() {
         
-        googleData = GoogleDataClass()
         
-        guard let currUserID = FIRAuth.auth()?.currentUser?.uid else{
+        
+        guard let currUserID = Auth.auth().currentUser?.uid else{
             print("user not logged in")
             NotificationCenter.default.post(Notification(name: ReturnToLoginNotificationName))
             return
@@ -137,6 +137,8 @@ class FirebaseDataClass{
         
         userID = currUserID
         print(userID!)
+        
+        self.pullingAllData()
         
         //TODO: - UNDO THIS INSTANTLY
         
@@ -153,6 +155,8 @@ class FirebaseDataClass{
             savedUserType = nil
             //firebaseDataDelegate.intiViewWith(userType: nil)
         }
+        
+        googleData = GoogleDataClass()
     }
     
     deinit {
@@ -172,48 +176,120 @@ class FirebaseDataClass{
     
     //MARK: - Current User
     
+//    private var killMyselfThisIsAShittyWayToCode = [String: String]()
+//
+//    private var amountOfUserLoad = 0 {
+//        didSet{
+//
+//        }
+//    }
+    
+    private var shouldRepullUser = true
+    private var amountOfUserLoaded = 0
+    
     func getCurrentUser(){
-        self.ref.child("users").child(userID).observeSingleEvent(of: .value, with: { [weak self] (snapshot) in
-            var data = snapshot.value as! [String: Any]
+        
+        print(Auth.auth().currentUser?.uid)
+        print(Auth.auth().currentUser?.displayName)
+        
+//        self.ref.child("users").child(userID).child("name").observeSingleEvent(of: .value) { [weak self] (snapshot) in
+//            var data = snapshot.value as! String
+//            self?.killMyselfThisIsAShittyWayToCode["name"] = data
+//            self?.amountOfUserLoad += 1
+//        }
+//        
+//        self.ref.child("users").child(userID).child("email").observeSingleEvent(of: .value) { [weak self] (snapshot) in
+//            let data = snapshot.value as! String
+//            self?.killMyselfThisIsAShittyWayToCode["email"] = data
+//            self.amountOfUserLoad += 1
+//        }
+//        
+//        self.ref.child("users").child(userID).child("tier").observeSingleEvent(of: .value) { [weak self] (snapshot) in
+//            let data = snapshot.value as! String
+//        }
+        
+        
+        self.ref.child("users").child(userID).observe(.value, with: { [weak self] (snapshot) in
             
-            
-            let name = data["name"] as! String
-            let email = data["email"] as! String
-            
-            var tier = userType.student
-            switch(data["tier"] as! Int){
-            case 0: tier = .student
-            case 1: tier = .teacher
-            case 2: tier = .admin
-            default: tier = .student
+            if snapshot.exists() && (self!.shouldRepullUser){
+                var data = snapshot.value as! [String: Any]
+                
+                let name: String
+                if data["name"] != nil{
+                    self!.amountOfUserLoaded += 1
+                    name = data["name"] as! String
+                }else{
+                    name = ""
+                }
+                
+                let email: String
+                if data["email"] != nil{
+                    self!.amountOfUserLoaded += 1
+                    email = data["email"] as! String
+                }else{
+                    email = ""
+                }
+                
+                
+                
+                var tier = userType.student
+                
+                if data["tier"] != nil{
+                    switch(data["tier"] as! Int){
+                    case 0: tier = .student
+                    case 1: tier = .teacher
+                    case 2: tier = .admin
+                    default: tier = .student
+                    }
+                    self!.amountOfUserLoaded += 1
+                }
+                    
+                print(tier.rawValue)
+                
+                //TODO: - Fix the standard User Defaults function for this
+                if self?.savedUserType == nil{
+                    UserDefaults.standard.set(tier.rawValue, forKey: "userType")
+                }else if tier != self?.savedUserType{
+                    print("\n\n\nERRRORRR INCORRECT USER TYPE\n\n\n")
+                    UserDefaults.standard.set(tier.rawValue, forKey: "userType")
+                    self?.savedUserType = tier
+                }
+                
+                let photoID: String
+                if data["photoURL"] != nil{
+                    self!.amountOfUserLoaded += 1
+                    photoID = data["photoURL"] as! String
+                }else{
+                    photoID = ""
+                }
+                
+                var image = UIImage()
+                try? image = UIImage(data: Data(contentsOf: URL(string: photoID)!))!
+                
+                if self!.amountOfUserLoaded != 4{
+                    return
+                }else{
+                    self?.shouldRepullUser = false
+                }
+                
+                self?.currentUser = User(email: email, type: tier, name: name, image: image, stringID: self?.userID!, isPotential: false)
+                
+                //Delegate call to userDidLoad
+                print("Current User data Did load")
+                self?.firebaseDataDelegate?.userDataDidLoad()
+                NotificationCenter.default.post(Notification(name: userDataDidLoadNotif))
+                
+                //Pulling all the users in the database....
+                self?.getStudentList(itemType: "teachers", potentialItem: "potentialTeachers")
+                self?.getStudentList(itemType: "students", potentialItem: "potentialStudents")
+            }else{
+                if self?.amountOfUserLoaded == 4{
+                    self?.shouldRepullUser = false
+                }else{
+                    self?.shouldRepullUser = true
+                }
+                
             }
-            
-            print(tier.rawValue)
-            
-            //TODO: - Fix the standard User Defaults function for this
-            if self?.savedUserType == nil{
-                UserDefaults.standard.set(tier.rawValue, forKey: "userType")
-            }else if tier != self?.savedUserType{
-                print("\n\n\nERRRORRR INCORRECT USER TYPE\n\n\n")
-                UserDefaults.standard.set(tier.rawValue, forKey: "userType")
-                self?.savedUserType = tier
-            }
-            
-            
-            let photoID = data["photoURL"] as! String
-            var image = UIImage()
-            try? image = UIImage(data: Data(contentsOf: URL(string: photoID)!))!
-            
-            self?.currentUser = User(email: email, type: tier, name: name, image: image, stringID: self?.userID!, isPotential: false)
-            
-            //Delegate call to userDidLoad
-            print("Current User data Did load")
-            self?.firebaseDataDelegate?.userDataDidLoad()
-            NotificationCenter.default.post(Notification(name: userDataDidLoadNotif))
-            
-            //Pulling all the users in the database....
-            self?.getStudentList(itemType: "teachers", potentialItem: "potentialTeachers")
-            self?.getStudentList(itemType: "students", potentialItem: "potentialStudents")
         })
     }
 }

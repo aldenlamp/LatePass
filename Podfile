@@ -7,11 +7,12 @@ target 'sidebar test' do
 
   # Pods for sidebar test
 
-  pod 'Firebase'
-  pod 'Firebase/Database'
-  pod 'Firebase/Messaging'
-  pod 'Firebase/Auth'
-  pod 'Firebase/Core'
+  pod 'Firebase', '~> 4.11.0'
+  pod 'Firebase/Database', '~> 4.11.0'
+  pod 'Firebase/Messaging', '~> 4.11.0'
+  pod 'Firebase/Auth', '~> 4.11.0'
+  pod 'Firebase/Core', '~> 4.11.0'
+  pod 'Firebase/Functions', '~> 4.11.0'
   pod 'GoogleSignIn'
   pod 'GoogleAPIClientForREST/Classroom', '~> 1.2.1'
   pod 'Google'

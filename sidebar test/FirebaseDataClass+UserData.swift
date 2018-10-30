@@ -44,6 +44,16 @@ extension FirebaseDataClass{
         //Getting real Students
         self.ref.child(itemType).observeSingleEvent(of: .value, with: { [weak self] (snapshotStudents) in
             
+            if !snapshotStudents.exists(){
+                if itemType == "students"{
+                    allStudentsLoaded = true
+                }else{
+                    allTeachersLoaded = true
+                }
+                self?.finishedPullingAll()
+                return
+            }
+            
             let studentKeys = Array((snapshotStudents.value! as! [String: Bool]).keys)
             var finishCount = 0
             
